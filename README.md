@@ -70,10 +70,10 @@ tracardi:
   apiDocs: "yes"
   installationToken: "tr298dsk75"
   image:
-    webApi: tracardi/com-tracardi-api:0.8.0
-    guiApi: tracardi/com-tracardi-api:0.8.0
-    gui: tracardi/tracardi-gui:0.8.0
-    worker: tracardi/worker:0.8.0
+    webApi: tracardi/com-tracardi-api:0.8.0-dev
+    guiApi: tracardi/com-tracardi-api:0.8.0-dev
+    gui: tracardi/tracardi-gui:0.8.0-dev
+    worker: tracardi/worker:0.8.0-dev
   replicas:
     webApi: 15
     guiApi: 2
@@ -207,7 +207,7 @@ tracardi:
     queue:
       image: tracardi/com-bridge-queue:0.8.0-dev
       replicas: 1
-      license: ""
+      license: ""                 # Leave empty if you do not want to be installed
   worker:
     image: tracardi/com-worker:0.8.0-dev
     loggingLevel: "INFO"
