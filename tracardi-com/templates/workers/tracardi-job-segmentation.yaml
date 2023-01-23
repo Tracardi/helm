@@ -1,0 +1,57 @@
+{{ if and .Values.tracardi.dockerHubSecret .Values.tracardi.segmentation.schedule }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: job-segmentation
+  labels:
+    jobgroup: jobs-group
+spec:
+  schedule: {{ .Values.tracardi.segmentation.schedule | quote }}
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 15
+  successfulJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      completions: 1
+      parallelism: 1
+      template:
+        metadata:
+          name: job-segmentation
+          labels:
+            jobgroup: jobs-group
+        spec:
+          imagePullSecrets:
+            - name: {{ .Values.tracardi.dockerHubSecret | quote }}
+          containers:
+          - name: job-segmentation
+            image: {{ .Values.tracardi.segmentation.image  }}
+            imagePullPolicy: Always
+            env:
+              - name: ELASTIC_SCHEME
+                value: {{ .Values.tracardi.elastic.schema | quote }}
+              - name: ELASTIC_HOST
+                value: {{ .Values.tracardi.elastic.host }}
+              - name: ELASTIC_HTTP_AUTH_USERNAME
+                value: {{ .Values.tracardi.elastic.username }}
+              - name: ELASTIC_HTTP_AUTH_PASSWORD
+                value: {{ .Values.tracardi.elastic.password }}
+              - name: ELASTIC_PORT
+                value: {{ .Values.tracardi.elastic.port | quote }}
+              - name: ELASTIC_VERIFY_CERTS
+                value: {{ .Values.tracardi.elastic.verifyCerts | quote }}
+              - name: REDIS_HOST
+                value: {{ .Values.tracardi.redis.host }}
+              - name: REDIS_PASSWORD
+                value: {{ .Values.tracardi.redis.password }}
+              - name: POOL_SIZE
+                value: {{ .Values.tracardi.segmentation.poolSize | quote }}
+              - name: SAVE_AFTER_POOLS
+                value: {{ .Values.tracardi.segmentation.saveAfterPools | quote }}
+              - name: LOGGING_LEVEL
+                value: {{ .Values.tracardi.segmentation.loggingLevel | quote }}
+              - name: ELASTIC_QUERY_TIMEOUT
+                value: "30"
+
+          restartPolicy: OnFailure
+{{ end }}

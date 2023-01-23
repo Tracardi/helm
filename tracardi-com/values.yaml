@@ -1,0 +1,49 @@
+tracardi:
+  dockerHubSecret: ""
+  bridge:
+    rest:
+      image: tracardi/com-bridge-rest:0.8.0-dev
+      replicas: 1
+      license: ""     # Leave empty if you do not want to be installed
+      worker:
+        image: tracardi/com-bridge-rest-worker:0.8.0-dev
+        replicas: 2
+    queue:
+      image: tracardi/com-bridge-queue:0.8.0-dev
+      replicas: 1
+      license: ""   # Leave empty if you do not want to be installed
+  worker:
+    image: tracardi/com-worker:0.8.0-dev
+    loggingLevel: "INFO"
+    replicas: 1
+    destination:
+      syncPostpone: 5
+  segmentation:
+    image: tracardi/com-job-segmentation:0.8.0-dev
+    schedule: ""      # example */15 * * * * - means run every 15 minutes
+    poolSize: 100
+    saveAfterPools: 40
+    loggingLevel: "INFO"
+  deduplication:
+    image: tracardi/com-job-deduplication:0.8.0-dev
+    schedule: ""    # Leave empty if you do not want to be installed
+    poolSize: 100
+    saveAfterPools: 40
+    loggingLevel: "INFO"
+  merging:
+    image: tracardi/com-job-merging:0.8.0-dev
+    schedule: ""
+    poolSize: 100
+    saveAfterPools: 40
+    loggingLevel: "INFO"
+  elastic:
+    host: elastic-cluster-es-http.elastic.svc.cluster.local
+    schema: https
+    port: "9200"
+    username: elastic
+    password: unset
+    verifyCerts: "no"
+  redis:
+    host: redis://redis-master.redis.svc.cluster.local/1
+    password: unset
+    port: "6379"

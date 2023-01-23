@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "tracardi-api.fullname" . }}-worker-deployment
+  labels:
+    app: {{ include "tracardi-api.fullname" . }}-worker
+    tier: backend
+spec:
+  replicas: {{ .Values.tracardi.replicas.worker }}
+  selector:
+    matchLabels:
+      app: {{ include "tracardi-api.fullname" . }}-worker
+  template:
+    metadata:
+      labels:
+        app: {{ include "tracardi-api.fullname" . }}-worker
+        tier: backend
+    spec:
+      containers:
+        - name: {{ include "tracardi-api.fullname" . }}-worker
+          image: {{ .Values.tracardi.image.worker }}
+          imagePullPolicy: Always
+          env:
+            - name: REDIS_HOST
+              value: {{ .Values.tracardi.redis.host }}
+            - name: REDIS_PORT
+              value: {{ .Values.tracardi.redis.port | quote }}
+            - name: REDIS_PASSWORD
+              value: {{ .Values.tracardi.redis.password }}
+            - name: ELASTIC_SCHEME
+              value: {{ .Values.tracardi.elastic.schema | quote }}
+            - name: ELASTIC_HOST
+              value: {{ .Values.tracardi.elastic.host }}
+            - name: ELASTIC_HTTP_AUTH_USERNAME
+              value: {{ .Values.tracardi.elastic.username }}
+            - name: ELASTIC_HTTP_AUTH_PASSWORD
+              value: {{ .Values.tracardi.elastic.password }}
+            - name: ELASTIC_PORT
+              value: "9200"
+            - name: ELASTIC_VERIFY_CERTS
+              value: {{ .Values.tracardi.elastic.verifyCerts | quote }}

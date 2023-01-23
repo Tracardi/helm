@@ -1,0 +1,149 @@
+{{ if and .Values.tracardi.dockerHubSecret .Values.tracardi.bridge.rest.license }}
+#
+# This is the deployment for commercial REST bridge background worker
+# This bridge includes:
+#  * Async Track
+#  * Webhook
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: com-bridge-rest-worker
+  labels:
+    tier: backend
+spec:
+  replicas: {{ .Values.tracardi.bridge.rest.worker.replicas }}
+  selector:
+    matchLabels:
+      app: com-bridge-rest-worker
+  template:
+    metadata:
+      labels:
+        app: com-bridge-rest-worker
+        tier: backend
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.tracardi.dockerHubSecret | quote }}
+      containers:
+      - name: com-bridge-rest-worker
+        image: {{ .Values.tracardi.bridge.rest.worker.image }}
+        imagePullPolicy: Always
+        env:
+          - name: ELASTIC_SCHEME
+            value: {{ .Values.tracardi.elastic.schema | quote }}
+          - name: ELASTIC_HOST
+            value: {{ .Values.tracardi.elastic.host }}
+          - name: ELASTIC_HTTP_AUTH_USERNAME
+            value: {{ .Values.tracardi.elastic.username }}
+          - name: ELASTIC_HTTP_AUTH_PASSWORD
+            value: {{ .Values.tracardi.elastic.password }}
+          - name: ELASTIC_PORT
+            value: {{ .Values.tracardi.elastic.port | quote }}
+          - name: ELASTIC_VERIFY_CERTS
+            value: {{ .Values.tracardi.elastic.verifyCerts | quote }}
+          - name: REDIS_HOST
+            value: {{ .Values.tracardi.redis.host }}
+          - name: REDIS_PASSWORD
+            value: {{ .Values.tracardi.redis.password }}
+          - name: POSTPONE_DESTINATION_SYNC
+            value: {{ .Values.tracardi.worker.destination.syncPostpone | quote}}
+          - name: ELASTIC_QUERY_TIMEOUT
+            value: "120"
+          - name: LOGGING_LEVEL
+            value: {{ .Values.tracardi.worker.loggingLevel | quote }}
+          - name: SOURCE_CACHE_TTL
+            value: "60"
+          - name: SESSION_CACHE_TTL
+            value: "60"
+          - name: EVENT_TAG_CACHE_TTL
+            value: "60"
+          - name: EVENT_VALIDATION_CACHE_TTL
+            value: "60"
+          - name: _DEBUG_VERSION
+            value: "0.8.0"
+          - name: LICENSE
+            value: {{ .Values.tracardi.bridge.rest.license | quote }}
+
+---
+#
+# This is the deployment for commercial REST bridge API
+# This bridge includes:
+#  * Async Track
+#  * Webhook
+#  * Redirect
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: com-bridge-rest
+  labels:
+    tier: backend
+spec:
+  replicas: {{ .Values.tracardi.bridge.rest.replicas }}
+  selector:
+    matchLabels:
+      app: com-bridge-rest
+  template:
+    metadata:
+      labels:
+        app: com-bridge-rest
+        tier: backend
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.tracardi.dockerHubSecret | quote }}
+      containers:
+      - name: com-bridge-rest
+        image: {{ .Values.tracardi.bridge.rest.image }}
+        imagePullPolicy: Always
+        env:
+          - name: ELASTIC_SCHEME
+            value: {{ .Values.tracardi.elastic.schema | quote }}
+          - name: ELASTIC_HOST
+            value: {{ .Values.tracardi.elastic.host }}
+          - name: ELASTIC_HTTP_AUTH_USERNAME
+            value: {{ .Values.tracardi.elastic.username }}
+          - name: ELASTIC_HTTP_AUTH_PASSWORD
+            value: {{ .Values.tracardi.elastic.password }}
+          - name: ELASTIC_PORT
+            value: {{ .Values.tracardi.elastic.port | quote }}
+          - name: ELASTIC_VERIFY_CERTS
+            value: {{ .Values.tracardi.elastic.verifyCerts | quote }}
+          - name: REDIS_HOST
+            value: {{ .Values.tracardi.redis.host }}
+          - name: REDIS_PASSWORD
+            value: {{ .Values.tracardi.redis.password }}
+          - name: POSTPONE_DESTINATION_SYNC
+            value: {{ .Values.tracardi.worker.destination.syncPostpone | quote}}
+          - name: ELASTIC_QUERY_TIMEOUT
+            value: "120"
+          - name: LOGGING_LEVEL
+            value: {{ .Values.tracardi.worker.loggingLevel | quote }}
+          - name: SOURCE_CACHE_TTL
+            value: "60"
+          - name: SESSION_CACHE_TTL
+            value: "60"
+          - name: EVENT_TAG_CACHE_TTL
+            value: "60"
+          - name: EVENT_VALIDATION_CACHE_TTL
+            value: "60"
+          - name: _DEBUG_VERSION
+            value: "0.8.0"
+          - name: API_DOCS
+            value: "yes"
+          - name: LICENSE
+            value: {{ .Values.tracardi.bridge.rest.license | quote }}
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: com-bridge-rest-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: com-bridge-rest
+  ports:
+    - protocol: TCP
+      port: 10000
+      targetPort: 10000
+{{ end }}

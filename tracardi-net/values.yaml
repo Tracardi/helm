@@ -1,0 +1,14 @@
+tracardi:
+  ingressClassName: ""
+  webApi:
+    domain: track.localhost
+    sslTerminationSecret: ""
+    port: 8585
+  guiApi:
+    domain: api.localhost
+    sslTerminationSecret: ""
+    port: 8686
+  gui:
+    domain: gui.localhost
+    sslTerminationSecret: ""
+    port: 8787

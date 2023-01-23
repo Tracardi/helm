@@ -1,0 +1,82 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-tracardi
+
+spec:
+{{ if or .Values.tracardi.webApi.sslTerminationSecret .Values.tracardi.guiApi.sslTerminationSecret .Values.tracardi.gui.sslTerminationSecret }}
+  tls:
+  {{ if .Values.tracardi.webApi.sslTerminationSecret }}
+  # This assumes tls-secret exists and the SSL
+  # certificate contains a CN for {{ .Values.tracardi.webApi.domain }}
+  - secretName: {{ .Values.tracardi.webApi.sslTerminationSecret }}
+  {{end}}
+  {{ if .Values.tracardi.guiApi.sslTerminationSecret }}
+  # This assumes tls-secret exists and the SSL
+  # certificate contains a CN for {{ .Values.tracardi.guiApi.domain }}
+  - secretName: {{ .Values.tracardi.guiApi.sslTerminationSecret }}
+  {{end}}
+  {{ if .Values.tracardi.gui.sslTerminationSecret }}
+  # This assumes tls-secret exists and the SSL
+  # certificate contains a CN for {{ .Values.tracardi.gui.domain }}
+  - secretName: {{ .Values.tracardi.gui.sslTerminationSecret }}
+  {{end}}
+{{end}}
+{{ if .Values.tracardi.ingressClassName }}
+  ingressClassName: {{ .Values.tracardi.ingressClassName }}
+{{ end }}
+  rules:
+  - host: {{ .Values.tracardi.webApi.domain }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: tracardi-api-web-svc
+            port:
+              number: {{ .Values.tracardi.webApi.port }}
+
+  - host: {{ .Values.tracardi.guiApi.domain }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: tracardi-api-gui-svc
+            port:
+              number: {{ .Values.tracardi.guiApi.port }}
+
+  - host: {{ .Values.tracardi.gui.domain }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: tracardi-gui-svc
+            port:
+              number: {{ .Values.tracardi.gui.port }}
+
+  - host: async.mt-hetzner.lb
+    http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: com-bridge-rest-svc
+              port:
+                number: 10000
+
+  - host: train.mt-hetzner.lb
+    http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: mt-bridge-svc
+              port:
+                number: 10000

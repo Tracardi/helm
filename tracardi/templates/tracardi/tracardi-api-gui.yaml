@@ -1,0 +1,130 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "tracardi-api.fullname" . }}-api-gui-deployment
+  labels:
+    app: {{ include "tracardi-api.fullname" . }}-api-gui
+    tier: backend
+spec:
+  replicas: {{ .Values.tracardi.replicas.guiApi }}
+  selector:
+    matchLabels:
+      app: {{ include "tracardi-api.fullname" . }}-api-gui
+  template:
+    metadata:
+      labels:
+        app: {{ include "tracardi-api.fullname" . }}-api-gui
+        tier: backend
+    spec:
+{{ if .Values.tracardi.dockerHubSecret }}
+      imagePullSecrets:
+        - name: {{ .Values.tracardi.dockerHubSecret | quote }}
+{{end}}
+      containers:
+        - name: {{ include "tracardi-api.fullname" . }}-api-gui
+          image: {{ .Values.tracardi.image.guiApi }}
+          imagePullPolicy: Always
+          ports:
+            - name: gui-api-port
+              containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 60
+          env:
+            - name: ELASTIC_SCHEME
+              value: {{ .Values.tracardi.elastic.schema | quote }}
+            - name: ELASTIC_HOST
+              value:  {{ .Values.tracardi.elastic.host }}
+            - name: ELASTIC_HTTP_AUTH_USERNAME
+              value: {{ .Values.tracardi.elastic.username }}
+            - name: ELASTIC_HTTP_AUTH_PASSWORD
+              value: {{ .Values.tracardi.elastic.password }}
+            - name: ELASTIC_PORT
+              value: "9200"
+            - name: ELASTIC_VERIFY_CERTS
+              value: {{ .Values.tracardi.elastic.verifyCerts | quote }}
+            - name: REDIS_HOST
+              value: {{ .Values.tracardi.redis.host }}
+            - name: REDIS_PASSWORD
+              value: {{ .Values.tracardi.redis.password }}
+            - name: POSTPONE_DESTINATION_SYNC
+              value: {{ .Values.tracardi.destination.syncPostpone | quote }}
+            - name: SYNC_PROFILE_TRACKS
+              value: "yes"
+            - name: MAX_WORKERS
+              value: {{ .Values.tracardi.workers.guiApi | quote }}
+            - name: EXPOSE_GUI_API
+              value: "yes"
+            - name: LOGGING_LEVEL
+              value: {{ .Values.tracardi.logging | quote }}
+            - name: TRACK_DEBUG
+              value: {{ .Values.tracardi.trackDebug | quote }}
+            - name: TOKENS_IN_REDIS
+              value: "yes"
+            - name: API_DOCS
+              value: {{ .Values.tracardi.apiDocs | quote}}
+            - name: TRACARDI_PRO_HOST
+              value: {{ .Values.tracardi.pro.host | quote}}
+            - name: TRACARDI_PRO_PORT
+              value: {{ .Values.tracardi.pro.port | quote }}
+            - name: TRACARDI_SCHEDULER_HOST
+              value: {{ .Values.tracardi.scheduler.host | quote}}
+            - name: INSTALLATION_TOKEN
+              value: {{ .Values.tracardi.installationToken | quote }}
+            - name: SAVE_LOGS
+              value: {{ .Values.tracardi.saveLogsInTracardi | quote }}
+            - name: _DEBUG_VERSION
+              value: "0.8.0"
+{{ if .Values.tracardi.instancePrefix }}
+            - name: INSTANCE_PREFIX
+              value: {{ .Values.tracardi.instancePrefix }}
+{{end}}
+{{ if .Values.tracardi.license }}
+            - name: LICENSE
+              value: {{ .Values.tracardi.license }}
+{{end}}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tracardi-api-gui-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ include "tracardi-api.fullname" . }}-api-gui
+  ports:
+    - protocol: TCP
+      port: {{ .Values.tracardi.port.guiApi }}
+      targetPort: gui-api-port
+
+
+#---
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: {{ include "tracardi-api.fullname" . }}-api-gui-lb
+#{{ if eq .Values.tracardi.doSSL "yes" }}
+#  annotations:
+#    service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
+#    service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
+#    service.beta.kubernetes.io/do-loadbalancer-certificate-id: {{ .Values.tracardi.elastic.doCertId | quote }}
+#{{end}}
+#spec:
+#  type: LoadBalancer
+#  selector:
+#    app: {{ include "tracardi-api.fullname" . }}-api-gui
+#  ports:
+#    - name: http
+#      protocol: TCP
+#      port: {{ .Values.tracardi.port.guiApi }}
+#      targetPort: gui-api-port
+#{{ if eq .Values.tracardi.doSSL "yes" }}
+#    - name: https
+#      protocol: TCP
+#      port: 443
+#      targetPort: gui-api-port
+#{{end}}
