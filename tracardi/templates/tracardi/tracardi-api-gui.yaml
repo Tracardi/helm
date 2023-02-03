@@ -76,8 +76,6 @@ spec:
               value: {{ .Values.tracardi.installationToken | quote }}
             - name: SAVE_LOGS
               value: {{ .Values.tracardi.saveLogsInTracardi | quote }}
-            - name: _DEBUG_VERSION
-              value: "0.8.0"
 {{ if .Values.tracardi.instancePrefix }}
             - name: INSTANCE_PREFIX
               value: {{ .Values.tracardi.instancePrefix }}

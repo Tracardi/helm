@@ -76,8 +76,6 @@ spec:
               value: "60"
             - name: EVENT_METADATA_CACHE_TTL
               value: "60"
-            - name: _DEBUG_VERSION
-              value: "0.8.0"
             - name: SAVE_LOGS
               value: {{ .Values.tracardi.saveLogsInTracardi | quote }}
 {{ if .Values.tracardi.instancePrefix }}

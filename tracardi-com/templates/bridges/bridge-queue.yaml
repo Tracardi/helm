@@ -61,8 +61,6 @@ spec:
             value: "60"
           - name: EVENT_VALIDATION_CACHE_TTL
             value: "60"
-          - name: _DEBUG_VERSION
-            value: "0.8.0"
           - name: LICENSE
             value: {{ .Values.tracardi.bridge.queue.license | quote }}
 {{ end }}
