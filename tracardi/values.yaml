@@ -8,10 +8,10 @@ tracardi:
   saveLogsInTracardi: "yes"
   installationToken: "tracardi-install"
   image:
-    webApi: tracardi/tracardi-api:0.8.0-dev
-    guiApi: tracardi/tracardi-api:0.8.0-dev
-    gui: tracardi/tracardi-gui:0.8.0-dev
-    worker: tracardi/worker:0.8.0-dev
+    webApi: tracardi/tracardi-api:0.8.0
+    guiApi: tracardi/tracardi-api:0.8.0
+    gui: tracardi/tracardi-gui:0.8.0
+    worker: tracardi/worker:0.8.0
   replicas:
     webApi: 1
     guiApi: 1

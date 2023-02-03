@@ -19,7 +19,7 @@ config:
 apiWeb:
   image:
     repository: tracardi/com-tracardi-api
-    tag: 0.8.0-dev
+    tag: 0.8.0
     pullPolicy: IfNotPresent
   port: 8585
   replicas: 1
@@ -35,7 +35,7 @@ apiWeb:
 apiGui:
   image:
     repository: tracardi/com-tracardi-api
-    tag: 0.8.0-dev
+    tag: 0.8.0
     pullPolicy: IfNotPresent
   port: 8686
   replicas: 1
@@ -51,7 +51,7 @@ apiGui:
 gui:
   image:
     repository: tracardi/tracardi-gui
-    tag: 0.8.0-dev
+    tag: 0.8.0
     pullPolicy: IfNotPresent
   port: 8787
   replicas: 1
@@ -85,7 +85,7 @@ worker:
     syncPostpone: 5
   image:
     repository: tracardi/worker
-    tag: 0.8.0-dev
+    tag: 0.8.0
     pullPolicy: IfNotPresent
   replicas: 1
   apiWeb:
@@ -97,7 +97,7 @@ bridge:
   rest:
     image:
       repository: tracardi/com-bridge-rest
-      tag: 0.8.0-dev
+      tag: 0.8.0
       pullPolicy: IfNotPresent
     replicas: 1
     license:
@@ -113,7 +113,7 @@ bridge:
   rest_worker:
     image:
       repository: tracardi/com-bridge-rest-worker
-      tag: 0.8.0-dev
+      tag: 0.8.0
       pullPolicy: IfNotPresent
     replicas: 2
     license:
@@ -121,7 +121,7 @@ bridge:
   queue:
     image:
       repository: tracardi/com-bridge-queue
-      tag: 0.8.0-dev
+      tag: 0.8.0
       pullPolicy: IfNotPresent
     replicas: 1
     license:
@@ -130,7 +130,7 @@ bridge:
 deduplication:
   image:
     repository: tracardi/com-job-deduplication
-    tag: 0.8.0-dev
+    tag: 0.8.0
     pullPolicy: IfNotPresent
   loggingLevel: "INFO"
   saveAfterPools: 40
@@ -141,7 +141,7 @@ deduplication:
 merging:
   image:
     repository: tracardi/com-job-merging
-    tag: 0.8.0-dev
+    tag: 0.8.0
     pullPolicy: IfNotPresent
   loggingLevel: "INFO"
   poolSize: 100
@@ -152,7 +152,7 @@ merging:
 segmentation:
   image:
     repository: tracardi/com-job-segmentation
-    tag: 0.8.0-dev
+    tag: 0.8.0
     pullPolicy: IfNotPresent
   loggingLevel: "INFO"
   poolSize: 100
