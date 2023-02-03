@@ -1,0 +1,40 @@
+{{ if and .Values.license.dockerExistingSecret .Values.deduplication.schedule }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: job-deduplication
+  labels:
+    {{- include "tracardi.labels" (dict "ctx" . "component" "jobs-group") | nindent 4 }}
+spec:
+  schedule: {{ .Values.deduplication.schedule | quote }}
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 15
+  successfulJobsHistoryLimit: {{ .Values.deduplication.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.deduplication.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      completions: 1
+      parallelism: 1
+      template:
+        metadata:
+          name: job-deduplication
+          labels:
+            {{- include "tracardi.podLabels" (dict "ctx" . "component" "jobs-group") | nindent 12 }}
+        spec:
+          imagePullSecrets:
+            - name: {{ .Values.license.dockerExistingSecret | quote }}
+          containers:
+          - name: job-deduplication
+            image: "{{ .Values.deduplication.image.repository }}:{{ .Values.deduplication.image.tag }}"
+            imagePullPolicy: "{{ .Values.deduplication.image.pullPolicy }}"
+            env:
+              {{- include "tracardi.env" (dict "ctx" .) | nindent 14 }}
+              - name: POOL_SIZE
+                value: {{ .Values.deduplication.poolSize | quote }}
+              - name: SAVE_AFTER_POOLS
+                value: {{ .Values.deduplication.saveAfterPools | quote }}
+              - name: LOGGING_LEVEL
+                value: {{ .Values.deduplication.loggingLevel | quote }}
+          restartPolicy: OnFailure
+{{ end }}

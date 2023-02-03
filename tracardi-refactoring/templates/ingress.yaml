@@ -1,0 +1,135 @@
+{{ if .Values.apiWeb.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-web
+  annotations:
+      {{ toYaml .Values.apiWeb.ingress.annotations }}
+spec:
+  {{ if .Values.apiWeb.ingress.tls -}}
+  tls:
+  - secretName: {{ .Values.apiWeb.ingress.tls.secretName }}
+  {{ end }}
+  {{- with .Values.apiWeb.ingressClassName -}}
+  ingressClassName: {{ . }}
+  {{- end -}}
+  rules:
+  - host: {{ .Values.apiWeb.ingress.domain }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: api-web
+            port:
+              number: {{ .Values.apiWeb.port }}
+{{ end }}
+---
+{{ if .Values.apiGui.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-gui
+  annotations:
+      {{ toYaml .Values.apiGui.ingress.annotations }}
+spec:
+  {{- if .Values.apiGui.ingress.tls }}
+  tls:
+  - secretName: {{ .Values.apiGui.ingress.tls.secretName }}
+  {{ end }}
+  {{- with .Values.apiGui.ingressClassName -}}
+  ingressClassName: {{ . }}
+  {{- end -}}
+  rules:
+  - host: {{ .Values.apiGui.ingress.domain }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: api-gui
+            port:
+              number: {{ .Values.apiGui.port }}
+{{ end }}
+---
+{{ if .Values.gui.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gui
+  annotations:
+      {{ toYaml .Values.gui.ingress.annotations }}
+spec:
+  {{ if .Values.gui.ingress.tls -}}
+  tls:
+  - secretName: {{ .Values.gui.ingress.tls.secretName }}
+  {{ end }}
+  {{- with .Values.gui.ingressClassName -}}
+  ingressClassName: {{ . }}
+  {{- end -}}
+  rules:
+  - host: {{ .Values.gui.ingress.domain }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: gui
+            port:
+              number: {{ .Values.gui.port }}
+{{ end }}
+---
+{{ if .Values.bridge.rest.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bridge-rest
+  annotations:
+      {{ toYaml .Values.bridge.rest.ingress.annotations }}
+spec:
+  {{ if .Values.bridge.rest.ingress.tls -}}
+  tls:
+  - secretName: {{ .Values.bridge.rest.ingress.tls.secretName }}
+  {{ end }}
+  {{- with .Values.bridge.rest.ingressClassName -}}
+  ingressClassName: {{ . }}
+  {{- end -}}
+  rules:
+  - host: {{ .Values.bridge.rest.ingress.domain }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: bridge-rest
+            port:
+              number: 10000
+{{ end }}
+---
+#apiVersion: networking.k8s.io/v1
+#kind: Ingress
+#metadata:
+#  name: ingress-tracardi-bridge
+#  annotations:
+#      dns.alpha.revma.io/record_1_fqdn: train.tracardi.k-staging.x.revma.io
+#spec:
+#  tls:
+#  - secretName: {{ .Values.tlsSecretName }}
+#{{ if .Values.ingressClassName }}
+#  ingressClassName: {{ .Values.ingressClassName }}
+#{{ end }}
+#  rules:
+#  - host: train.tracardi.k-staging.x.revma.io
+#    http:
+#      paths:
+#        - path: /
+#          pathType: Prefix
+#          backend:
+#            service:
+#              name: mt-bridge-svc
+#              port:
+#                number: 10000
