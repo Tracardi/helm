@@ -23,10 +23,10 @@ tracardi:
   saveLogsInTracardi: "yes" # Leave as yes
   installationToken: "tracardi-install"   # Installation token is used ven system is installed. Set any string you want  
   image:                # What images ad versions to use
-    webApi: tracardi/tracardi-api:0.8.0-dev 
-    guiApi: tracardi/tracardi-api:0.8.0-dev
-    gui: tracardi/tracardi-gui:0.8.0-dev
-    worker: tracardi/worker:0.8.0-dev
+    webApi: tracardi/tracardi-api:0.8.0
+    guiApi: tracardi/tracardi-api:0.8.0
+    gui: tracardi/tracardi-gui:0.8.0
+    worker: tracardi/worker:0.8.0
   replicas:             # How many replicas per service
     webApi: 1           # Web API for collecting data, this scales data collection
     guiApi: 1           # API for GUI - probably do no need many of these
@@ -70,10 +70,10 @@ tracardi:
   apiDocs: "yes"
   installationToken: "tr298dsk75"
   image:
-    webApi: tracardi/com-tracardi-api:0.8.0-dev
-    guiApi: tracardi/com-tracardi-api:0.8.0-dev
-    gui: tracardi/tracardi-gui:0.8.0-dev
-    worker: tracardi/worker:0.8.0-dev
+    webApi: tracardi/com-tracardi-api:0.8.0
+    guiApi: tracardi/com-tracardi-api:0.8.0
+    gui: tracardi/tracardi-gui:0.8.0
+    worker: tracardi/worker:0.8.0
   replicas:
     webApi: 15
     guiApi: 2
@@ -198,36 +198,36 @@ tracardi:
   dockerHubSecret: ""             # DockerHub secret - needed for commercial version 
   bridge:
     rest:
-      image: tracardi/com-bridge-rest:0.8.0-dev
+      image: tracardi/com-bridge-rest:0.8.0
       replicas: 1
       license: ""                 # Leave empty if you do not want to be installed
       worker:
-        image: tracardi/com-bridge-rest-worker:0.8.0-dev
+        image: tracardi/com-bridge-rest-worker:0.8.0
         replicas: 2
     queue:
-      image: tracardi/com-bridge-queue:0.8.0-dev
+      image: tracardi/com-bridge-queue:0.8.0
       replicas: 1
       license: ""                 # Leave empty if you do not want to be installed
   worker:
-    image: tracardi/com-worker:0.8.0-dev
+    image: tracardi/com-worker:0.8.0
     loggingLevel: "INFO"
     replicas: 1
     destination:
       syncPostpone: 5
   segmentation:
-    image: tracardi/com-job-segmentation:0.8.0-dev
+    image: tracardi/com-job-segmentation:0.8.0
     schedule: "*/15 * * * *"
     poolSize: 100
     saveAfterPools: 40
     loggingLevel: "INFO"
   deduplication:
-    image: tracardi/com-job-deduplication:0.8.0-dev
+    image: tracardi/com-job-deduplication:0.8.0
     schedule: ""                  # Leave empty if you do not want to be installed
     poolSize: 100
     saveAfterPools: 40
     loggingLevel: "INFO"
   merging:
-    image: tracardi/com-job-merging:0.8.0-dev
+    image: tracardi/com-job-merging:0.8.0
     schedule: ""
     poolSize: 100
     saveAfterPools: 40
