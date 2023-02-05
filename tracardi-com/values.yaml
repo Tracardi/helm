@@ -1,28 +1,31 @@
+secrets:
+  dockerHub: ""
+
 tracardi:
-  dockerHubSecret: ""
-  system:
-    license:
-      secret: ""
-    logging: "info"
-    apiDocs: "no"
-    trackDebug: "yes"
-    saveLogsInTracardi: "yes"
-    installationToken: "tracardi-install"
-    image:
-      webApi: tracardi/com-tracardi-api:0.8.0
-      guiApi: tracardi/com-tracardi-api:0.8.0
-      gui: tracardi/tracardi-gui:0.8.0
-      worker: tracardi/worker:0.8.0
-    replicas:
-      webApi: 1
-      guiApi: 1
-      gui: 1
-      worker: 1
-    port:
-      webApi: 8585  # Production
-      guiApi: 8686  # Staging
-      gui: 8787
-  scheduler:
+  license:
+    secret: ""
+  logging: "info"
+  apiDocs: "no"
+  trackDebug: "yes"
+  saveLogsInTracardi: "yes"
+  installationToken: "tracardi-install"
+  image:
+    webApi: tracardi/com-tracardi-api:0.8.0
+    guiApi: tracardi/com-tracardi-api:0.8.0
+    gui: tracardi/tracardi-gui:0.8.0
+    worker: tracardi/worker:0.8.0
+  replicas:
+    webApi: 1
+    guiApi: 1
+    gui: 1
+    worker: 1
+  port:
+    webApi: 8585  # Production
+    guiApi: 8686  # Staging
+    gui: 8787
+
+
+scheduler:
     manager:
       image: tracardi/com-tracardi-scheduler:0.8.0
       replicas: 1
