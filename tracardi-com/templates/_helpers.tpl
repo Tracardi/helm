@@ -140,6 +140,24 @@ app.kubernetes.io/component: {{ .component }}
 {{- end }}
 {{- end }}
 
+{{/*
+Resource labels
+Params:
+  ctx = . context
+  component = component name (optional)
+*/}}
+{{- define "tracardi.labels" -}}
+helm.sh/chart: {{ include "tracardi.chart" .ctx }}
+app.kubernetes.io/name: {{ include "tracardi.name" .ctx }}
+app.kubernetes.io/instance: {{ .ctx.Release.Name }}
+{{- if .component }}
+app.kubernetes.io/component: {{ .component }}
+{{- end }}
+{{- if .ctx.Chart.AppVersion }}
+app.kubernetes.io/version: {{ .ctx.Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .ctx.Release.Service }}
+{{- end -}}
 
 {{/*
 POD labels
