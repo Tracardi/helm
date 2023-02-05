@@ -1,10 +1,6 @@
 secrets:
-  dockerHub: ""
-  tracardi: ""
-  bridge:
-    rest: ""
-    queue: ""
-  installationToken: ""
+  dockerHub: "SET-DOCKERHUB-SECRET"
+  installationToken: "SET-INSTALLATION-SECRET"
 
 gui:
   image:
@@ -66,30 +62,48 @@ apiGui:
   license:
     existingSecret: ""  # The secret need to have a key field in it
 
+# Scheduler
 
 scheduler:
+  image:
+    repository: tracardi/com-tracardi-scheduler
+    tag: 0.8.0
+    pullPolicy: IfNotPresent
   replicas: 1
+  config:
+    loggingLevel: "info"
   license:
-    existingSecret: ""  # The secret need to have a key field in it
-
+    existingSecret: "SET-SCHEDULER-LICENSE"  # The secret need to have a key field in it
 
 schedulerWorker:
+  image:
+    repository: tracardi/com-tracardi-scheduler-worker
+    tag: 0.8.0
+    pullPolicy: IfNotPresent
+  config:
+    loggingLevel: "info"
   license:
-    existingSecret: ""  # The secret need to have a key field in it
+    existingSecret: "SET-SCHEDULER-LICENSE"  # The secret need to have a key field in it
+
+# Segmentation
 
 segmentation:
   image:
     repository: tracardi/com-job-segmentation
     tag: 0.8.0
     pullPolicy: IfNotPresent
-  loggingLevel: "INFO"
-  poolSize: 100
-  saveAfterPools: 40
-  schedule: ""      # example */15 * * * * - means run every 15 minutes
-  successfulJobsHistoryLimit: 2
-  failedJobsHistoryLimit: 2
   config:
+    successfulJobsHistoryLimit: 2
+    failedJobsHistoryLimit: 2
     saveLogs: "no"
+    loggingLevel: "INFO"
+    poolSize: 100
+    saveAfterPools: 40
+    schedule: ""      # example */15 * * * * - means run every 15 minutes
+  license:
+    existingSecret: "SET-SEGMENTATION-LICENSE"  # The secret need to have a key field in it
+
+# Update and Migration
 
 updateWorker:
   loggingLevel: "INFO"
@@ -101,6 +115,7 @@ updateWorker:
   config:
     saveLogs: "no"
 
+# Bridges
 
 bridge:
   rest:
@@ -109,8 +124,6 @@ bridge:
       tag: 0.8.0
       pullPolicy: IfNotPresent
     replicas: 1
-    license:
-      existingSecret: ""
     ingress:
       enabled: false
       domain: async.tracardi.example.com
@@ -119,85 +132,32 @@ bridge:
         enable: true
         secretName: ""
       annotations: {}
+    config:
+      loggingLevel: "info"
+    license:
+      existingSecret: "SET-REST-LICENSE-SECRET"
   restWorker:
     image:
       repository: tracardi/com-bridge-rest-worker
       tag: 0.8.0
       pullPolicy: IfNotPresent
     replicas: 2
+    config:
+      loggingLevel: "info"
     license:
-      existingSecret: ""
+      existingSecret: "SET-REST-LICENSE-SECRET"
   queue:
     image:
       repository: tracardi/com-bridge-queue
       tag: 0.8.0
       pullPolicy: IfNotPresent
     replicas: 1
+    config:
+      loggingLevel: "info"
     license:
-      existingSecret: ""
+      existingSecret: "SET-QUEUE-LICENSE-SECRET"
 
-#tracardi:
-#  license:
-#    secret: ""
-#  logging: "info"
-#  apiDocs: "no"
-#  trackDebug: "yes"
-#  saveLogsInTracardi: "yes"
-#  installationToken: "tracardi-install"
-#  image:
-#    webApi: tracardi/com-tracardi-api:0.8.0
-#    guiApi: tracardi/com-tracardi-api:0.8.0
-#    gui: tracardi/tracardi-gui:0.8.0
-#    worker: tracardi/worker:0.8.0
-#  replicas:
-#    webApi: 1
-#    guiApi: 1
-#    gui: 1
-#    worker: 1
-#  port:
-#    webApi: 8585  # Production
-#    guiApi: 8686  # Staging
-#    gui: 8787
-
-
-
-
-#scheduler:
-#    manager:
-#      image: tracardi/com-tracardi-scheduler:0.8.0
-#      replicas: 1
-#    worker:
-#      image: tracardi/com-tracardi-scheduler-worker:0.8.0
-#      replicas: 1
-#  bridge:
-#    rest:
-#      image: tracardi/com-bridge-rest:0.8.0
-#      replicas: 1
-#      license: ""     # Leave empty if you do not want to be installed
-#      worker:
-#        image: tracardi/com-bridge-rest-worker:0.8.0
-#        replicas: 2
-#    queue:
-#      image: tracardi/com-bridge-queue:0.8.0
-#      replicas: 1
-#      license: ""   # Leave empty if you do not want to be installed
-#  worker:
-#    image: tracardi/com-worker:0.8.0
-#    loggingLevel: "INFO"
-#    replicas: 1
-#    destination:
-#      syncPostpone: 5
-#  segmentation:
-#    image: tracardi/com-tracardi-segmentation-job:0.8.0
-#    schedule: ""      # example */15 * * * * - means run every 15 minutes
-#    poolSize: 100
-#    saveAfterPools: 40
-#    loggingLevel: "INFO"
-#  segmentation-worker:
-#    image: tracardi/com-tracardi-segmentation-worker:0.8.0
-#    poolSize: 100
-#    saveAfterPools: 40
-#    loggingLevel: "INFO"
+# Infrastructure
 
 elastic:
   host: "elastic-svc"
@@ -208,6 +168,7 @@ elastic:
   verifyCerts: "no"
   doCertId: "none"
   port: 9200
+
 redis:
   host: redis://redis-svc/0
   existingSecret: "redis-secret"

@@ -109,27 +109,3 @@ spec:
             port:
               number: 10000
 {{ end }}
----
-#apiVersion: networking.k8s.io/v1
-#kind: Ingress
-#metadata:
-#  name: ingress-tracardi-bridge
-#  annotations:
-#      dns.alpha.revma.io/record_1_fqdn: train.tracardi.k-staging.x.revma.io
-#spec:
-#  tls:
-#  - secretName: {{ .Values.tlsSecretName }}
-#{{ if .Values.ingressClassName }}
-#  ingressClassName: {{ .Values.ingressClassName }}
-#{{ end }}
-#  rules:
-#  - host: train.tracardi.k-staging.x.revma.io
-#    http:
-#      paths:
-#        - path: /
-#          pathType: Prefix
-#          backend:
-#            service:
-#              name: mt-bridge-svc
-#              port:
-#                number: 10000

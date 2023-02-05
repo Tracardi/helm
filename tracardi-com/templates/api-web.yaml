@@ -1,3 +1,4 @@
+{{ if and .Values.secrets.dockerHub .Values.apiGui.license.existingSecret }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,10 +15,8 @@ spec:
       labels:
         {{- include "tracardi.podLabels" (dict "ctx" . "component" "api-web") | nindent 8 }}
     spec:
-      {{ if .Values.secrets.dockerHub }}
       imagePullSecrets:
-        - name: {{ .Values.license.dockerExistingSecret | quote }}
-      {{end}}
+        - name: {{ .Values.secrets.dockerHub | quote }}
       containers:
         - name: api-web
           image: "{{ .Values.apiWeb.image.repository }}:{{ .Values.apiWeb.image.tag }}"
@@ -46,3 +45,4 @@ spec:
     - protocol: TCP
       port: {{ .Values.apiWeb.port }}
       targetPort: api-web-port
+{{ end }}

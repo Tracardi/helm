@@ -10,8 +10,8 @@ spec:
   concurrencyPolicy: Forbid
   startingDeadlineSeconds: 15
   successfulJobsHistoryLimit: 2
-  successfulJobsHistoryLimit: {{ .Values.segmentation.successfulJobsHistoryLimit }}
-  failedJobsHistoryLimit: {{ .Values.segmentation.failedJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ .Values.segmentation.config.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.segmentation.config.failedJobsHistoryLimit }}
   jobTemplate:
     spec:
       backoffLimit: 2
@@ -32,10 +32,10 @@ spec:
             env:
               {{- include "tracardi.env" (dict "ctx" .) | nindent 14 }}
               - name: POOL_SIZE
-                value: {{ .Values.segmentation.poolSize | quote }}
+                value: {{ .Values.segmentation.config.poolSize | quote }}
               - name: SAVE_AFTER_POOLS
-                value: {{ .Values.segmentation.saveAfterPools | quote }}
+                value: {{ .Values.segmentation.config.saveAfterPools | quote }}
               - name: LOGGING_LEVEL
-                value: {{ .Values.segmentation.loggingLevel | quote }}
+                value: {{ .Values.segmentation.config.loggingLevel | quote }}
           restartPolicy: OnFailure
 {{ end }}

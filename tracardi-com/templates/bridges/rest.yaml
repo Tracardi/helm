@@ -22,17 +22,15 @@ spec:
         {{- include "tracardi.podLabels" (dict "ctx" . "component" "bridge-rest") | nindent 8 }}
     spec:
       imagePullSecrets:
-        - name: {{ .Values.license.dockerExistingSecret | quote }}
+        - name: {{ .Values.secrets.dockerHub | quote }}
       containers:
       - name: bridge-rest
         image: "{{ .Values.bridge.rest.image.repository }}:{{ .Values.bridge.rest.image.tag }}"
         imagePullPolicy: {{ .Values.bridge.rest.image.pullPolicy }}
         env:
           {{- include "tracardi.env" (dict "ctx" . "license" .Values.bridge.rest.license.existingSecret) | nindent 10 }}
-          - name: POSTPONE_DESTINATION_SYNC
-            value: {{ .Values.worker.destination.syncPostpone | quote}}
           - name: LOGGING_LEVEL
-            value: {{ .Values.worker.loggingLevel | quote }}
+            value: {{ .Values.bridge.rest.config.loggingLevel | quote }}
           - name: API_DOCS
             value: "yes"
 ---

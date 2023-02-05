@@ -5,6 +5,7 @@ metadata:
 data:
   custom.js: |
     export const custom = {}
+
 ---
 apiVersion: apps/v1
 kind: Deployment

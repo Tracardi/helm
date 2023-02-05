@@ -1,3 +1,4 @@
+{{ if and .Values.secrets.dockerHub .Values.apiGui.license.existingSecret }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,10 +15,8 @@ spec:
       labels:
         {{- include "tracardi.podLabels" (dict "ctx" . "component" "api-gui") | nindent 8 }}
     spec:
-      {{ if .Values.secrets.dockerHub }}
       imagePullSecrets:
-        - name: {{ .Values.license.dockerExistingSecret | quote }}
-      {{end}}
+        - name: {{ .Values.secrets.dockerHub  | quote }}
       containers:
         - name: api-gui
           image: "{{ .Values.apiGui.image.repository }}:{{ .Values.apiGui.image.tag }}"
@@ -54,3 +53,4 @@ spec:
     - protocol: TCP
       port: {{ .Values.apiGui.port }}
       targetPort: api-gui-port
+{{ end }}
