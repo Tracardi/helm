@@ -51,7 +51,7 @@ spec:
             - name: REDIS_PASSWORD
               value: {{ .Values.tracardi.redis.password }}
             - name: POSTPONE_DESTINATION_SYNC
-              value: {{ .Values.tracardi.system.destination.syncPostpone | quote }}
+              value: "5"
             - name: SYNC_PROFILE_TRACKS
               value: "yes"
             - name: EXPOSE_GUI_API
@@ -65,11 +65,11 @@ spec:
             - name: API_DOCS
               value: {{ .Values.tracardi.apiDocs | quote}}
             - name: TRACARDI_PRO_HOST
-              value: {{ .Values.tracardi.pro.host | quote}}
+              value: "pro.tracardi.com"
             - name: TRACARDI_PRO_PORT
-              value: {{ .Values.tracardi.pro.port | quote }}
+              value: "40000"
             - name: TRACARDI_SCHEDULER_HOST
-              value: {{ .Values.tracardi.scheduler.host | quote}}
+              value: "scheduler.tracardi.com"
             - name: INSTALLATION_TOKEN
               value: {{ .Values.tracardi.installationToken | quote }}
             - name: SAVE_LOGS
@@ -94,7 +94,7 @@ spec:
     app: {{ include "tracardi-api.fullname" . }}-api-gui
   ports:
     - protocol: TCP
-      port: {{ .Values.tracardi.port.guiApi }}
+      port: {{ .Values.tracardi.system.port.guiApi }}
       targetPort: gui-api-port
 
 
@@ -103,12 +103,10 @@ spec:
 #kind: Service
 #metadata:
 #  name: {{ include "tracardi-api.fullname" . }}-api-gui-lb
-#{{ if eq .Values.tracardi.doSSL "yes" }}
 #  annotations:
 #    service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
 #    service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
 #    service.beta.kubernetes.io/do-loadbalancer-certificate-id: {{ .Values.tracardi.elastic.doCertId | quote }}
-#{{end}}
 #spec:
 #  type: LoadBalancer
 #  selector:
@@ -116,11 +114,9 @@ spec:
 #  ports:
 #    - name: http
 #      protocol: TCP
-#      port: {{ .Values.tracardi.port.guiApi }}
+#      port: {{ .Values.tracardi.system.port.guiApi }}
 #      targetPort: gui-api-port
-#{{ if eq .Values.tracardi.doSSL "yes" }}
 #    - name: https
 #      protocol: TCP
 #      port: 443
 #      targetPort: gui-api-port
-#{{end}}
