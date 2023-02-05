@@ -1,7 +1,8 @@
 tracardi:
   dockerHubSecret: ""
   system:
-    license: ""
+    license:
+      secret: ""
     logging: "info"
     apiDocs: "no"
     trackDebug: "yes"
@@ -57,14 +58,14 @@ tracardi:
     poolSize: 100
     saveAfterPools: 40
     loggingLevel: "INFO"
-  elastic:
-    host: elastic-cluster-es-http.elastic.svc.cluster.local
-    schema: https
-    port: "9200"
-    username: elastic
-    password: unset
-    verifyCerts: "no"
-  redis:
-    host: redis://redis-master.redis.svc.cluster.local/1
-    password: unset
-    port: "6379"
+elastic:
+  host: elastic-cluster-es-http.elastic.svc.cluster.local
+  schema: https
+  port: "9200"
+  username: elastic
+  password: unset
+  verifyCerts: "no"
+redis:
+  host: redis://redis-master.redis.svc.cluster.local/1
+  password: unset
+  port: "6379"

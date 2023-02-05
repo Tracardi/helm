@@ -69,6 +69,13 @@ Params:
   license = name of secret containing the license
 */}}
 {{- define "tracardi.env" -}}
+{{- if .license }}
+- name: LICENSE
+  valueFrom:
+    secretKeyRef:
+      name: {{ .license }}
+      key: key
+{{- end }}
 - name: ELASTIC_SCHEME
   value: {{ .ctx.Values.elastic.schema | quote }}
 - name: ELASTIC_HOST
@@ -101,11 +108,20 @@ Params:
   value: "60"
 - name: EVENT_VALIDATION_CACHE_TTL
   value: "60"
-{{- if .license }}
-- name: LICENSE
-  valueFrom:
-    secretKeyRef:
-      name: {{ .license }}
-      key: key
-{{- end }}
+- name: LOGGING_LEVEL
+  value: {{ .ctx.Values.tracardi.system.logging | quote }}
+- name: TRACK_DEBUG
+  value: {{ .ctx.Values.tracardi.system.trackDebug | quote }}
+- name: API_DOCS
+  value: {{ .ctx.Values.tracardi.system.apiDocs | quote}}
+- name: TRACARDI_PRO_HOST
+  value: "pro.tracardi.com"
+- name: TRACARDI_PRO_PORT
+  value: "40000"
+- name: TRACARDI_SCHEDULER_HOST
+  value: "scheduler.tracardi.com"
+- name: INSTALLATION_TOKEN
+  value: {{ .ctx.Values.tracardi.system.installationToken | quote }}
+- name: SAVE_LOGS
+  value: {{ .ctx.Values.tracardi.system.saveLogsInTracardi | quote }}
 {{- end -}}

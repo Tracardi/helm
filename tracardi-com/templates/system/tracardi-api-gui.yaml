@@ -34,54 +34,11 @@ spec:
             initialDelaySeconds: 30
             periodSeconds: 60
           env:
-            - name: ELASTIC_SCHEME
-              value: {{ .Values.tracardi.elastic.schema | quote }}
-            - name: ELASTIC_HOST
-              value:  {{ .Values.tracardi.elastic.host }}
-            - name: ELASTIC_HTTP_AUTH_USERNAME
-              value: {{ .Values.tracardi.elastic.username }}
-            - name: ELASTIC_HTTP_AUTH_PASSWORD
-              value: {{ .Values.tracardi.elastic.password }}
-            - name: ELASTIC_PORT
-              value: "9200"
-            - name: ELASTIC_VERIFY_CERTS
-              value: {{ .Values.tracardi.elastic.verifyCerts | quote }}
-            - name: REDIS_HOST
-              value: {{ .Values.tracardi.redis.host }}
-            - name: REDIS_PASSWORD
-              value: {{ .Values.tracardi.redis.password }}
-            - name: POSTPONE_DESTINATION_SYNC
-              value: "5"
-            - name: SYNC_PROFILE_TRACKS
-              value: "yes"
+            {{- include "tracardi.env" (dict "ctx" . "license" .Values.tracardi.system.license.secret) | nindent 12 }}
             - name: EXPOSE_GUI_API
               value: "yes"
-            - name: LOGGING_LEVEL
-              value: {{ .Values.tracardi.logging | quote }}
-            - name: TRACK_DEBUG
-              value: {{ .Values.tracardi.trackDebug | quote }}
-            - name: TOKENS_IN_REDIS
-              value: "yes"
-            - name: API_DOCS
-              value: {{ .Values.tracardi.apiDocs | quote}}
-            - name: TRACARDI_PRO_HOST
-              value: "pro.tracardi.com"
-            - name: TRACARDI_PRO_PORT
-              value: "40000"
-            - name: TRACARDI_SCHEDULER_HOST
-              value: "scheduler.tracardi.com"
-            - name: INSTALLATION_TOKEN
-              value: {{ .Values.tracardi.installationToken | quote }}
-            - name: SAVE_LOGS
-              value: {{ .Values.tracardi.saveLogsInTracardi | quote }}
-{{ if .Values.tracardi.instancePrefix }}
-            - name: INSTANCE_PREFIX
-              value: {{ .Values.tracardi.instancePrefix }}
-{{end}}
-{{ if .Values.tracardi.license }}
-            - name: LICENSE
-              value: {{ .Values.tracardi.license }}
-{{end}}
+            - PRODUCTION:
+              value: "no"
 
 ---
 apiVersion: v1
@@ -106,7 +63,7 @@ spec:
 #  annotations:
 #    service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
 #    service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
-#    service.beta.kubernetes.io/do-loadbalancer-certificate-id: {{ .Values.tracardi.elastic.doCertId | quote }}
+#    service.beta.kubernetes.io/do-loadbalancer-certificate-id: {{ .Values.tracardi.doCertId | quote }}
 #spec:
 #  type: LoadBalancer
 #  selector:
