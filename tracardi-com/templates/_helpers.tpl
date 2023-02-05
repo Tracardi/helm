@@ -60,3 +60,52 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+
+{{/*
+Common Env Var
+Params:
+  ctx = . context
+  license = name of secret containing the license
+*/}}
+{{- define "tracardi.env" -}}
+- name: ELASTIC_SCHEME
+  value: {{ .ctx.Values.elastic.schema | quote }}
+- name: ELASTIC_HOST
+  value: {{ .ctx.Values.elastic.host }}
+- name: ELASTIC_HTTP_AUTH_USERNAME
+  value: {{ .ctx.Values.elastic.username }}
+- name: ELASTIC_HTTP_AUTH_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .ctx.Values.elastic.existingSecret }}
+      key: {{ .ctx.Values.elastic.existingSecretPasswordKey }}
+- name: ELASTIC_PORT
+  value: {{ .ctx.Values.elastic.port | quote }}
+- name: ELASTIC_VERIFY_CERTS
+  value: {{ .ctx.Values.elastic.verifyCerts | quote }}
+- name: ELASTIC_QUERY_TIMEOUT
+  value: "120"
+- name: REDIS_HOST
+  value: {{ .ctx.Values.redis.host }}
+- name: REDIS_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .ctx.Values.redis.existingSecret }}
+      key: {{ .ctx.Values.redis.existingSecretPasswordKey }}
+- name: SOURCE_CACHE_TTL
+  value: "60"
+- name: SESSION_CACHE_TTL
+  value: "60"
+- name: EVENT_TAG_CACHE_TTL
+  value: "60"
+- name: EVENT_VALIDATION_CACHE_TTL
+  value: "60"
+{{- if .license }}
+- name: LICENSE
+  valueFrom:
+    secretKeyRef:
+      name: {{ .license }}
+      key: key
+{{- end }}
+{{- end -}}
