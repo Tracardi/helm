@@ -6,6 +6,55 @@ secrets:
     queue: ""
   installationToken: ""
 
+apiWeb:
+  image:
+    repository: tracardi/com-tracardi-api
+    tag: 0.8.0
+    pullPolicy: IfNotPresent
+  port: 8585
+  replicas: 1
+  ingress:
+    enabled: false
+    domain: track.tracardi.example.com
+    ingressClassName: ""
+    tls:
+      enable: false
+      secretName: ""
+    annotations: {}
+
+apiGui:
+  image:
+    repository: tracardi/com-tracardi-api
+    tag: 0.8.0
+    pullPolicy: IfNotPresent
+  port: 8686
+  replicas: 1
+  ingress:
+    enabled: false
+    domain: api.tracardi.example.com
+    ingressClassName: ""
+    tls:
+      enable: false
+      secretName: ""
+    annotations: {}
+
+gui:
+  image:
+    repository: tracardi/tracardi-gui
+    tag: 0.8.0
+    pullPolicy: IfNotPresent
+  port: 8787
+  replicas: 1
+  ingress:
+    enabled: false
+    domain: ui.tracardi.s.revma.io
+    ingressClassName: ""
+    tls:
+      enable: true
+      secretName: ""
+    annotations: {}
+
+
 tracardi:
   license:
     secret: ""
