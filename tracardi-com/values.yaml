@@ -88,9 +88,9 @@ schedulerWorker:
 
 # Segmentation
 
-segmentation:
+segmentationJob:
   image:
-    repository: tracardi/com-job-segmentation
+    repository: tracardi/com-tracardi-segmentation-job
     tag: 0.8.0
     pullPolicy: IfNotPresent
   config:
@@ -101,6 +101,17 @@ segmentation:
     poolSize: 100
     saveAfterPools: 40
     schedule: ""      # example */15 * * * * - means run every 15 minutes
+  license:
+    existingSecret: "SET-SEGMENTATION-LICENSE"  # The secret need to have a key field in it
+
+segmentationWorker:
+  image:
+    repository: tracardi/com-tracardi-segmentation-worker
+    tag: 0.8.0
+    pullPolicy: IfNotPresent
+  config:
+    saveLogs: "no"
+    loggingLevel: "INFO"
   license:
     existingSecret: "SET-SEGMENTATION-LICENSE"  # The secret need to have a key field in it
 

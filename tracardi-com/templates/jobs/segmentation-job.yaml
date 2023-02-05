@@ -1,4 +1,4 @@
-{{ if and .Values.secrets.dockerHub .Values.segmentation.schedule }}
+{{ if and .Values.secrets.dockerHub .Values.segmentationJob.schedule }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -6,12 +6,12 @@ metadata:
   labels:
     {{- include "tracardi.labels" (dict "ctx" . "component" "jobs-group") | nindent 4 }}
 spec:
-  schedule: {{ .Values.segmentation.schedule | quote }}
+  schedule: {{ .Values.segmentationJob.schedule | quote }}
   concurrencyPolicy: Forbid
   startingDeadlineSeconds: 15
   successfulJobsHistoryLimit: 2
-  successfulJobsHistoryLimit: {{ .Values.segmentation.config.successfulJobsHistoryLimit }}
-  failedJobsHistoryLimit: {{ .Values.segmentation.config.failedJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ .Values.segmentationJob.config.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.segmentationJob.config.failedJobsHistoryLimit }}
   jobTemplate:
     spec:
       backoffLimit: 2
@@ -27,15 +27,15 @@ spec:
             - name: {{ .Values.secrets.dockerHub | quote }}
           containers:
           - name: job-segmentation
-            image: "{{ .Values.segmentation.image.repository }}:{{ .Values.segmentation.image.tag }}"
-            imagePullPolicy: "{{ .Values.segmentation.image.pullPolicy }}"
+            image: "{{ .Values.segmentationJob.image.repository }}:{{ .Values.segmentationJob.image.tag }}"
+            imagePullPolicy: "{{ .Values.segmentationJob.image.pullPolicy }}"
             env:
               {{- include "tracardi.env" (dict "ctx" .) | nindent 14 }}
               - name: POOL_SIZE
-                value: {{ .Values.segmentation.config.poolSize | quote }}
+                value: {{ .Values.segmentationJob.config.poolSize | quote }}
               - name: SAVE_AFTER_POOLS
-                value: {{ .Values.segmentation.config.saveAfterPools | quote }}
+                value: {{ .Values.segmentationJob.config.saveAfterPools | quote }}
               - name: LOGGING_LEVEL
-                value: {{ .Values.segmentation.config.loggingLevel | quote }}
+                value: {{ .Values.segmentationJob.config.loggingLevel | quote }}
           restartPolicy: OnFailure
 {{ end }}
