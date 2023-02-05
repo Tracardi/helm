@@ -1,0 +1,61 @@
+{{ if and .Values.tracardi.dockerHubSecret .Values.tracardi.license }}
+#
+# This is the deployment for scheduler. It is responsible for delayed events
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: com-tracardi-scheduler
+  labels:
+    tier: backend
+spec:
+  replicas: {{ .Values.tracardi.scheduler.manager.replicas }}
+  selector:
+    matchLabels:
+      app: com-tracardi-scheduler
+  template:
+    metadata:
+      labels:
+        app: com-tracardi-scheduler
+        tier: backend
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.tracardi.dockerHubSecret | quote }}
+      containers:
+      - name: com-tracardi-scheduler
+        image: {{ .Values.tracardi.scheduler.manager.image }}
+        imagePullPolicy: Always
+        env:
+          - name: ELASTIC_SCHEME
+            value: {{ .Values.tracardi.elastic.schema | quote }}
+          - name: ELASTIC_HOST
+            value: {{ .Values.tracardi.elastic.host }}
+          - name: ELASTIC_HTTP_AUTH_USERNAME
+            value: {{ .Values.tracardi.elastic.username }}
+          - name: ELASTIC_HTTP_AUTH_PASSWORD
+            value: {{ .Values.tracardi.elastic.password }}
+          - name: ELASTIC_PORT
+            value: {{ .Values.tracardi.elastic.port | quote }}
+          - name: ELASTIC_VERIFY_CERTS
+            value: {{ .Values.tracardi.elastic.verifyCerts | quote }}
+          - name: REDIS_HOST
+            value: {{ .Values.tracardi.redis.host }}
+          - name: REDIS_PASSWORD
+            value: {{ .Values.tracardi.redis.password }}
+          - name: POSTPONE_DESTINATION_SYNC
+            value: {{ .Values.tracardi.system.destination.syncPostpone | quote}}
+          - name: ELASTIC_QUERY_TIMEOUT
+            value: "120"
+          - name: LOGGING_LEVEL
+            value: {{ .Values.tracardi.logging | quote }}
+          - name: SOURCE_CACHE_TTL
+            value: "60"
+          - name: SESSION_CACHE_TTL
+            value: "60"
+          - name: EVENT_TAG_CACHE_TTL
+            value: "60"
+          - name: EVENT_VALIDATION_CACHE_TTL
+            value: "60"
+          - name: LICENSE
+            value: {{ .Values.tracardi.license | quote }}
+{{ end }}

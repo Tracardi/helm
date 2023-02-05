@@ -1,5 +1,41 @@
 tracardi:
   dockerHubSecret: ""
+  license: ""
+  doSSL: "no"
+  logging: "info"
+  apiDocs: "no"
+  trackDebug: "yes"
+  saveLogsInTracardi: "yes"
+  installationToken: "tracardi-install"
+  system:
+    image:
+      webApi: tracardi/com-tracardi-api:0.8.0
+      guiApi: tracardi/com-tracardi-api:0.8.0
+      gui: tracardi/tracardi-gui:0.8.0
+      worker: tracardi/worker:0.8.0
+      replicas:
+        webApi: 1
+        guiApi: 1
+        gui: 1
+        worker: 1
+      port:
+        webApi: 8585  # Production
+        guiApi: 8686  # Staging
+        gui: 8787
+    destination:
+      syncPostpone: 5
+      pro:
+        host: "pro.tracardi.com"
+        port: "40000"
+      scheduler:
+        host: "scheduler.tracardi.com"
+  scheduler:
+    manager:
+      image: tracardi/com-tracardi-scheduler:0.8.0
+      replicas: 1
+    worker:
+      image: tracardi/com-tracardi-scheduler-worker:0.8.0
+      replicas: 1
   bridge:
     rest:
       image: tracardi/com-bridge-rest:0.8.0
@@ -19,8 +55,13 @@ tracardi:
     destination:
       syncPostpone: 5
   segmentation:
-    image: tracardi/com-job-segmentation:0.8.0
+    image: tracardi/com-tracardi-segmentation-job:0.8.0
     schedule: ""      # example */15 * * * * - means run every 15 minutes
+    poolSize: 100
+    saveAfterPools: 40
+    loggingLevel: "INFO"
+  segmentation-worker:
+    image: tracardi/com-tracardi-segmentation-worker:0.8.0
     poolSize: 100
     saveAfterPools: 40
     loggingLevel: "INFO"
