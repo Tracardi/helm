@@ -14,7 +14,7 @@ spec:
       labels:
         {{- include "tracardi.podLabels" (dict "ctx" . "component" "api-gui") | nindent 8 }}
     spec:
-      {{ if .Values.license.dockerExistingSecret }}
+      {{ if .Values.secrets.dockerHub }}
       imagePullSecrets:
         - name: {{ .Values.license.dockerExistingSecret | quote }}
       {{end}}
@@ -32,37 +32,15 @@ spec:
             initialDelaySeconds: 30
             periodSeconds: 60
           env:
-            {{- include "tracardi.env" (dict "ctx" . "license" .Values.license.existingSecret) | nindent 12 }}
-            - name: POSTPONE_DESTINATION_SYNC
-              value: {{ .Values.config.destination.syncPostpone | quote }}
-            - name: SYNC_PROFILE_TRACKS
-              value: "yes"
-            - name: MAX_WORKERS
-              value: {{ .Values.worker.apiGui.maxWorkers | quote }}
+            {{- include "tracardi.env" (dict "ctx" . "license" .Values.apiGui.license.existingSecret) | nindent 12 }}
             - name: EXPOSE_GUI_API
               value: "yes"
             - name: LOGGING_LEVEL
-              value: {{ .Values.config.logging | quote }}
-            - name: TRACK_DEBUG
-              value: {{ .Values.config.trackDebug | quote }}
-            - name: TOKENS_IN_REDIS
-              value: "yes"
+              value: {{ .Values.apiWeb.config.loggingLevel | quote }}
             - name: API_DOCS
-              value: {{ .Values.config.apiDocs | quote}}
-            - name: TRACARDI_PRO_HOST
-              value: {{ .Values.config.pro.host | quote}}
-            - name: TRACARDI_PRO_PORT
-              value: {{ .Values.config.pro.port | quote }}
-            - name: TRACARDI_SCHEDULER_HOST
-              value: {{ .Values.config.scheduler.host | quote}}
-            - name: INSTALLATION_TOKEN
-              value: {{ .Values.config.installationToken | quote }}
+              value: {{ .Values.apiWeb.config.apiDocs | quote}}
             - name: SAVE_LOGS
-              value: {{ .Values.config.saveLogsInTracardi | quote }}
-            {{ if .Values.config.instancePrefix }}
-            - name: INSTANCE_PREFIX
-              value: {{ .Values.config.instancePrefix }}
-            {{end}}
+              value: {{ .Values.apiWeb.config.saveLogs | quote }}
 ---
 apiVersion: v1
 kind: Service

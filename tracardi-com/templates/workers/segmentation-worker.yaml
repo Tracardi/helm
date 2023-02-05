@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "tracardi.labels" (dict "ctx" . "component" "worker") | nindent 4 }}
 spec:
-  replicas: {{ .Values.worker.replicas }}
+  replicas: {{ .Values.updateWorker.replicas }}
   selector:
     matchLabels:
       {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "worker") | nindent 6 }}
@@ -15,14 +15,12 @@ spec:
         {{- include "tracardi.podLabels" (dict "ctx" . "component" "worker") | nindent 8 }}
     spec:
       imagePullSecrets:
-        - name: { { .Values.secrets.dockerHub | quote } }
+        - name: {{ .Values.secrets.dockerHub | quote }}
       containers:
         - name: worker
-          image: "{{ .Values.worker.image.repository }}:{{ .Values.worker.image.tag }}"
-          imagePullPolicy: {{ .Values.worker.image.pullPolicy }}
+          image: "{{ .Values.updateWorker.image.repository }}:{{ .Values.updateWorker.image.tag }}"
+          imagePullPolicy: {{ .Values.updateWorker.image.pullPolicy }}
           env:
             {{- include "tracardi.env" (dict "ctx" .) | nindent 12 }}
-            - name: POSTPONE_DESTINATION_SYNC
-              value: {{ .Values.worker.destination.syncPostpone | quote}}
             - name: LOGGING_LEVEL
-              value: {{ .Values.worker.loggingLevel | quote }}
+              value: {{ .Values.updateWorker.loggingLevel | quote }}

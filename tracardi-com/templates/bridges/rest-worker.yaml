@@ -1,4 +1,4 @@
-{{ if and .Values.license.dockerExistingSecret .Values.bridge.rest_worker.license.existingSecret }}
+{{ if and .Values.secrets.dockerHub .Values.bridge.restWorker.license.existingSecret }}
 #
 # This is the deployment for commercial REST bridge background worker
 # This bridge includes:

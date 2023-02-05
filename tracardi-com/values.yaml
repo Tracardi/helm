@@ -6,38 +6,6 @@ secrets:
     queue: ""
   installationToken: ""
 
-apiWeb:
-  image:
-    repository: tracardi/com-tracardi-api
-    tag: 0.8.0
-    pullPolicy: IfNotPresent
-  port: 8585
-  replicas: 1
-  ingress:
-    enabled: false
-    domain: track.tracardi.example.com
-    ingressClassName: ""
-    tls:
-      enable: false
-      secretName: ""
-    annotations: {}
-
-apiGui:
-  image:
-    repository: tracardi/com-tracardi-api
-    tag: 0.8.0
-    pullPolicy: IfNotPresent
-  port: 8686
-  replicas: 1
-  ingress:
-    enabled: false
-    domain: api.tracardi.example.com
-    ingressClassName: ""
-    tls:
-      enable: false
-      secretName: ""
-    annotations: {}
-
 gui:
   image:
     repository: tracardi/tracardi-gui
@@ -54,6 +22,61 @@ gui:
       secretName: ""
     annotations: {}
 
+apiWeb:
+  image:
+    repository: tracardi/com-tracardi-api
+    tag: 0.8.0
+    pullPolicy: IfNotPresent
+  port: 8585
+  replicas: 1
+  ingress:
+    enabled: false
+    domain: track.tracardi.example.com
+    ingressClassName: ""
+    tls:
+      enable: false
+      secretName: ""
+    annotations: {}
+  config:
+    saveLogs: "no"
+    logginLevel: "info"
+    apiDocs: "no"
+  license:
+    existingSecret: ""  # The secret need to have a key field in it
+
+apiGui:
+  image:
+    repository: tracardi/com-tracardi-api
+    tag: 0.8.0
+    pullPolicy: IfNotPresent
+  port: 8686
+  replicas: 1
+  ingress:
+    enabled: false
+    domain: api.tracardi.example.com
+    ingressClassName: ""
+    tls:
+      enable: false
+      secretName: ""
+    annotations: {}
+  config:
+    saveLogs: "yes"
+    logginLevel: "info"
+    apiDocs: "yes"
+  license:
+    existingSecret: ""  # The secret need to have a key field in it
+
+
+scheduler:
+  replicas: 1
+  license:
+    existingSecret: ""  # The secret need to have a key field in it
+
+
+schedulerWorker:
+  license:
+    existingSecret: ""  # The secret need to have a key field in it
+
 segmentation:
   image:
     repository: tracardi/com-job-segmentation
@@ -65,6 +88,53 @@ segmentation:
   schedule: ""      # example */15 * * * * - means run every 15 minutes
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 2
+  config:
+    saveLogs: "no"
+
+updateWorker:
+  loggingLevel: "INFO"
+  image:
+    repository: tracardi/worker
+    tag: 0.8.0
+    pullPolicy: IfNotPresent
+  replicas: 1
+  config:
+    saveLogs: "no"
+
+
+bridge:
+  rest:
+    image:
+      repository: tracardi/com-bridge-rest
+      tag: 0.8.0
+      pullPolicy: IfNotPresent
+    replicas: 1
+    license:
+      existingSecret: ""
+    ingress:
+      enabled: false
+      domain: async.tracardi.example.com
+      ingressClassName: ""
+      tls:
+        enable: true
+        secretName: ""
+      annotations: {}
+  restWorker:
+    image:
+      repository: tracardi/com-bridge-rest-worker
+      tag: 0.8.0
+      pullPolicy: IfNotPresent
+    replicas: 2
+    license:
+      existingSecret: ""
+  queue:
+    image:
+      repository: tracardi/com-bridge-queue
+      tag: 0.8.0
+      pullPolicy: IfNotPresent
+    replicas: 1
+    license:
+      existingSecret: ""
 
 #tracardi:
 #  license:
@@ -130,13 +200,16 @@ segmentation:
 #    loggingLevel: "INFO"
 
 elastic:
-  host: elastic-cluster-es-http.elastic.svc.cluster.local
+  host: "elastic-svc"
   schema: https
-  port: "9200"
-  username: elastic
-  password: unset
+  username: "elastic"
+  existingSecret: "elastic-secret"
+  existingSecretPasswordKey: "elastic"
   verifyCerts: "no"
+  doCertId: "none"
+  port: 9200
 redis:
-  host: redis://redis-master.redis.svc.cluster.local/1
-  password: unset
+  host: redis://redis-svc/0
+  existingSecret: "redis-secret"
+  existingSecretPasswordKey: "redis-password"
   port: "6379"

@@ -1,4 +1,4 @@
-{{ if and .Values.license.dockerExistingSecret .Values.bridge.queue.license.existingSecret }}
+{{ if and .Values.secrets.dockerHub .Values.bridge.queue.license.existingSecret }}
 #
 # This is the deployment for commercial Queues Bridge
 # This bridge includes:

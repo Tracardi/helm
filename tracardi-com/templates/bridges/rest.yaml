@@ -1,4 +1,4 @@
-{{ if and .Values.license.dockerExistingSecret .Values.bridge.rest.license.existingSecret }}
+{{ if and .Values.secrets.dockerHub .Values.bridge.rest.license.existingSecret }}
 #
 # This is the deployment for commercial REST bridge API
 # This bridge includes:
