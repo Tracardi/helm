@@ -80,6 +80,7 @@ schedulerWorker:
     repository: tracardi/com-tracardi-scheduler-worker
     tag: 0.8.0
     pullPolicy: IfNotPresent
+  replicas: 1
   config:
     loggingLevel: "info"
   license:
@@ -166,7 +167,6 @@ elastic:
   existingSecret: "elastic-secret"
   existingSecretPasswordKey: "elastic"
   verifyCerts: "no"
-  doCertId: "none"
   port: 9200
 
 redis:
@@ -174,3 +174,10 @@ redis:
   existingSecret: "redis-secret"
   existingSecretPasswordKey: "redis-password"
   port: "6379"
+
+
+# Digital ocean
+
+digitalOcean:
+  loadBalancer: "yes"
+  certId: ""

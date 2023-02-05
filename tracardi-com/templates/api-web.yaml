@@ -45,4 +45,35 @@ spec:
     - protocol: TCP
       port: {{ .Values.apiWeb.port }}
       targetPort: api-web-port
+
+{{ if .Values.digitalOcean.loadBalancer }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: do-api-web-lb
+  {{ if .Values.digitalOcean.certId }}
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
+    service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: {{ .Values.digitalOcean.certId | quote }}
+  {{ end }}
+spec:
+  type: LoadBalancer
+  selector:
+    matchLabels:
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "api-web") | nindent 6 }}
+  ports:
+    - name: http
+      protocol: TCP
+      port: {{ .Values.apiWeb.port }}
+      targetPort: web-api-port
+    {{ if .Values.digitalOcean.certId }}
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: web-api-port
+    {{ end }}
+
+{{ end }}
 {{ end }}

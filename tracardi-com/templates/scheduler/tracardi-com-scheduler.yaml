@@ -1,4 +1,4 @@
-{{ if and .Values.secrets.dockerHub }}
+{{ if and .Values.secrets.dockerHub .Values.scheduler.license.existingSecret }}
 #
 # This is the deployment for scheduler. It is responsible for delayed events
 #
