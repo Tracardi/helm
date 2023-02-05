@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-web-deployment
+  labels:
+    {{- include "tracardi.labels" (dict "ctx" . "component" "api-web") | nindent 4 }}
+spec:
+  replicas: {{ .Values.apiWeb.replicas }}
+  selector:
+    matchLabels:
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "api-web") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "api-web") | nindent 8 }}
+    spec:
+      {{ if .Values.license.dockerExistingSecret }}
+      imagePullSecrets:
+        - name: {{ .Values.license.dockerExistingSecret | quote }}
+      {{end}}
+      containers:
+        - name: api-web
+          image: "{{ .Values.apiWeb.image.repository }}:{{ .Values.apiWeb.image.tag }}"
+          imagePullPolicy: {{ .Values.apiWeb.image.pullPolicy }}
+          ports:
+            - name: api-web-port
+              containerPort: 80
+          env:
+            {{- include "tracardi.env" (dict "ctx" . "license" .Values.license.existingSecret) | nindent 12 }}
+            - name: POSTPONE_DESTINATION_SYNC
+              value: {{ .Values.config.destination.syncPostpone | quote }}
+            - name: SYNC_PROFILE_TRACKS
+              value: "yes"
+            - name: MAX_WORKERS
+              value: {{ .Values.worker.apiWeb.maxWorkers | quote }}
+            - name: EXPOSE_GUI_API
+              value: "no"
+            - name: API_DOCS
+              value: {{ .Values.config.apiDocs | quote}}
+            - name: LOGGING_LEVEL
+              value: {{ .Values.config.logging | quote }}
+            - name: TRACK_DEBUG
+              value: {{ .Values.config.trackDebug | quote }}
+            - name: TRACARDI_PRO_HOST
+              value: {{ .Values.config.pro.host | quote}}
+            - name: TRACARDI_PRO_PORT
+              value: {{ .Values.config.pro.port | quote }}
+            - name: TRACARDI_SCHEDULER_HOST
+              value: {{ .Values.config.scheduler.host | quote}}
+            - name: INSTALLATION_TOKEN
+              value: {{ .Values.config.installationToken | quote }}
+            - name: SAVE_LOGS
+              value: {{ .Values.config.saveLogsInTracardi | quote }}
+            {{ if .Values.config.instancePrefix }}
+            - name: INSTANCE_PREFIX
+              value: {{ .Values.config.instancePrefix }}
+            {{end}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-web
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "api-web") | nindent 6 }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.apiWeb.port }}
+      targetPort: api-web-port
