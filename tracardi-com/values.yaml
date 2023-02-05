@@ -11,14 +11,14 @@ gui:
   replicas: 1
   ingress:
     enabled: false
-    domain: ui.tracardi.s.revma.io
+    domain: gui.tracardi.example.com
     ingressClassName: ""
     tls:
       enable: true
       secretName: ""
     annotations: {}
 
-apiWeb:
+production:
   image:
     repository: tracardi/com-tracardi-api
     tag: 0.8.0
@@ -26,11 +26,11 @@ apiWeb:
   port: 8585
   replicas: 1
   ingress:
-    enabled: false
+    enabled: true
     domain: track.tracardi.example.com
     ingressClassName: ""
     tls:
-      enable: false
+      enable: true
       secretName: ""
     annotations: {}
   config:
@@ -40,7 +40,7 @@ apiWeb:
   license:
     existingSecret: ""  # The secret need to have a key field in it
 
-apiGui:
+staging:
   image:
     repository: tracardi/com-tracardi-api
     tag: 0.8.0
@@ -48,11 +48,11 @@ apiGui:
   port: 8686
   replicas: 1
   ingress:
-    enabled: false
+    enabled: true
     domain: api.tracardi.example.com
     ingressClassName: ""
     tls:
-      enable: false
+      enable: true
       secretName: ""
     annotations: {}
   config:

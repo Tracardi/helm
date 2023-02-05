@@ -1,20 +1,20 @@
-{{ if .Values.apiWeb.ingress.enabled }}
+{{ if .Values.production.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: api-web
   annotations:
-      {{ toYaml .Values.apiWeb.ingress.annotations }}
+      {{ toYaml .Values.production.ingress.annotations }}
 spec:
-  {{ if .Values.apiWeb.ingress.tls -}}
+  {{ if .Values.production.ingress.tls -}}
   tls:
-  - secretName: {{ .Values.apiWeb.ingress.tls.secretName }}
+  - secretName: {{ .Values.production.ingress.tls.secretName }}
   {{ end }}
-  {{- with .Values.apiWeb.ingressClassName -}}
+  {{- with .Values.production.ingressClassName -}}
   ingressClassName: {{ . }}
   {{- end -}}
   rules:
-  - host: {{ .Values.apiWeb.ingress.domain }}
+  - host: {{ .Values.production.ingress.domain }}
     http:
       paths:
       - path: /
@@ -23,26 +23,26 @@ spec:
           service:
             name: api-web
             port:
-              number: {{ .Values.apiWeb.port }}
+              number: {{ .Values.production.port }}
 {{ end }}
 ---
-{{ if .Values.apiGui.ingress.enabled }}
+{{ if .Values.staging.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: api-gui
   annotations:
-      {{ toYaml .Values.apiGui.ingress.annotations }}
+      {{ toYaml .Values.staging.ingress.annotations }}
 spec:
-  {{- if .Values.apiGui.ingress.tls }}
+  {{- if .Values.staging.ingress.tls }}
   tls:
-  - secretName: {{ .Values.apiGui.ingress.tls.secretName }}
+  - secretName: {{ .Values.staging.ingress.tls.secretName }}
   {{ end }}
-  {{- with .Values.apiGui.ingressClassName -}}
+  {{- with .Values.staging.ingressClassName -}}
   ingressClassName: {{ . }}
   {{- end -}}
   rules:
-  - host: {{ .Values.apiGui.ingress.domain }}
+  - host: {{ .Values.staging.ingress.domain }}
     http:
       paths:
       - path: /
@@ -51,7 +51,7 @@ spec:
           service:
             name: api-gui
             port:
-              number: {{ .Values.apiGui.port }}
+              number: {{ .Values.staging.port }}
 {{ end }}
 ---
 {{ if .Values.gui.ingress.enabled }}

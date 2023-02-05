@@ -1,4 +1,4 @@
-{{ if and .Values.secrets.dockerHub .Values.apiGui.license.existingSecret }}
+{{ if and .Values.secrets.dockerHub .Values.staging.license.existingSecret }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "tracardi.labels" (dict "ctx" . "component" "api-web") | nindent 4 }}
 spec:
-  replicas: {{ .Values.apiWeb.replicas }}
+  replicas: {{ .Values.production.replicas }}
   selector:
     matchLabels:
       {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "api-web") | nindent 6 }}
@@ -19,19 +19,19 @@ spec:
         - name: {{ .Values.secrets.dockerHub | quote }}
       containers:
         - name: api-web
-          image: "{{ .Values.apiWeb.image.repository }}:{{ .Values.apiWeb.image.tag }}"
-          imagePullPolicy: {{ .Values.apiWeb.image.pullPolicy }}
+          image: "{{ .Values.production.image.repository }}:{{ .Values.production.image.tag }}"
+          imagePullPolicy: {{ .Values.production.image.pullPolicy }}
           ports:
             - name: api-web-port
               containerPort: 80
           env:
-            {{- include "tracardi.env" (dict "ctx" . "license" .Values.apiWeb.license.existingSecret) | nindent 12 }}
+            {{- include "tracardi.env" (dict "ctx" . "license" .Values.production.license.existingSecret) | nindent 12 }}
             - name: EXPOSE_GUI_API
               value: "no"
             - name: LOGGING_LEVEL
-              value: {{ .Values.apiWeb.config.loggingLevel | quote }}
+              value: {{ .Values.production.config.loggingLevel | quote }}
             - name: SAVE_LOGS
-              value: {{ .Values.apiWeb.config.saveLogs | quote }}
+              value: {{ .Values.production.config.saveLogs | quote }}
 ---
 apiVersion: v1
 kind: Service
@@ -43,7 +43,7 @@ spec:
     {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "api-web") | nindent 6 }}
   ports:
     - protocol: TCP
-      port: {{ .Values.apiWeb.port }}
+      port: {{ .Values.production.port }}
       targetPort: api-web-port
 
 {{ if .Values.digitalOcean.loadBalancer }}
@@ -66,7 +66,7 @@ spec:
   ports:
     - name: http
       protocol: TCP
-      port: {{ .Values.apiWeb.port }}
+      port: {{ .Values.production.port }}
       targetPort: web-api-port
     {{ if .Values.digitalOcean.certId }}
     - name: https
