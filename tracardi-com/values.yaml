@@ -38,7 +38,7 @@ production:
     logginLevel: "info"
     apiDocs: "no"
   license:
-    existingSecret: ""  # The secret need to have a key field in it
+    existingSecret: "SET-TRACARDI-LICENSE-SECRET"  # The secret need to have a key field in it
 
 staging:
   image:
@@ -60,7 +60,7 @@ staging:
     logginLevel: "info"
     apiDocs: "yes"
   license:
-    existingSecret: ""  # The secret need to have a key field in it
+    existingSecret: "SET-TRACARDI-LICENSE-SECRET"  # The secret need to have a key field in it
 
 # Scheduler
 
@@ -190,5 +190,5 @@ redis:
 # Digital ocean
 
 digitalOcean:
-  loadBalancer: "yes"
-  certId: ""
+  loadBalancer: true
+  certId: "SET-CERT-ID"
