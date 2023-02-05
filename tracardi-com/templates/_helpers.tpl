@@ -125,3 +125,35 @@ Params:
 - name: SAVE_LOGS
   value: {{ .ctx.Values.tracardi.system.saveLogsInTracardi | quote }}
 {{- end -}}
+
+{{/*
+Service selector labels
+Params:
+  ctx = . context
+  component = name of the component
+*/}}
+{{- define "tracardi.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "tracardi.name" .ctx }}
+app.kubernetes.io/instance: {{ .ctx.Release.Name }}
+{{- if .component }}
+app.kubernetes.io/component: {{ .component }}
+{{- end }}
+{{- end }}
+
+
+{{/*
+POD labels
+Params:
+  ctx = . context
+  component = name of the component
+*/}}
+{{- define "tracardi.podLabels" -}}
+helm.sh/chart: {{ include "tracardi.chart" .ctx }}
+app.kubernetes.io/name: {{ include "tracardi.name" .ctx }}
+app.kubernetes.io/instance: {{ .ctx.Release.Name }}
+app.kubernetes.io/version: {{ .ctx.Chart.AppVersion | quote }}
+app.kubernetes.io/managed-by: {{ .ctx.Release.Service }}
+{{- if .component }}
+app.kubernetes.io/component: {{ .component }}
+{{- end }}
+{{- end }}

@@ -79,42 +79,43 @@ tracardi:
     gui: 8787
 
 
-scheduler:
-    manager:
-      image: tracardi/com-tracardi-scheduler:0.8.0
-      replicas: 1
-    worker:
-      image: tracardi/com-tracardi-scheduler-worker:0.8.0
-      replicas: 1
-  bridge:
-    rest:
-      image: tracardi/com-bridge-rest:0.8.0
-      replicas: 1
-      license: ""     # Leave empty if you do not want to be installed
-      worker:
-        image: tracardi/com-bridge-rest-worker:0.8.0
-        replicas: 2
-    queue:
-      image: tracardi/com-bridge-queue:0.8.0
-      replicas: 1
-      license: ""   # Leave empty if you do not want to be installed
-  worker:
-    image: tracardi/com-worker:0.8.0
-    loggingLevel: "INFO"
-    replicas: 1
-    destination:
-      syncPostpone: 5
-  segmentation:
-    image: tracardi/com-tracardi-segmentation-job:0.8.0
-    schedule: ""      # example */15 * * * * - means run every 15 minutes
-    poolSize: 100
-    saveAfterPools: 40
-    loggingLevel: "INFO"
-  segmentation-worker:
-    image: tracardi/com-tracardi-segmentation-worker:0.8.0
-    poolSize: 100
-    saveAfterPools: 40
-    loggingLevel: "INFO"
+#scheduler:
+#    manager:
+#      image: tracardi/com-tracardi-scheduler:0.8.0
+#      replicas: 1
+#    worker:
+#      image: tracardi/com-tracardi-scheduler-worker:0.8.0
+#      replicas: 1
+#  bridge:
+#    rest:
+#      image: tracardi/com-bridge-rest:0.8.0
+#      replicas: 1
+#      license: ""     # Leave empty if you do not want to be installed
+#      worker:
+#        image: tracardi/com-bridge-rest-worker:0.8.0
+#        replicas: 2
+#    queue:
+#      image: tracardi/com-bridge-queue:0.8.0
+#      replicas: 1
+#      license: ""   # Leave empty if you do not want to be installed
+#  worker:
+#    image: tracardi/com-worker:0.8.0
+#    loggingLevel: "INFO"
+#    replicas: 1
+#    destination:
+#      syncPostpone: 5
+#  segmentation:
+#    image: tracardi/com-tracardi-segmentation-job:0.8.0
+#    schedule: ""      # example */15 * * * * - means run every 15 minutes
+#    poolSize: 100
+#    saveAfterPools: 40
+#    loggingLevel: "INFO"
+#  segmentation-worker:
+#    image: tracardi/com-tracardi-segmentation-worker:0.8.0
+#    poolSize: 100
+#    saveAfterPools: 40
+#    loggingLevel: "INFO"
+
 elastic:
   host: elastic-cluster-es-http.elastic.svc.cluster.local
   schema: https
