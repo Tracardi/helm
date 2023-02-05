@@ -1,5 +1,10 @@
 secrets:
   dockerHub: ""
+  tracardi: ""
+  bridge:
+    rest: ""
+    queue: ""
+  installationToken: ""
 
 tracardi:
   license:
