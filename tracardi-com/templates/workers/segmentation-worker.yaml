@@ -14,6 +14,8 @@ spec:
       labels:
         {{- include "tracardi.podLabels" (dict "ctx" . "component" "worker") | nindent 8 }}
     spec:
+      imagePullSecrets:
+        - name: { { .Values.secrets.dockerHub | quote } }
       containers:
         - name: worker
           image: "{{ .Values.worker.image.repository }}:{{ .Values.worker.image.tag }}"

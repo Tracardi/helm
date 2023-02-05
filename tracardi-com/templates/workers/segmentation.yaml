@@ -1,4 +1,4 @@
-{{ if and .Values.license.dockerExistingSecret .Values.segmentation.schedule }}
+{{ if and .Values.secrets.dockerHub .Values.segmentation.schedule }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -24,7 +24,7 @@ spec:
             {{- include "tracardi.podLabels" (dict "ctx" . "component" "jobs-group") | nindent 12 }}
         spec:
           imagePullSecrets:
-            - name: {{ .Values.license.dockerExistingSecret | quote }}
+            - name: {{ .Values.secrets.dockerHub | quote }}
           containers:
           - name: job-segmentation
             image: "{{ .Values.segmentation.image.repository }}:{{ .Values.segmentation.image.tag }}"
