@@ -24,6 +24,7 @@ spec:
       - name: com-tracardi-scheduler
         image: "{{ .Values.scheduler.image.repository }}:{{ .Values.scheduler.image.tag }}"
         imagePullPolicy: {{ .Values.scheduler.image.pullPolicy }}
+        command: ["rqscheduler -i 1 --host {{ .Values.redis.ip }} --port {{ .Values.redis.port }}"]
         env:
           {{- include "tracardi.env" (dict "ctx" . "license" .Values.scheduler.license.existingSecret) | nindent 10 }}
           - name: LOGGING_LEVEL

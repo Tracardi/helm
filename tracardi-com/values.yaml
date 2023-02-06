@@ -118,14 +118,14 @@ segmentationWorker:
 # Update and Migration
 
 updateWorker:
-  loggingLevel: "INFO"
   image:
-    repository: tracardi/worker
+    repository: tracardi/update-worker
     tag: 0.8.0
     pullPolicy: IfNotPresent
   replicas: 1
   config:
     saveLogs: "no"
+    loggingLevel: "INFO"
 
 # Bridges
 
@@ -153,7 +153,7 @@ bridge:
       repository: tracardi/com-bridge-rest-worker
       tag: 0.8.0
       pullPolicy: IfNotPresent
-    replicas: 2
+    replicas: 1
     config:
       loggingLevel: "info"
     license:
@@ -181,14 +181,15 @@ elastic:
   port: 9200
 
 redis:
-  host: redis://redis-svc/0
+  host: redis://redis-svc
   existingSecret: "redis-secret"
   existingSecretPasswordKey: "redis-password"
   port: "6379"
+  ip: redis-svc
 
 
 # Digital ocean
 
 digitalOcean:
-  loadBalancer: true
+  loadBalancer: false
   certId: "SET-CERT-ID"

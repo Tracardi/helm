@@ -1,6 +1,3 @@
-docker run \
--e ELASTIC_HOST = http://192.168.1.190:9200 tracardi/live-deduplication-job:0.7.4-dev
-
 ## Add private docker hub
 
 ```
@@ -16,7 +13,7 @@ helm template tracardi-com --values  mtsilesia-tracardi-com.yaml
 ```
 
 ```
-helm upgrade --wait --timeout=1200s --install --values mtsilesia-tracardi-com.yaml tracardi-com --namespace tracardi tracardi-com --create-namespace
+helm upgrade --wait --timeout=1200s --install --values test-tracardi-com.yaml tracardi-com tracardi-com -n test
 ```
 
 # Delete

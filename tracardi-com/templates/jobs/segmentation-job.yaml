@@ -1,4 +1,4 @@
-{{ if and .Values.secrets.dockerHub .Values.segmentationJob.schedule }}
+{{ if and .Values.secrets.dockerHub .Values.segmentationJob.config.schedule }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "tracardi.labels" (dict "ctx" . "component" "jobs-group") | nindent 4 }}
 spec:
-  schedule: {{ .Values.segmentationJob.schedule | quote }}
+  schedule: {{ .Values.segmentationJob.config.schedule | quote }}
   concurrencyPolicy: Forbid
   startingDeadlineSeconds: 15
   successfulJobsHistoryLimit: 2

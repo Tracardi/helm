@@ -34,6 +34,8 @@ spec:
             {{- include "tracardi.env" (dict "ctx" . "license" .Values.staging.license.existingSecret) | nindent 12 }}
             - name: EXPOSE_GUI_API
               value: "yes"
+            - name: PRODUCTION
+              value: "no"
             - name: LOGGING_LEVEL
               value: {{ .Values.staging.config.loggingLevel | quote }}
             - name: API_DOCS

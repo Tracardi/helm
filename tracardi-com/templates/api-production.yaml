@@ -27,7 +27,9 @@ spec:
           env:
             {{- include "tracardi.env" (dict "ctx" . "license" .Values.production.license.existingSecret) | nindent 12 }}
             - name: EXPOSE_GUI_API
-              value: "no"
+              value: "yes"
+            - name: PRODUCTION
+              value: "yes"
             - name: LOGGING_LEVEL
               value: {{ .Values.production.config.loggingLevel | quote }}
             - name: SAVE_LOGS

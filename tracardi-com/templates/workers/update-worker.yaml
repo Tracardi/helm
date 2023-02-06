@@ -21,4 +21,4 @@ spec:
           env:
             {{- include "tracardi.env" (dict "ctx" .) | nindent 12 }}
             - name: LOGGING_LEVEL
-              value: {{ .Values.updateWorker.loggingLevel | quote }}
+              value: {{ .Values.updateWorker.config.loggingLevel | quote }}

@@ -103,10 +103,7 @@ Params:
 {{- define "tracardi.env" -}}
 {{- if .license }}
 - name: LICENSE
-  valueFrom:
-    secretKeyRef:
-      name: {{ .license }}
-      key: key
+  value: {{ .license }}
 {{- end }}
 - name: ELASTIC_SCHEME
   value: {{ .ctx.Values.elastic.schema | quote }}
