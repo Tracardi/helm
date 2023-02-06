@@ -76,6 +76,16 @@ app.kubernetes.io/component: {{ .component }}
 {{- end }}
 {{- end }}
 
+{{/* Image
+Params:
+  repo = type of image
+  policy = pullPolicy type
+  ctx = . context
+*/}}
+{{- define "tracardi.image" -}}
+image: "{{ .repo }}:{{ .ctx.Values.config.image.tag }}"
+imagePullPolicy: {{ .policy }}
+{{- end }}
 
 {{/*
 POD labels

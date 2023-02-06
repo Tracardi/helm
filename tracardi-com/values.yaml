@@ -2,11 +2,18 @@ secrets:
   dockerHub: "SET-DOCKERHUB-SECRET"
   installationToken: "SET-INSTALLATION-SECRET"
 
+config:
+  image:
+    tag: 0.8.0  # Tag should be the same for gui and backend
+    api:
+      repository: tracardi/com-tracardi-api
+      pullPolicy: IfNotPresent
+    gui:
+      repository: tracardi/tracardi-gui
+      pullPolicy: IfNotPresent
+
 gui:
   image:
-    repository: tracardi/tracardi-gui
-    tag: 0.8.0
-    pullPolicy: IfNotPresent
   port: 8787
   replicas: 1
   ingress:
@@ -22,10 +29,6 @@ gui:
 # No GUI like operations are available
 
 collector:
-  image:
-    repository: tracardi/com-tracardi-api
-    tag: 0.8.0
-    pullPolicy: IfNotPresent
   port: 8484
   replicas: 1
   ingress:
@@ -48,10 +51,6 @@ collector:
 # instance.
 
 production:
-  image:
-    repository: tracardi/com-tracardi-api
-    tag: 0.8.0
-    pullPolicy: IfNotPresent
   port: 8585
   replicas: 1
   ingress:
@@ -73,10 +72,6 @@ production:
 # test data. Access to this server should have people working on the data orchestration.
 
 staging:
-  image:
-    repository: tracardi/com-tracardi-api
-    tag: 0.8.0
-    pullPolicy: IfNotPresent
   port: 8686
   replicas: 1
   ingress:

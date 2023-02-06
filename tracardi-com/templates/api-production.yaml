@@ -4,23 +4,22 @@ kind: Deployment
 metadata:
   name: api-production-deployment
   labels:
-    {{- include "tracardi.labels" (dict "ctx" . "component" "api-web") | nindent 4 }}
+    {{- include "tracardi.labels" (dict "ctx" . "component" "api-production") | nindent 4 }}
 spec:
   replicas: {{ .Values.production.replicas }}
   selector:
     matchLabels:
-      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "api-web") | nindent 6 }}
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "api-production") | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "tracardi.podLabels" (dict "ctx" . "component" "api-web") | nindent 8 }}
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "api-production") | nindent 8 }}
     spec:
       imagePullSecrets:
         - name: {{ .Values.secrets.dockerHub | quote }}
       containers:
-        - name: api-web
-          image: "{{ .Values.production.image.repository }}:{{ .Values.production.image.tag }}"
-          imagePullPolicy: {{ .Values.production.image.pullPolicy }}
+        - name: api-production
+          {{- include "tracardi.image" (dict "ctx" . "repo" .Values.config.image.api.repository "policy" .Values.config.image.api.pullPolicy) | nindent 10 }}
           ports:
             - name: prod-port
               containerPort: 80
@@ -38,11 +37,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: api-web
+  name: api-production
 spec:
   type: ClusterIP
   selector:
-    {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "api-web") | nindent 6 }}
+    {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "api-production") | nindent 6 }}
   ports:
     - protocol: TCP
       port: {{ .Values.production.port }}
@@ -53,7 +52,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: do-api-web-lb
+  name: do-api-production-lb
   {{ if .Values.digitalOcean.certId }}
   annotations:
     service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
@@ -64,7 +63,7 @@ spec:
   type: LoadBalancer
   selector:
     matchLabels:
-      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "api-web") | nindent 6 }}
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "api-production") | nindent 6 }}
   ports:
     - name: http
       protocol: TCP

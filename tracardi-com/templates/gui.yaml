@@ -25,8 +25,7 @@ spec:
     spec:
       containers:
         - name: gui
-          image: "{{ .Values.gui.image.repository }}:{{ .Values.gui.image.tag }}"
-          imagePullPolicy: {{ .Values.gui.image.pullPolicy }}
+          {{- include "tracardi.image" (dict "ctx" . "repo" .Values.config.image.gui.repository "policy" .Values.config.image.gui.pullPolicy) | nindent 10 }}
           ports:
             - containerPort: 80
               name: gui-port
