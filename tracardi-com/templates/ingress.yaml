@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: api-web
+  name: production-ingress
   annotations:
       {{ toYaml .Values.production.ingress.annotations }}
 spec:
@@ -21,7 +21,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: api-web
+            name: api-production
             port:
               number: {{ .Values.production.port }}
 {{ end }}
@@ -30,7 +30,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: api-gui
+  name: staging-ingress
   annotations:
       {{ toYaml .Values.staging.ingress.annotations }}
 spec:
@@ -49,7 +49,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: api-gui
+            name: api-staging
             port:
               number: {{ .Values.staging.port }}
 {{ end }}
@@ -58,7 +58,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: gui
+  name: gui-ingress
   annotations:
       {{ toYaml .Values.gui.ingress.annotations }}
 spec:
@@ -86,7 +86,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: bridge-rest
+  name: bridge-rest-ingress
   annotations:
       {{ toYaml .Values.bridge.rest.ingress.annotations }}
 spec:

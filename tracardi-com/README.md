@@ -9,7 +9,7 @@ kubectl create secret docker-registry tracardi-dockerhub \
 ```
 
 ```
-helm template tracardi-com --values  mtsilesia-tracardi-com.yaml
+helm template tracardi-com --values  test-tracardi-com.yaml
 ```
 
 ```
@@ -19,5 +19,5 @@ helm upgrade --wait --timeout=1200s --install --values test-tracardi-com.yaml tr
 # Delete
 
 ```
-helm delete tracardi-com --namespace tracardi
+helm delete tracardi-com -n test
 ```

@@ -123,7 +123,7 @@ Params:
 - name: ELASTIC_QUERY_TIMEOUT
   value: "120"
 - name: REDIS_HOST
-  value: {{ .ctx.Values.redis.host }}
+  value: {{ .ctx.Values.redis.schema }}{{ .ctx.Values.redis.host }}
 - name: REDIS_PASSWORD
   valueFrom:
     secretKeyRef:

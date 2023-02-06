@@ -1,0 +1,81 @@
+{{ if and .Values.secrets.dockerHub .Values.staging.license.existingSecret }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-collector-deployment
+  labels:
+    {{- include "tracardi.labels" (dict "ctx" . "component" "api-internet") | nindent 4 }}
+spec:
+  replicas: {{ .Values.collector.replicas }}
+  selector:
+    matchLabels:
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "api-internet") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "api-internet") | nindent 8 }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.secrets.dockerHub | quote }}
+      containers:
+        - name: api-internet
+          image: "{{ .Values.collector.image.repository }}:{{ .Values.collector.image.tag }}"
+          imagePullPolicy: {{ .Values.collector.image.pullPolicy }}
+          ports:
+            - name: coll-port
+              containerPort: 80
+          env:
+            {{- include "tracardi.env" (dict "ctx" . "license" .Values.collector.license.existingSecret) | nindent 12 }}
+            - name: EXPOSE_GUI_API
+              value: "no"
+            - name: PRODUCTION
+              value: "yes"
+            - name: LOGGING_LEVEL
+              value: {{ .Values.collector.config.loggingLevel | quote }}
+            - name: SAVE_LOGS
+              value: {{ .Values.collector.config.saveLogs | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-internet
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "api-internet") | nindent 6 }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.collector.port }}
+      targetPort: coll-port
+
+{{ if .Values.digitalOcean.loadBalancer }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: do-api-internet-lb
+  {{ if .Values.digitalOcean.certId }}
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
+    service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: {{ .Values.digitalOcean.certId | quote }}
+  {{ end }}
+spec:
+  type: LoadBalancer
+  selector:
+    matchLabels:
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "api-internet") | nindent 6 }}
+  ports:
+    - name: http
+      protocol: TCP
+      port: {{ .Values.collector.port }}
+      targetPort: coll-port
+    {{ if .Values.digitalOcean.certId }}
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: coll-port
+    {{ end }}
+
+{{ end }}
+{{ end }}

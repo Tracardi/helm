@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-gui-deployment
+  name: api-staging-deployment
   labels:
     {{- include "tracardi.labels" (dict "ctx" . "component" "api-gui") | nindent 4 }}
 spec:
@@ -22,7 +22,7 @@ spec:
           image: "{{ .Values.staging.image.repository }}:{{ .Values.staging.image.tag }}"
           imagePullPolicy: {{ .Values.staging.image.pullPolicy }}
           ports:
-            - name: api-gui-port
+            - name: staging-port
               containerPort: 80
           livenessProbe:
             httpGet:
@@ -54,7 +54,7 @@ spec:
   ports:
     - protocol: TCP
       port: {{ .Values.staging.port }}
-      targetPort: api-gui-port
+      targetPort: staging-port
 
 {{ if .Values.digitalOcean.loadBalancer }}
 ---
@@ -77,12 +77,12 @@ spec:
     - name: http
       protocol: TCP
       port: {{ .Values.staging.port }}
-      targetPort: api-gui-port
+      targetPort: staging-port
     {{ if .Values.digitalOcean.certId }}
     - name: https
       protocol: TCP
       port: 443
-      targetPort: api-gui-port
+      targetPort: staging-port
     {{ end }}
 
 {{ end }}

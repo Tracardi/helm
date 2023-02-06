@@ -18,12 +18,15 @@ gui:
       secretName: ""
     annotations: {}
 
-production:
+# Collector API is the API that should be exposed to the internet. It has limited API only to collecting data.
+# No GUI like operations are available
+
+collector:
   image:
     repository: tracardi/com-tracardi-api
     tag: 0.8.0
     pullPolicy: IfNotPresent
-  port: 8585
+  port: 8484
   replicas: 1
   ingress:
     enabled: true
@@ -40,6 +43,35 @@ production:
   license:
     existingSecret: "SET-TRACARDI-LICENSE-SECRET"  # The secret need to have a key field in it
 
+# Production API is the API that should not be exposed to the internet. It has the API functions with the access to
+# production data. Also if possible only users who are allowed to see real data should have opened accounts on this
+# instance.
+
+production:
+  image:
+    repository: tracardi/com-tracardi-api
+    tag: 0.8.0
+    pullPolicy: IfNotPresent
+  port: 8585
+  replicas: 1
+  ingress:
+    enabled: true
+    domain: prod.tracardi.example.com
+    ingressClassName: ""
+    tls:
+      enable: true
+      secretName: ""
+    annotations: {}
+  config:
+    saveLogs: "no"
+    logginLevel: "info"
+    apiDocs: "no"
+  license:
+    existingSecret: "SET-TRACARDI-LICENSE-SECRET"  # The secret need to have a key field in it
+
+# Stating API is the API that should not be exposed to the internet. It has the API functions with the access to
+# test data. Access to this server should have people working on the data orchestration.
+
 staging:
   image:
     repository: tracardi/com-tracardi-api
@@ -49,7 +81,7 @@ staging:
   replicas: 1
   ingress:
     enabled: true
-    domain: api.tracardi.example.com
+    domain: staging.tracardi.example.com
     ingressClassName: ""
     tls:
       enable: true
@@ -62,7 +94,8 @@ staging:
   license:
     existingSecret: "SET-TRACARDI-LICENSE-SECRET"  # The secret need to have a key field in it
 
-# Scheduler
+# Scheduler. It is a service that reschdules ro execution the delayed events. A delayed event happens when the
+# workflow pauses and resumes after some time.
 
 scheduler:
   image:
@@ -75,6 +108,9 @@ scheduler:
   license:
     existingSecret: "SET-SCHEDULER-LICENSE"  # The secret need to have a key field in it
 
+# Scheduler worker. It is a service that is responsible for execution the delayed events. A delayed event happens when the
+# workflow pauses and resumes after some time.
+
 schedulerWorker:
   image:
     repository: tracardi/com-tracardi-scheduler-worker
@@ -86,7 +122,7 @@ schedulerWorker:
   license:
     existingSecret: "SET-SCHEDULER-LICENSE"  # The secret need to have a key field in it
 
-# Segmentation
+# Segmentation job is a job that runs periodically and checks if some profiles should be run through a segmentation process.
 
 segmentationJob:
   image:
@@ -104,6 +140,8 @@ segmentationJob:
   license:
     existingSecret: "SET-SEGMENTATION-LICENSE"  # The secret need to have a key field in it
 
+# Segmentation worker runs a segmentation process.
+
 segmentationWorker:
   image:
     repository: tracardi/com-tracardi-segmentation-worker
@@ -115,7 +153,7 @@ segmentationWorker:
   license:
     existingSecret: "SET-SEGMENTATION-LICENSE"  # The secret need to have a key field in it
 
-# Update and Migration
+# Update and Migration. Set of workers responsible for system migration, data import, etc.
 
 updateWorker:
   image:
@@ -127,7 +165,7 @@ updateWorker:
     saveLogs: "no"
     loggingLevel: "INFO"
 
-# Bridges
+# Bridges. Services responsible for collection data from different channels. They bridge the defined transportation protocol to tracardi event source.
 
 bridge:
   rest:
@@ -181,11 +219,12 @@ elastic:
   port: 9200
 
 redis:
-  host: redis://redis-svc
   existingSecret: "redis-secret"
   existingSecretPasswordKey: "redis-password"
+  schema: "redis://"
+  host: redis-svc
   port: "6379"
-  ip: redis-svc
+  db: "0"
 
 
 # Digital ocean

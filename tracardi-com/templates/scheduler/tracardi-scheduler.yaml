@@ -5,7 +5,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: com-tracardi-scheduler
+  name: com-scheduler
   labels:
     {{- include "tracardi.labels" (dict "ctx" . "component" "com-scheduler") | nindent 4 }}
 spec:
@@ -21,10 +21,11 @@ spec:
       imagePullSecrets:
         - name: {{ .Values.secrets.dockerHub | quote }}
       containers:
-      - name: com-tracardi-scheduler
+      - name: com-scheduler
         image: "{{ .Values.scheduler.image.repository }}:{{ .Values.scheduler.image.tag }}"
         imagePullPolicy: {{ .Values.scheduler.image.pullPolicy }}
-        command: ["rqscheduler -i 1 --host {{ .Values.redis.ip }} --port {{ .Values.redis.port }}"]
+        command: ["sh", "-c"]
+        args: ["rqscheduler -i 1 --host {{ .Values.redis.host }} --port {{ .Values.redis.port }} --db 0 --password $REDIS_PASSWORD"]
         env:
           {{- include "tracardi.env" (dict "ctx" . "license" .Values.scheduler.license.existingSecret) | nindent 10 }}
           - name: LOGGING_LEVEL

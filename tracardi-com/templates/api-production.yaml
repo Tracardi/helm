@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-web-deployment
+  name: api-production-deployment
   labels:
     {{- include "tracardi.labels" (dict "ctx" . "component" "api-web") | nindent 4 }}
 spec:
@@ -22,7 +22,7 @@ spec:
           image: "{{ .Values.production.image.repository }}:{{ .Values.production.image.tag }}"
           imagePullPolicy: {{ .Values.production.image.pullPolicy }}
           ports:
-            - name: api-web-port
+            - name: prod-port
               containerPort: 80
           env:
             {{- include "tracardi.env" (dict "ctx" . "license" .Values.production.license.existingSecret) | nindent 12 }}
@@ -46,7 +46,7 @@ spec:
   ports:
     - protocol: TCP
       port: {{ .Values.production.port }}
-      targetPort: api-web-port
+      targetPort: prod-port
 
 {{ if .Values.digitalOcean.loadBalancer }}
 ---
@@ -69,12 +69,12 @@ spec:
     - name: http
       protocol: TCP
       port: {{ .Values.production.port }}
-      targetPort: web-api-port
+      targetPort: prod-port
     {{ if .Values.digitalOcean.certId }}
     - name: https
       protocol: TCP
       port: 443
-      targetPort: web-api-port
+      targetPort: prod-port
     {{ end }}
 
 {{ end }}
