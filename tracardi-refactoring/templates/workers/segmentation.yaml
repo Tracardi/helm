@@ -1,0 +1,41 @@
+{{ if and .Values.license.dockerExistingSecret .Values.segmentation.schedule }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: job-segmentation
+  labels:
+    {{- include "tracardi.labels" (dict "ctx" . "component" "jobs-group") | nindent 4 }}
+spec:
+  schedule: {{ .Values.segmentation.schedule | quote }}
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 15
+  successfulJobsHistoryLimit: 2
+  successfulJobsHistoryLimit: {{ .Values.segmentation.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.segmentation.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      completions: 1
+      parallelism: 1
+      template:
+        metadata:
+          name: job-segmentation
+          labels:
+            {{- include "tracardi.podLabels" (dict "ctx" . "component" "jobs-group") | nindent 12 }}
+        spec:
+          imagePullSecrets:
+            - name: {{ .Values.license.dockerExistingSecret | quote }}
+          containers:
+          - name: job-segmentation
+            image: "{{ .Values.segmentation.image.repository }}:{{ .Values.segmentation.image.tag }}"
+            imagePullPolicy: "{{ .Values.segmentation.image.pullPolicy }}"
+            env:
+              {{- include "tracardi.env" (dict "ctx" .) | nindent 14 }}
+              - name: POOL_SIZE
+                value: {{ .Values.segmentation.poolSize | quote }}
+              - name: SAVE_AFTER_POOLS
+                value: {{ .Values.segmentation.saveAfterPools | quote }}
+              - name: LOGGING_LEVEL
+                value: {{ .Values.segmentation.loggingLevel | quote }}
+          restartPolicy: OnFailure
+{{ end }}

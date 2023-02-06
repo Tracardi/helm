@@ -1,0 +1,162 @@
+license:
+    existingSecret: "" # The secret need to have a key field in it
+    dockerExistingSecret: ""
+# Config ENV
+config:
+  logging: "info"
+  apiDocs: "yes"
+  trackDebug: "yes"
+  saveLogsInTracardi: "yes"
+  installationToken: "tracardi-install"
+  destination:
+    syncPostpone: 5
+  pro:
+    host: "pro.tracardi.com"
+    port: "40000"
+  scheduler:
+    host: "scheduler.tracardi.com"
+
+apiWeb:
+  image:
+    repository: tracardi/com-tracardi-api
+    tag: 0.8.0-dev
+    pullPolicy: IfNotPresent
+  port: 8585
+  replicas: 1
+  ingress:
+    enabled: false
+    domain: track.tracardi.example.com
+    ingressClassName: ""
+    tls:
+      enable: false
+      secretName: ""
+    annotations: {}
+
+apiGui:
+  image:
+    repository: tracardi/com-tracardi-api
+    tag: 0.8.0-dev
+    pullPolicy: IfNotPresent
+  port: 8686
+  replicas: 1
+  ingress:
+    enabled: false
+    domain: api.tracardi.example.com
+    ingressClassName: ""
+    tls:
+      enable: false
+      secretName: ""
+    annotations: {}
+
+gui:
+  image:
+    repository: tracardi/tracardi-gui
+    tag: 0.8.0-dev
+    pullPolicy: IfNotPresent
+  port: 8787
+  replicas: 1
+  ingress:
+    enabled: false
+    domain: ui.tracardi.s.revma.io
+    ingressClassName: ""
+    tls:
+      enable: true
+      secretName: ""
+    annotations: {}
+
+elastic:
+  host: "elastic-svc"
+  schema: https
+  username: "elastic"
+  existingSecret: "elastic-secret"
+  existingSecretPasswordKey: "elastic"
+  verifyCerts: "no"
+  doCertId: "none"
+  port: 9200
+redis:
+  host: redis://redis-svc/0
+  existingSecret: "redis-secret"
+  existingSecretPasswordKey: "redis-password"
+  port: "6379"
+
+worker:
+  loggingLevel: "INFO"
+  destination:
+    syncPostpone: 5
+  image:
+    repository: tracardi/worker
+    tag: 0.8.0-dev
+    pullPolicy: IfNotPresent
+  replicas: 1
+  apiWeb:
+    maxWorkers: 5
+  apiGui:
+    maxWorkers: 3
+
+bridge:
+  rest:
+    image:
+      repository: tracardi/com-bridge-rest
+      tag: 0.8.0-dev
+      pullPolicy: IfNotPresent
+    replicas: 1
+    license:
+      existingSecret: ""
+    ingress:
+      enabled: false
+      domain: async.tracardi.example.com
+      ingressClassName: ""
+      tls:
+        enable: true
+        secretName: ""
+      annotations: {}
+  rest_worker:
+    image:
+      repository: tracardi/com-bridge-rest-worker
+      tag: 0.8.0-dev
+      pullPolicy: IfNotPresent
+    replicas: 2
+    license:
+      existingSecret: ""
+  queue:
+    image:
+      repository: tracardi/com-bridge-queue
+      tag: 0.8.0-dev
+      pullPolicy: IfNotPresent
+    replicas: 1
+    license:
+      existingSecret: ""
+
+deduplication:
+  image:
+    repository: tracardi/com-job-deduplication
+    tag: 0.8.0-dev
+    pullPolicy: IfNotPresent
+  loggingLevel: "INFO"
+  saveAfterPools: 40
+  schedule: ""    # Leave empty if you do not want to be installed
+  poolSize: 100
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 2
+merging:
+  image:
+    repository: tracardi/com-job-merging
+    tag: 0.8.0-dev
+    pullPolicy: IfNotPresent
+  loggingLevel: "INFO"
+  poolSize: 100
+  saveAfterPools: 40
+  schedule: ""
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 2
+segmentation:
+  image:
+    repository: tracardi/com-job-segmentation
+    tag: 0.8.0-dev
+    pullPolicy: IfNotPresent
+  loggingLevel: "INFO"
+  poolSize: 100
+  saveAfterPools: 40
+  schedule: ""      # example */15 * * * * - means run every 15 minutes
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 2 

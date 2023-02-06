@@ -1,0 +1,40 @@
+{{ if and .Values.license.dockerExistingSecret .Values.merging.schedule }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: job-merging
+  labels:
+    {{- include "tracardi.labels" (dict "ctx" . "component" "jobs-group") | nindent 4 }}
+spec:
+  schedule: {{ .Values.merging.schedule | quote }}
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 15
+  successfulJobsHistoryLimit: {{ .Values.merging.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.merging.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      completions: 1
+      parallelism: 1
+      template:
+        metadata:
+          name: job-merging
+          labels:
+            {{- include "tracardi.podLabels" (dict "ctx" . "component" "jobs-group") | nindent 12 }}
+        spec:
+          imagePullSecrets:
+            - name: {{ .Values.license.dockerExistingSecret | quote }}
+          containers:
+          - name: job-merging
+            image: "{{ .Values.merging.image.repository }}:{{ .Values.merging.image.tag }}"
+            imagePullPolicy: "{{ .Values.merging.image.pullPolicy }}"
+            env:
+              {{- include "tracardi.env" (dict "ctx" .) | nindent 14 }}
+              - name: POOL_SIZE
+                value: {{ .Values.merging.poolSize | quote }}
+              - name: SAVE_AFTER_POOLS
+                value: {{ .Values.merging.saveAfterPools | quote }}
+              - name: LOGGING_LEVEL
+                value: {{ .Values.merging.loggingLevel | quote }}
+          restartPolicy: OnFailure
+{{ end }}

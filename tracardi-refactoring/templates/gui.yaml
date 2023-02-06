@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gui-config
+data:
+  custom.js: |
+    export const custom = {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gui-deployment
+  labels:
+    {{- include "tracardi.labels" (dict "ctx" . "component" "gui") | nindent 4 }}
+spec:
+  replicas: {{ .Values.gui.replicas }}
+  selector:
+    matchLabels:
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "gui") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "gui") | nindent 8 }}
+    spec:
+      containers:
+        - name: gui
+          image: "{{ .Values.gui.image.repository }}:{{ .Values.gui.image.tag }}"
+          imagePullPolicy: {{ .Values.gui.image.pullPolicy }}
+          ports:
+            - containerPort: 80
+              name: gui-port
+          volumeMounts:
+            - name: gui-config-volume
+              mountPath: /usr/share/nginx/html/config
+      volumes:
+        - name: gui-config-volume
+          configMap:
+            name: gui-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gui
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "gui") | nindent 6 }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.gui.port }}
+      targetPort: gui-port
