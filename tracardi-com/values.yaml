@@ -41,7 +41,7 @@ collector:
     annotations: {}
   config:
     saveLogs: "no"
-    logginLevel: "info"
+    logginLevel: "WARNING"
     apiDocs: "no"
   license:
     existingSecret: "SET-TRACARDI-LICENSE-SECRET"  # The secret need to have a key field in it
@@ -63,7 +63,7 @@ production:
     annotations: {}
   config:
     saveLogs: "no"
-    logginLevel: "info"
+    logginLevel: "WARNING"
     apiDocs: "no"
   license:
     existingSecret: "SET-TRACARDI-LICENSE-SECRET"  # The secret need to have a key field in it
@@ -84,7 +84,7 @@ staging:
     annotations: {}
   config:
     saveLogs: "yes"
-    logginLevel: "info"
+    logginLevel: "WARNING"
     apiDocs: "yes"
   license:
     existingSecret: "SET-TRACARDI-LICENSE-SECRET"  # The secret need to have a key field in it
@@ -99,7 +99,7 @@ scheduler:
     pullPolicy: IfNotPresent
   replicas: 1
   config:
-    loggingLevel: "info"
+    loggingLevel: "WARNING"
   license:
     existingSecret: "SET-SCHEDULER-LICENSE"  # The secret need to have a key field in it
 
@@ -113,7 +113,7 @@ schedulerWorker:
     pullPolicy: IfNotPresent
   replicas: 1
   config:
-    loggingLevel: "info"
+    loggingLevel: "WARNING"
   license:
     existingSecret: "SET-SCHEDULER-LICENSE"  # The secret need to have a key field in it
 
@@ -128,7 +128,7 @@ segmentationJob:
     successfulJobsHistoryLimit: 2
     failedJobsHistoryLimit: 2
     saveLogs: "no"
-    loggingLevel: "INFO"
+    loggingLevel: "WARNING"
     poolSize: 100
     saveAfterPools: 40
     schedule: ""      # example */15 * * * * - means run every 15 minutes
@@ -144,7 +144,7 @@ segmentationWorker:
     pullPolicy: IfNotPresent
   config:
     saveLogs: "no"
-    loggingLevel: "INFO"
+    loggingLevel: "WARNING"
   license:
     existingSecret: "SET-SEGMENTATION-LICENSE"  # The secret need to have a key field in it
 
@@ -158,7 +158,7 @@ updateWorker:
   replicas: 1
   config:
     saveLogs: "no"
-    loggingLevel: "INFO"
+    loggingLevel: "WARNING"
 
 # Bridges. Services responsible for collection data from different channels. They bridge the defined transportation protocol to tracardi event source.
 
@@ -178,7 +178,7 @@ bridge:
         secretName: ""
       annotations: {}
     config:
-      loggingLevel: "info"
+      loggingLevel: "WARNING"
     license:
       existingSecret: "SET-REST-LICENSE-SECRET"
   restWorker:
@@ -188,7 +188,7 @@ bridge:
       pullPolicy: IfNotPresent
     replicas: 1
     config:
-      loggingLevel: "info"
+      loggingLevel: "WARNING"
     license:
       existingSecret: "SET-REST-LICENSE-SECRET"
   queue:
@@ -198,7 +198,7 @@ bridge:
       pullPolicy: IfNotPresent
     replicas: 1
     config:
-      loggingLevel: "info"
+      loggingLevel: "WARNING"
     license:
       existingSecret: "SET-QUEUE-LICENSE-SECRET"
 

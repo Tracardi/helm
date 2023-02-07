@@ -33,4 +33,6 @@ spec:
           {{- include "tracardi.env" (dict "ctx" . "license" .Values.bridge.queue.license.existingSecret) | nindent 10 }}
           - name: LOGGING_LEVEL
             value: {{ .Values.bridge.queue.config.loggingLevel | quote }}
+          - name: PRODUCTION
+            value: "yes"
 {{ end }}

@@ -30,5 +30,7 @@ spec:
           {{- include "tracardi.env" (dict "ctx" . "license" .Values.schedulerWorker.license.existingSecret) | nindent 10 }}
           - name: LOGGING_LEVEL
             value: {{ .Values.schedulerWorker.config.loggingLevel | quote }}
+          - name: PRODUCTION
+            value: "yes"
 
 {{ end }}

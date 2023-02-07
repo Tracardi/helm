@@ -33,6 +33,8 @@ spec:
             value: {{ .Values.bridge.rest.config.loggingLevel | quote }}
           - name: API_DOCS
             value: "yes"
+          - name: PRODUCTION
+            value: "yes"
 ---
 apiVersion: v1
 kind: Service
