@@ -1,0 +1,48 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: production-lb
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/component: api-production
+    app.kubernetes.io/instance: tracardi-com
+    app.kubernetes.io/name: tracardi
+  ports:
+    - protocol: TCP
+      port: 28585
+      targetPort: prod-port
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: staging-lb
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/component: api-staging
+    app.kubernetes.io/instance: tracardi-com
+    app.kubernetes.io/name: tracardi
+  ports:
+    - protocol: TCP
+      port: 28686
+      targetPort: staging-port
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gui-lb
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/component: gui
+    app.kubernetes.io/instance: tracardi-com
+    app.kubernetes.io/name: tracardi
+  ports:
+    - protocol: TCP
+      port: 28787
+      targetPort: gui-port

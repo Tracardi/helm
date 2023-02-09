@@ -1,0 +1,6 @@
+production:
+  port: 18585
+staging:
+  port: 18686
+gui:
+  port: 18787
