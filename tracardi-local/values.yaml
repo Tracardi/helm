@@ -1,6 +1,6 @@
-production:
-  port: 18585
+collector:
+  port: 8585
 staging:
-  port: 18686
+  port: 8686
 gui:
-  port: 18787
+  port: 8787
