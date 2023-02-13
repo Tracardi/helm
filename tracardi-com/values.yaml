@@ -29,6 +29,7 @@ gui:
 # No GUI like operations are available
 
 collector:
+  enabled: false
   port: 8484
   replicas: 1
   ingress:
@@ -44,34 +45,13 @@ collector:
     logginLevel: "WARNING"
     apiDocs: "no"
   license:
-    existingSecret: "SET-TRACARDI-LICENSE-SECRET"  # The secret need to have a key field in it
-
-# Production API is the API that should not be exposed to the internet. It has the API functions with the access to
-# production data. Also if possible only users who are allowed to see real data should have opened accounts on this
-# instance.
-
-production:
-  port: 8585
-  replicas: 1
-  ingress:
-    enabled: true
-    domain: prod.tracardi.example.com
-    ingressClassName: ""
-    tls:
-      enable: true
-      secretName: ""
-    annotations: {}
-  config:
-    saveLogs: "no"
-    logginLevel: "WARNING"
-    apiDocs: "no"
-  license:
-    existingSecret: "SET-TRACARDI-LICENSE-SECRET"  # The secret need to have a key field in it
+    existingSecret: ""  # SET-TRACARDI-LICENSE-SECRET. The secret need to have a key field in it
 
 # Stating API is the API that should not be exposed to the internet. It has the API functions with the access to
 # test data. Access to this server should have people working on the data orchestration.
 
 staging:
+  enabled: true
   port: 8686
   replicas: 1
   ingress:
@@ -87,7 +67,7 @@ staging:
     logginLevel: "WARNING"
     apiDocs: "yes"
   license:
-    existingSecret: "SET-TRACARDI-LICENSE-SECRET"  # The secret need to have a key field in it
+    existingSecret: ""  # SET-TRACARDI-LICENSE-SECRET. The secret need to have a key field in it
 
 # Scheduler. It is a service that reschdules ro execution the delayed events. A delayed event happens when the
 # workflow pauses and resumes after some time.
@@ -101,7 +81,7 @@ scheduler:
   config:
     loggingLevel: "WARNING"
   license:
-    existingSecret: "SET-SCHEDULER-LICENSE"  # The secret need to have a key field in it
+    existingSecret: ""  # SET-SCHEDULER-LICENSE. The secret need to have a key field in it
 
 # Scheduler worker. It is a service that is responsible for execution the delayed events. A delayed event happens when the
 # workflow pauses and resumes after some time.
@@ -115,7 +95,7 @@ schedulerWorker:
   config:
     loggingLevel: "WARNING"
   license:
-    existingSecret: "SET-SCHEDULER-LICENSE"  # The secret need to have a key field in it
+    existingSecret: ""  # SET-SCHEDULER-LICENSE The secret need to have a key field in it
 
 # Segmentation job is a job that runs periodically and checks if some profiles should be run through a segmentation process.
 
@@ -133,7 +113,7 @@ segmentationJob:
     saveAfterPools: 40
     schedule: ""      # example */15 * * * * - means run every 15 minutes
   license:
-    existingSecret: "SET-SEGMENTATION-LICENSE"  # The secret need to have a key field in it
+    existingSecret: ""  # SET-SEGMENTATION-LICENSE. The secret need to have a key field in it
 
 # Segmentation worker runs a segmentation process.
 
@@ -146,7 +126,7 @@ segmentationWorker:
     saveLogs: "no"
     loggingLevel: "WARNING"
   license:
-    existingSecret: "SET-SEGMENTATION-LICENSE"  # The secret need to have a key field in it
+    existingSecret: ""  # SET-SEGMENTATION-LICENSE. The secret need to have a key field in it
 
 # Update and Migration. Set of workers responsible for system migration, data import, etc.
 
@@ -180,7 +160,7 @@ bridge:
     config:
       loggingLevel: "WARNING"
     license:
-      existingSecret: "SET-REST-LICENSE-SECRET"
+      existingSecret: ""  # SET-REST-LICENSE-SECRET
   restWorker:
     image:
       repository: tracardi/com-bridge-rest-worker
@@ -190,7 +170,7 @@ bridge:
     config:
       loggingLevel: "WARNING"
     license:
-      existingSecret: "SET-REST-LICENSE-SECRET"
+      existingSecret: ""  # SET-REST-LICENSE-SECRET
   queue:
     image:
       repository: tracardi/com-bridge-queue
@@ -200,7 +180,7 @@ bridge:
     config:
       loggingLevel: "WARNING"
     license:
-      existingSecret: "SET-QUEUE-LICENSE-SECRET"
+      existingSecret: ""  # SET-QUEUE-LICENSE-SECRET
 
 # Infrastructure
 
@@ -226,4 +206,4 @@ redis:
 
 digitalOcean:
   loadBalancer: false
-  certId: "SET-CERT-ID"
+  certId: ""  # SET-CERT-ID

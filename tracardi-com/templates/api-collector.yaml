@@ -1,4 +1,4 @@
-{{ if and .Values.secrets.dockerHub .Values.staging.license.existingSecret }}
+{{ if and .Values.secrets.dockerHub .Values.collector.enabled .Values.collector.license.existingSecret }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13,6 +13,7 @@ spec:
   template:
     metadata:
       labels:
+        app: do-api-collector-lb
         {{- include "tracardi.podLabels" (dict "ctx" . "component" "api-collector") | nindent 8 }}
     spec:
       imagePullSecrets:

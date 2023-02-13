@@ -1,29 +1,29 @@
-{{ if .Values.production.ingress.enabled }}
+{{ if .Values.collector.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: production-ingress
+  name: collector-ingress
   annotations:
-      {{ toYaml .Values.production.ingress.annotations }}
+      {{ toYaml .Values.collector.ingress.annotations }}
 spec:
-  {{ if .Values.production.ingress.tls -}}
+  {{ if .Values.collector.ingress.tls -}}
   tls:
-  - secretName: {{ .Values.production.ingress.tls.secretName }}
+  - secretName: {{ .Values.collector.ingress.tls.secretName }}
   {{ end }}
-  {{- with .Values.production.ingressClassName -}}
+  {{- with .Values.collector.ingressClassName -}}
   ingressClassName: {{ . }}
   {{- end -}}
   rules:
-  - host: {{ .Values.production.ingress.domain }}
+  - host: {{ .Values.collector.ingress.domain }}
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: api-production
+            name: api-collector
             port:
-              number: {{ .Values.production.port }}
+              number: {{ .Values.collector.port }}
 {{ end }}
 ---
 {{ if .Values.staging.ingress.enabled }}
