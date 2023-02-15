@@ -105,13 +105,22 @@ segmentationJob:
     tag: 0.8.0
     pullPolicy: IfNotPresent
   config:
-    successfulJobsHistoryLimit: 2
-    failedJobsHistoryLimit: 2
-    saveLogs: "no"
-    loggingLevel: "WARNING"
-    poolSize: 100
-    saveAfterPools: 40
-    schedule: ""      # example */15 * * * * - means run every 15 minutes
+    production:
+      successfulJobsHistoryLimit: 2
+      failedJobsHistoryLimit: 2
+      saveLogs: "no"
+      loggingLevel: "WARNING"
+      poolSize: 100
+      saveAfterPools: 40
+      schedule: ""      # example */15 * * * * - means run every 15 minutes
+    staging:
+      successfulJobsHistoryLimit: 2
+      failedJobsHistoryLimit: 2
+      saveLogs: "yes"
+      loggingLevel: "INFO"
+      poolSize: 100
+      saveAfterPools: 40
+      schedule: ""      # example */15 * * * * - means run every 15 minutes
   license:
     existingSecret: ""  # SET-SEGMENTATION-LICENSE. The secret need to have a key field in it
 

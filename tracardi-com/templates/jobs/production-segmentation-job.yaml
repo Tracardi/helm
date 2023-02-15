@@ -1,17 +1,17 @@
-{{ if and .Values.secrets.dockerHub .Values.segmentationJob.config.schedule }}
+{{ if and .Values.secrets.dockerHub .Values.segmentationJob.config.production.schedule }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: job-segmentation
+  name: production-job-segmentation
   labels:
     {{- include "tracardi.labels" (dict "ctx" . "component" "jobs-group") | nindent 4 }}
 spec:
-  schedule: {{ .Values.segmentationJob.config.schedule | quote }}
+  schedule: {{ .Values.segmentationJob.config.production.schedule | quote }}
   concurrencyPolicy: Forbid
   startingDeadlineSeconds: 15
   successfulJobsHistoryLimit: 2
-  successfulJobsHistoryLimit: {{ .Values.segmentationJob.config.successfulJobsHistoryLimit }}
-  failedJobsHistoryLimit: {{ .Values.segmentationJob.config.failedJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ .Values.segmentationJob.config.production.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.segmentationJob.config.production.failedJobsHistoryLimit }}
   jobTemplate:
     spec:
       backoffLimit: 2
@@ -19,23 +19,25 @@ spec:
       parallelism: 1
       template:
         metadata:
-          name: job-segmentation
+          name: production-job-segmentation
           labels:
             {{- include "tracardi.podLabels" (dict "ctx" . "component" "jobs-group") | nindent 12 }}
         spec:
           imagePullSecrets:
             - name: {{ .Values.secrets.dockerHub | quote }}
           containers:
-          - name: job-segmentation
+          - name: production-job-segmentation
             image: "{{ .Values.segmentationJob.image.repository }}:{{ .Values.segmentationJob.image.tag }}"
             imagePullPolicy: "{{ .Values.segmentationJob.image.pullPolicy }}"
             env:
               {{- include "tracardi.env" (dict "ctx" .) | nindent 14 }}
               - name: POOL_SIZE
-                value: {{ .Values.segmentationJob.config.poolSize | quote }}
+                value: {{ .Values.segmentationJob.config.production.poolSize | quote }}
               - name: SAVE_AFTER_POOLS
-                value: {{ .Values.segmentationJob.config.saveAfterPools | quote }}
+                value: {{ .Values.segmentationJob.config.production.saveAfterPools | quote }}
               - name: LOGGING_LEVEL
-                value: {{ .Values.segmentationJob.config.loggingLevel | quote }}
+                value: {{ .Values.segmentationJob.config.production.loggingLevel | quote }}
+              - name: PRODUCTION
+                value: "yes"
           restartPolicy: OnFailure
 {{ end }}

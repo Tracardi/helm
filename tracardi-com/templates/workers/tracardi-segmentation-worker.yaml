@@ -26,5 +26,5 @@ spec:
           - name: LOGGING_LEVEL
             value: {{ .Values.segmentationWorker.config.loggingLevel | quote }}
           - name: PRODUCTION
-            value: "yes"
+            value: "no"
 {{ end }}
