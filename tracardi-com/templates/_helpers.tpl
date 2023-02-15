@@ -140,13 +140,13 @@ Params:
       name: {{ .ctx.Values.redis.existingSecret }}
       key: {{ .ctx.Values.redis.existingSecretPasswordKey }}
 - name: SOURCE_CACHE_TTL
-  value: "60"
+  value: "2"
 - name: SESSION_CACHE_TTL
-  value: "60"
+  value: "2"
 - name: EVENT_TAG_CACHE_TTL
-  value: "60"
+  value: "10"
 - name: EVENT_VALIDATION_CACHE_TTL
-  value: "60"
+  value: "10"
 - name: TRACK_DEBUG
   value: "yes"
 - name: TRACARDI_PRO_HOST
