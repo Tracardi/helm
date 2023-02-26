@@ -124,6 +124,47 @@ segmentationJob:
   license:
     existingSecret: ""  # SET-SEGMENTATION-LICENSE. The secret need to have a key field in it
 
+heartbeatJob:
+  image:
+    repository: tracardi/com-heartbeat-job
+    tag: 0.8.0
+    pullPolicy: IfNotPresent
+
+  config:
+
+    production:
+      enable: false
+      successfulJobsHistoryLimit: 2
+      failedJobsHistoryLimit: 2
+      saveLogs: "no"
+      loggingLevel: "WARNING"
+      schedules:
+        - name: prod-early-heartbeats
+          schedule: ""      # example */15 * * * * - means run every 15 minutes
+          range: ""
+          qualify_by: ""
+
+       # Add ass many as you need
+
+    staging:
+      enable: true
+      successfulJobsHistoryLimit: 2
+      failedJobsHistoryLimit: 2
+      saveLogs: "yes"
+      loggingLevel: "INFO"
+      schedules:
+        - name: stage-test-heartbeats-0
+          schedule: "*/5 * * * *"
+          range: "now-1d|now"
+          qualify_by: "has_event"
+        - name: stage-early-heartbeats-1
+          schedule: "30 03 * * *"
+          range: "now-5d|now"
+          qualify_by: "has_event"
+
+  license:
+    existingSecret: ""  # SET-HEARTBEAT-LICENSE. The secret need to have a key field in it
+
 # Segmentation worker runs a segmentation process.
 
 segmentationWorker:

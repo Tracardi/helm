@@ -9,7 +9,6 @@ spec:
   schedule: {{ .Values.segmentationJob.config.staging.schedule | quote }}
   concurrencyPolicy: Forbid
   startingDeadlineSeconds: 15
-  successfulJobsHistoryLimit: 2
   successfulJobsHistoryLimit: {{ .Values.segmentationJob.config.staging.successfulJobsHistoryLimit }}
   failedJobsHistoryLimit: {{ .Values.segmentationJob.config.staging.failedJobsHistoryLimit }}
   jobTemplate:
