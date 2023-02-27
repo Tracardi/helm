@@ -154,8 +154,8 @@ heartbeatJob:
       loggingLevel: "INFO"
       schedules:
         - name: stage-test-heartbeats-0
-          schedule: "*/5 * * * *"
-          range: "now-1d|now"
+          schedule: "*/15 * * * *"
+          range: "now-1h|now"
           qualify_by: "has_event"
         - name: stage-early-heartbeats-1
           schedule: "30 03 * * *"
