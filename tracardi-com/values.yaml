@@ -174,8 +174,8 @@ heartbeatJob:
       loggingLevel: "INFO"
       schedules:
         - name: stage-heartbeats-1hour
-          schedule: "*/15 * * * *"
-          range: "now-30m|now"
+          schedule: "*/35 * * * *"
+          range: "now-3h|now"
           qualify_by: "has_event"
 
   license:
