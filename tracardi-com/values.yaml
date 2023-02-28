@@ -139,9 +139,9 @@ heartbeatJob:
       saveLogs: "no"
       loggingLevel: "WARNING"
       schedules:
-        - name: production-heartbeats-1hour # every 30min through 1 hour - means at least 1 time
-          schedule: "*/30 * * * *"
-          range: "now-45m|now"
+        - name: production-heartbeats-1hour # every 35min through 3 hour but not quicker than 2h after now - means at least 1 time
+          schedule: "*/35 * * * *"
+          range: "now-3h|now"
           qualify_by: "has_event"
         - name: production-heartbeats-5days  # once a day at 03:30 through 5 days - means 5 times
           schedule: "30 03 * * *"
