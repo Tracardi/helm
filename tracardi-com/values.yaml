@@ -133,16 +133,36 @@ heartbeatJob:
   config:
 
     production:
-      enable: false
+      enable: true
       successfulJobsHistoryLimit: 2
       failedJobsHistoryLimit: 2
       saveLogs: "no"
       loggingLevel: "WARNING"
       schedules:
-        - name: prod-early-heartbeats
-          schedule: ""      # example */15 * * * * - means run every 15 minutes
-          range: ""
-          qualify_by: ""
+        - name: production-heartbeats-1hour # every 30min through 1 hour - means at least 1 time
+          schedule: "*/30 * * * *"
+          range: "now-45m|now"
+          qualify_by: "has_event"
+        - name: production-heartbeats-5days  # once a day at 03:30 through 5 days - means 5 times
+          schedule: "30 03 * * *"
+          range: "now-5d|now"
+          qualify_by: "has_event"
+        - name: production-heartbeats-2weeks # once every 5 days at 04:17 through 2 weeks - means 3 times
+          schedule: "17 04 */5 * *"
+          range: "now-14d|now-5d"
+          qualify_by: "has_event"
+        - name: production-heartbeats-3months # once every 20 days at 05:10 through 3 months - means at least 3 times
+          schedule: "10 05 */20 * *"
+          range: "now-90d|now-14d"
+          qualify_by: "has_event"
+        - name: production-heartbeats-6months # once every 1 month at 01:02 through 6 months - means at least 3 times
+          schedule: "02 01 1 * *"
+          range: "now-180d|now-90d"
+          qualify_by: "has_event"
+        - name: production-heartbeats-12months # once every 2 month at 01:32 through 6 months - means at least 3 times
+          schedule: "32 01 2 */2 *"
+          range: "now-360d|now-180d"
+          qualify_by: "has_event"
 
        # Add ass many as you need
 
@@ -153,13 +173,9 @@ heartbeatJob:
       saveLogs: "yes"
       loggingLevel: "INFO"
       schedules:
-        - name: stage-test-heartbeats-0
+        - name: stage-heartbeats-1hour
           schedule: "*/15 * * * *"
-          range: "now-1h|now"
-          qualify_by: "has_event"
-        - name: stage-early-heartbeats-1
-          schedule: "30 03 * * *"
-          range: "now-5d|now"
+          range: "now-30m|now"
           qualify_by: "has_event"
 
   license:
