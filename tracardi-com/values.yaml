@@ -42,7 +42,7 @@ collector:
     annotations: {}
   config:
     saveLogs: "no"
-    logginLevel: "WARNING"
+    loggingLevel: "WARNING"
     apiDocs: "no"
   license:
     existingSecret: ""  # SET-TRACARDI-LICENSE-SECRET. The secret need to have a key field in it
@@ -64,7 +64,7 @@ staging:
     annotations: {}
   config:
     saveLogs: "yes"
-    logginLevel: "WARNING"
+    loggingLevel: "WARNING"
     apiDocs: "yes"
   license:
     existingSecret: ""  # SET-TRACARDI-LICENSE-SECRET. The secret need to have a key field in it
