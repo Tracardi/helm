@@ -69,6 +69,21 @@ staging:
   license:
     existingSecret: ""  # SET-TRACARDI-LICENSE-SECRET. The secret need to have a key field in it
 
+migration:
+  enabled: false
+  image:
+    tag: 0.8.1-dev  # Tag should not be the same for gui and backend
+    api:
+      repository: tracardi/com-tracardi-api
+      pullPolicy: IfNotPresent
+      port: 28686
+    gui:
+      repository: tracardi/tracardi-gui
+      pullPolicy: IfNotPresent
+      port: 28787
+  license:
+    existingSecret: ""  # SET-TRACARDI-LICENSE-SECRET. The secret need to have a key field in it
+
 # Scheduler. It is a service that reschdules ro execution the delayed events. A delayed event happens when the
 # workflow pauses and resumes after some time.
 

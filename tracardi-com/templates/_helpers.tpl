@@ -82,8 +82,9 @@ Params:
   policy = pullPolicy type
   ctx = . context
 */}}
+
 {{- define "tracardi.image" -}}
-image: "{{ .repo }}:{{ .ctx.Values.config.image.tag }}"
+image: "{{ .repo }}:{{ .tag }}"
 imagePullPolicy: {{ .policy }}
 {{- end }}
 

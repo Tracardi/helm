@@ -20,7 +20,7 @@ spec:
         - name: {{ .Values.secrets.dockerHub  | quote }}
       containers:
         - name: api-staging
-          {{- include "tracardi.image" (dict "ctx" . "repo" .Values.config.image.api.repository "policy" .Values.config.image.api.pullPolicy) | nindent 10 }}
+          {{- include "tracardi.image" (dict "ctx" . "repo" .Values.config.image.api.repository "tag" .Values.config.image.tag "policy" .Values.config.image.api.pullPolicy) | nindent 10 }}
           ports:
             - name: staging-port
               containerPort: 80

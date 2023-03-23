@@ -1,0 +1,90 @@
+{{ if and .Values.secrets.dockerHub .Values.migration.enabled  .Values.migration.license.existingSecret }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-migration-deployment
+  labels:
+    {{- include "tracardi.labels" (dict "ctx" . "component" "api-migration") | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "api-migration") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: api-migration
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "api-migration") | nindent 8 }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.secrets.dockerHub  | quote }}
+      containers:
+        - name: api-migration
+          {{- include "tracardi.image" (dict "ctx" . "repo" .Values.migration.image.api.repository "tag" .Values.migration.image.tag "policy" .Values.migration.image.api.pullPolicy) | nindent 10 }}
+          ports:
+            - name: migration-port
+              containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 60
+          env:
+            {{- include "tracardi.env" (dict "ctx" . "license" .Values.migration.license.existingSecret) | nindent 12 }}
+            - name: EXPOSE_GUI_API
+              value: "yes"
+            - name: PRODUCTION
+              value: "no"
+            - name: LOGGING_LEVEL
+              value: "INFO"
+            - name: API_DOCS
+              value: "yes"
+            - name: SAVE_LOGS
+              value: "yes"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-migration
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "api-migration") | nindent 6 }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.migration.image.api.port }}
+      targetPort: migration-port
+
+{{ if .Values.digitalOcean.loadBalancer }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: do-api-migration-lb
+  {{ if .Values.digitalOcean.certId }}
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
+    service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: {{ .Values.digitalOcean.certId | quote }}
+  {{ end }}
+spec:
+  type: LoadBalancer
+  selector:
+    app: api-migration
+  ports:
+    - name: http
+      protocol: TCP
+      port: {{ .Values.migration.image.api.port }}
+      targetPort: migration-port
+    {{ if .Values.digitalOcean.certId }}
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: migration-port
+    {{ end }}
+
+{{ end }}
+{{ end }}
+
+

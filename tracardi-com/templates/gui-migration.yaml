@@ -10,7 +10,7 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: gui-deployment
+  name: gui-migration-deployment
   labels:
     {{- include "tracardi.labels" (dict "ctx" . "component" "gui") | nindent 4 }}
 spec:
@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
         - name: gui
-          {{- include "tracardi.image" (dict "ctx" . "repo" .Values.config.image.gui.repository "tag" .Values.config.image.tag "policy" .Values.config.image.gui.pullPolicy) | nindent 10 }}
+          {{- include "tracardi.image" (dict "ctx" . "repo" .Values.migration.image.gui.repository "tag" .Values.migration.image.tag "policy" .Values.migration.image.gui.pullPolicy) | nindent 10 }}
           ports:
             - containerPort: 80
               name: gui-port
@@ -41,14 +41,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: gui-svc
+  name: gui-migration-svc
 spec:
   type: ClusterIP
   selector:
     {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "gui") | nindent 6 }}
   ports:
     - protocol: TCP
-      port: {{ .Values.gui.port }}
+      port: {{ .Values.migration.image.gui.port }}
       targetPort: gui-port
 
 {{ if .Values.digitalOcean.loadBalancer }}
@@ -56,13 +56,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: do-gui-staging-lb
-  {{ if .Values.digitalOcean.certId }}
-  annotations:
-    service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
-    service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
-    service.beta.kubernetes.io/do-loadbalancer-certificate-id: {{ .Values.digitalOcean.certId | quote }}
-  {{ end }}
+  name: do-gui-migration-lb
 spec:
   type: LoadBalancer
   selector:
@@ -70,13 +64,7 @@ spec:
   ports:
     - name: http
       protocol: TCP
-      port: {{ .Values.gui.port }}
+      port: {{ .Values.migration.image.gui.port }}
       targetPort: gui-port
-    {{ if .Values.digitalOcean.certId }}
-    - name: https
-      protocol: TCP
-      port: 443
-      targetPort: gui-port
-    {{ end }}
 
 {{ end }}
