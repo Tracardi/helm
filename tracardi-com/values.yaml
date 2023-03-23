@@ -72,7 +72,7 @@ staging:
 migration:
   enabled: false
   image:
-    tag: 0.8.1-dev  # Tag should not be the same for gui and backend
+    tag: 0.8.1-dev  # Tag should not be the same for migration gui and backend
     api:
       repository: tracardi/com-tracardi-api
       pullPolicy: IfNotPresent
