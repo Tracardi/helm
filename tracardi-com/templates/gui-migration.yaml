@@ -12,24 +12,24 @@ kind: Deployment
 metadata:
   name: gui-migration-deployment
   labels:
-    {{- include "tracardi.labels" (dict "ctx" . "component" "gui") | nindent 4 }}
+    {{- include "tracardi.labels" (dict "ctx" . "component" "gui-migration") | nindent 4 }}
 spec:
   replicas: {{ .Values.gui.replicas }}
   selector:
     matchLabels:
-      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "gui") | nindent 6 }}
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "gui-migration") | nindent 6 }}
   template:
     metadata:
       labels:
         app: gui
-        {{- include "tracardi.podLabels" (dict "ctx" . "component" "gui") | nindent 8 }}
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "gui-migration") | nindent 8 }}
     spec:
       containers:
         - name: gui
           {{- include "tracardi.image" (dict "ctx" . "repo" .Values.migration.image.gui.repository "tag" .Values.migration.image.tag "policy" .Values.migration.image.gui.pullPolicy) | nindent 10 }}
           ports:
             - containerPort: 80
-              name: gui-port
+              name: gui-mgr-port
           volumeMounts:
             - name: gui-config-volume
               mountPath: /usr/share/nginx/html/config
@@ -45,11 +45,11 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "gui") | nindent 6 }}
+    {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "gui-migration") | nindent 6 }}
   ports:
     - protocol: TCP
       port: {{ .Values.migration.image.gui.port }}
-      targetPort: gui-port
+      targetPort: gui-mgr-port
 
 {{ if .Values.digitalOcean.loadBalancer }}
 ---
@@ -65,6 +65,6 @@ spec:
     - name: http
       protocol: TCP
       port: {{ .Values.migration.image.gui.port }}
-      targetPort: gui-port
+      targetPort: gui-mgr-port
 
 {{ end }}
