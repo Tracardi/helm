@@ -38,7 +38,8 @@ helm repo update
 Install elasticsearch operator
 
 ```
-helm install elastic-operator elastic/eck-operator -n elastic-system --create-namespace
+kubectl create -f https://download.elastic.co/downloads/eck/2.1.0/crds.yaml
+kubectl apply -f https://download.elastic.co/downloads/eck/2.1.0/operator.yaml
 ```
 
 From k8s folder
