@@ -1,0 +1,50 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: elastic-cluster
+spec:
+  version: 7.17.7
+  nodeSets:
+  - name: master-node
+    count: 1
+    config:
+      node.roles: [ "master" ]
+      node.store.allow_mmap: false
+    volumeClaimTemplates:
+      - metadata:
+          name: elasticsearch-data
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 5Gi
+    podTemplate:
+      spec:
+        initContainers:
+          - name: sysctl
+            securityContext:
+              privileged: true
+              runAsUser: 0
+            command: [ 'sh', '-c', 'sysctl -w vm.max_map_count=262144' ]
+  - name: data-node
+    count: 3
+    config:
+      node.roles: [ "data" ]
+    volumeClaimTemplates:
+      - metadata:
+          name: elasticsearch-data
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 50Gi
+    podTemplate:
+      spec:
+        initContainers:
+          - name: sysctl
+            securityContext:
+              privileged: true
+              runAsUser: 0
+            command: [ 'sh', '-c', 'sysctl -w vm.max_map_count=262144' ]
