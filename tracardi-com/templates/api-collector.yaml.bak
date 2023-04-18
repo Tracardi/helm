@@ -69,7 +69,8 @@ metadata:
 spec:
   type: LoadBalancer
   selector:
-    app: api-collector
+    matchLabels:
+      app: api-collector
   ports:
     - name: http
       protocol: TCP

@@ -1,3 +1,4 @@
+{{ if and .Values.secrets.dockerHub .Values.migration.enabled  .Values.migration.license.existingSecret }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -67,4 +68,5 @@ spec:
       port: {{ .Values.migration.image.gui.port }}
       targetPort: gui-mgr-port
 
+{{ end }}
 {{ end }}

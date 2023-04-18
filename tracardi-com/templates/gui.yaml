@@ -56,7 +56,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: do-gui-staging-lb
+  name: do-gui-lb
   {{ if .Values.digitalOcean.certId }}
   annotations:
     service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
