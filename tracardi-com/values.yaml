@@ -4,7 +4,7 @@ secrets:
 
 config:
   image:
-    tag: 0.8.0  # Tag should be the same for gui and backend
+    tag: 0.8.0.8  # Tag should be the same for gui and backend
     api:
       repository: tracardi/com-tracardi-api
       pullPolicy: IfNotPresent
@@ -90,7 +90,7 @@ migration:
 scheduler:
   image:
     repository: tracardi/com-tracardi-scheduler
-    tag: 0.8.0
+    tag: 0.8.0.8
     pullPolicy: IfNotPresent
   replicas: 1
   config:
@@ -104,7 +104,7 @@ scheduler:
 schedulerWorker:
   image:
     repository: tracardi/com-tracardi-scheduler-worker
-    tag: 0.8.0
+    tag: 0.8.0.8
     pullPolicy: IfNotPresent
   replicas: 1
   config:
@@ -117,7 +117,7 @@ schedulerWorker:
 segmentationJob:
   image:
     repository: tracardi/com-tracardi-segmentation-job
-    tag: 0.8.0
+    tag: 0.8.0.8
     pullPolicy: IfNotPresent
   config:
     production:
@@ -142,7 +142,7 @@ segmentationJob:
 heartbeatJob:
   image:
     repository: tracardi/com-heartbeat-job
-    tag: 0.8.0
+    tag: 0.8.0.8
     pullPolicy: IfNotPresent
 
   config:
@@ -154,30 +154,48 @@ heartbeatJob:
       saveLogs: "no"
       loggingLevel: "WARNING"
       schedules:
+        - name: production-session-close # every 8min get last events and skip first 15 minutes.
+          schedule: "*/8 * * * *"
+          range: "now-1h|now"
+          qualify_by: "not-closed-session"
+          skip_seconds: "900"  # 15 minutes
+          event_type: "session-closed"
         - name: production-heartbeats-1hour # every 35min through 3 hour but not quicker than 2h after now - means at least 1 time
           schedule: "*/35 * * * *"
           range: "now-3h|now"
-          qualify_by: "has_event"
+          qualify_by: "has-event"
+          skip_seconds: "7200"
+          event_type: "heartbeat"
         - name: production-heartbeats-5days  # once a day at 03:30 through 5 days - means 5 times
           schedule: "30 03 * * *"
           range: "now-5d|now"
-          qualify_by: "has_event"
+          qualify_by: "has-event"
+          skip_seconds: "7200"
+          event_type: "heartbeat"
         - name: production-heartbeats-2weeks # once every 5 days at 04:17 through 2 weeks - means 3 times
           schedule: "17 04 */5 * *"
           range: "now-14d|now-5d"
-          qualify_by: "has_event"
+          qualify_by: "has-event"
+          skip_seconds: "7200"
+          event_type: "heartbeat"
         - name: production-heartbeats-3months # once every 20 days at 05:10 through 3 months - means at least 3 times
           schedule: "10 05 */20 * *"
           range: "now-90d|now-14d"
-          qualify_by: "has_event"
+          qualify_by: "has-event"
+          skip_seconds: "7200"
+          event_type: "heartbeat"
         - name: production-heartbeats-6months # once every 1 month at 01:02 through 6 months - means at least 3 times
           schedule: "02 01 1 * *"
           range: "now-180d|now-90d"
-          qualify_by: "has_event"
+          qualify_by: "has-event"
+          skip_seconds: "7200"
+          event_type: "heartbeat"
         - name: production-heartbeats-12months # once every 2 month at 01:32 through 6 months - means at least 3 times
           schedule: "32 01 2 */2 *"
           range: "now-360d|now-180d"
-          qualify_by: "has_event"
+          qualify_by: "has-event"
+          skip_seconds: "7200"
+          event_type: "heartbeat"
 
        # Add ass many as you need
 
@@ -191,7 +209,7 @@ heartbeatJob:
         - name: stage-heartbeats-1hour
           schedule: "*/35 * * * *"
           range: "now-3h|now"
-          qualify_by: "has_event"
+          qualify_by: "has-event"
 
   license:
     existingSecret: ""  # SET-HEARTBEAT-LICENSE. The secret need to have a key field in it
@@ -201,7 +219,7 @@ heartbeatJob:
 segmentationWorker:
   image:
     repository: tracardi/com-tracardi-segmentation-worker
-    tag: 0.8.0
+    tag: 0.8.0.8
     pullPolicy: IfNotPresent
   config:
     saveLogs: "no"
@@ -214,7 +232,7 @@ segmentationWorker:
 updateWorker:
   image:
     repository: tracardi/update-worker
-    tag: 0.8.0
+    tag: 0.8.0.8
     pullPolicy: IfNotPresent
   replicas: 1
   config:
@@ -227,7 +245,7 @@ bridge:
   rest:
     image:
       repository: tracardi/com-bridge-rest
-      tag: 0.8.0
+      tag: 0.8.0.8
       pullPolicy: IfNotPresent
     replicas: 1
     ingress:
@@ -245,7 +263,7 @@ bridge:
   restWorker:
     image:
       repository: tracardi/com-bridge-rest-worker
-      tag: 0.8.0
+      tag: 0.8.0.8
       pullPolicy: IfNotPresent
     replicas: 1
     config:
@@ -255,7 +273,7 @@ bridge:
   queue:
     image:
       repository: tracardi/com-bridge-queue
-      tag: 0.8.0
+      tag: 0.8.0.8
       pullPolicy: IfNotPresent
     replicas: 1
     config:

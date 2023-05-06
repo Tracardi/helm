@@ -73,7 +73,7 @@ spec:
   selector:
     app: api-staging
   ports:
-    - name: http
+    - name: http-{{ .Values.staging.port }}
       protocol: TCP
       port: {{ .Values.staging.port }}
       targetPort: staging-port
