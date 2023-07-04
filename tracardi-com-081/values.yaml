@@ -1,0 +1,311 @@
+secrets:
+  dockerHub: "SET-DOCKERHUB-SECRET"
+  installationToken: "SET-INSTALLATION-SECRET"
+
+config:
+  image:
+    tag: 0.8.1-rc3  # Tag should be the same for gui and backend
+    api:
+      repository: tracardi/com-tracardi-api
+      pullPolicy: IfNotPresent
+    gui:
+      repository: tracardi/tracardi-gui
+      pullPolicy: IfNotPresent
+
+gui:
+  image:
+  port: 8787
+  replicas: 1
+  ingress:
+    enabled: false
+    domain: gui.tracardi.example.com
+    ingressClassName: ""
+    tls:
+      enable: true
+      secretName: ""
+    annotations: {}
+
+# Collector API is the API that should be exposed to the internet. It has limited API only to collecting data.
+# No GUI like operations are available
+
+collector:
+  enabled: false
+  port: 8484
+  replicas: 1
+  ingress:
+    enabled: true
+    domain: track.tracardi.example.com
+    ingressClassName: ""
+    tls:
+      enable: true
+      secretName: ""
+    annotations: {}
+  config:
+    saveLogs: "no"
+    loggingLevel: "WARNING"
+    apiDocs: "no"
+  license:
+    existingSecret: ""  # SET-TRACARDI-LICENSE-SECRET. The secret need to have a key field in it
+
+# Stating API is the API that should not be exposed to the internet. It has the API functions with the access to
+# test data. Access to this server should have people working on the data orchestration.
+
+staging:
+  enabled: true
+  port: 8686
+  replicas: 1
+  ingress:
+    enabled: true
+    domain: staging.tracardi.example.com
+    ingressClassName: ""
+    tls:
+      enable: true
+      secretName: ""
+    annotations: {}
+  config:
+    saveLogs: "yes"
+    loggingLevel: "WARNING"
+    apiDocs: "yes"
+  license:
+    existingSecret: ""  # SET-TRACARDI-LICENSE-SECRET. The secret need to have a key field in it
+
+migration:
+  enabled: false
+  image:
+    tag: 0.8.1  # Tag should not be the same for migration gui and backend
+    api:
+      repository: tracardi/com-tracardi-api
+      pullPolicy: IfNotPresent
+      port: 28686
+    gui:
+      repository: tracardi/tracardi-gui
+      pullPolicy: IfNotPresent
+      port: 28787
+  license:
+    existingSecret: ""  # SET-TRACARDI-LICENSE-SECRET. The secret need to have a key field in it
+
+# Scheduler. It is a service that reschdules ro execution the delayed events. A delayed event happens when the
+# workflow pauses and resumes after some time.
+
+scheduler:
+  image:
+    repository: tracardi/com-tracardi-scheduler
+    tag: 0.8.1-rc3
+    pullPolicy: IfNotPresent
+  replicas: 1
+  config:
+    loggingLevel: "WARNING"
+  license:
+    existingSecret: ""  # SET-SCHEDULER-LICENSE. The secret need to have a key field in it
+
+# Scheduler worker. It is a service that is responsible for execution the delayed events. A delayed event happens when the
+# workflow pauses and resumes after some time.
+
+schedulerWorker:
+  image:
+    repository: tracardi/com-tracardi-scheduler-worker
+    tag: 0.8.1-rc3
+    pullPolicy: IfNotPresent
+  replicas: 1
+  config:
+    loggingLevel: "WARNING"
+  license:
+    existingSecret: ""  # SET-SCHEDULER-LICENSE The secret need to have a key field in it
+
+# Segmentation job is a job that runs periodically and checks if some profiles should be run through a segmentation process.
+
+segmentationJob:
+  image:
+    repository: tracardi/com-tracardi-segmentation-job
+    tag: 0.8.1-rc3
+    pullPolicy: IfNotPresent
+  config:
+    production:
+      successfulJobsHistoryLimit: 2
+      failedJobsHistoryLimit: 2
+      saveLogs: "no"
+      loggingLevel: "WARNING"
+      poolSize: 100
+      saveAfterPools: 40
+      schedule: ""      # example */15 * * * * - means run every 15 minutes
+    staging:
+      successfulJobsHistoryLimit: 2
+      failedJobsHistoryLimit: 2
+      saveLogs: "yes"
+      loggingLevel: "INFO"
+      poolSize: 100
+      saveAfterPools: 40
+      schedule: ""      # example */15 * * * * - means run every 15 minutes
+  license:
+    existingSecret: ""  # SET-SEGMENTATION-LICENSE. The secret need to have a key field in it
+
+heartbeatJob:
+  image:
+    repository: tracardi/com-heartbeat-job
+    tag: 0.8.1-rc3
+    pullPolicy: IfNotPresent
+
+  config:
+
+    production:
+      enable: true
+      successfulJobsHistoryLimit: 2
+      failedJobsHistoryLimit: 2
+      saveLogs: "no"
+      loggingLevel: "WARNING"
+      schedules:
+        - name: production-session-close # every 8min get last events and skip first 15 minutes.
+          schedule: "*/8 * * * *"
+          range: "now-1h|now"
+          qualify_by: "not-closed-session"
+          skip_seconds: "900"  # 15 minutes
+          event_type: "session-closed"
+        - name: production-heartbeats-1hour # every 35min through 3 hour but not quicker than 2h after now - means at least 1 time
+          schedule: "*/35 * * * *"
+          range: "now-3h|now"
+          qualify_by: "has-event"
+          skip_seconds: "7200"
+          event_type: "heartbeat"
+        - name: production-heartbeats-5days  # once a day at 03:30 through 5 days - means 5 times
+          schedule: "30 03 * * *"
+          range: "now-5d|now"
+          qualify_by: "has-event"
+          skip_seconds: "7200"
+          event_type: "heartbeat"
+        - name: production-heartbeats-2weeks # once every 5 days at 04:17 through 2 weeks - means 3 times
+          schedule: "17 04 */5 * *"
+          range: "now-14d|now-5d"
+          qualify_by: "has-event"
+          skip_seconds: "7200"
+          event_type: "heartbeat"
+        - name: production-heartbeats-3months # once every 20 days at 05:10 through 3 months - means at least 3 times
+          schedule: "10 05 */20 * *"
+          range: "now-90d|now-14d"
+          qualify_by: "has-event"
+          skip_seconds: "7200"
+          event_type: "heartbeat"
+        - name: production-heartbeats-6months # once every 1 month at 01:02 through 6 months - means at least 3 times
+          schedule: "02 01 1 * *"
+          range: "now-180d|now-90d"
+          qualify_by: "has-event"
+          skip_seconds: "7200"
+          event_type: "heartbeat"
+        - name: production-heartbeats-12months # once every 2 month at 01:32 through 6 months - means at least 3 times
+          schedule: "32 01 2 */2 *"
+          range: "now-360d|now-180d"
+          qualify_by: "has-event"
+          skip_seconds: "7200"
+          event_type: "heartbeat"
+
+       # Add ass many as you need
+
+    staging:
+      enable: true
+      successfulJobsHistoryLimit: 2
+      failedJobsHistoryLimit: 2
+      saveLogs: "yes"
+      loggingLevel: "INFO"
+      schedules:
+        - name: stage-heartbeats-1hour
+          schedule: "*/35 * * * *"
+          range: "now-3h|now"
+          qualify_by: "has-event"
+
+  license:
+    existingSecret: ""  # SET-HEARTBEAT-LICENSE. The secret need to have a key field in it
+
+# Segmentation worker runs a segmentation process.
+
+segmentationWorker:
+  image:
+    repository: tracardi/com-tracardi-segmentation-worker
+    tag: 0.8.1-rc3
+    pullPolicy: IfNotPresent
+  config:
+    saveLogs: "no"
+    loggingLevel: "WARNING"
+  license:
+    existingSecret: ""  # SET-SEGMENTATION-LICENSE. The secret need to have a key field in it
+
+# Update and Migration. Set of workers responsible for system migration, data import, etc.
+
+updateWorker:
+  image:
+    repository: tracardi/update-worker
+    tag: 0.8.1-rc3
+    pullPolicy: IfNotPresent
+  replicas: 1
+  config:
+    saveLogs: "no"
+    loggingLevel: "WARNING"
+
+# Bridges. Services responsible for collection data from different channels. They bridge the defined transportation protocol to tracardi event source.
+
+bridge:
+  rest:
+    enabled: false
+    image:
+      repository: tracardi/com-bridge-rest
+      tag: 0.8.1-rc3
+      pullPolicy: IfNotPresent
+    replicas: 1
+    ingress:
+      enabled: false
+      domain: async.tracardi.example.com
+      ingressClassName: ""
+      tls:
+        enable: true
+        secretName: ""
+      annotations: {}
+    config:
+      loggingLevel: "WARNING"
+    license:
+      existingSecret: ""  # SET-REST-LICENSE-SECRET
+  restWorker:
+    enabled: false
+    image:
+      repository: tracardi/com-bridge-rest-worker
+      tag: 0.8.1-rc3
+      pullPolicy: IfNotPresent
+    replicas: 1
+    config:
+      loggingLevel: "WARNING"
+    license:
+      existingSecret: ""  # SET-REST-LICENSE-SECRET
+  queue:
+    enabled: false
+    image:
+      repository: tracardi/com-bridge-queue
+      tag: 0.8.1-rc3
+      pullPolicy: IfNotPresent
+    replicas: 1
+    config:
+      loggingLevel: "WARNING"
+    license:
+      existingSecret: ""  # SET-QUEUE-LICENSE-SECRET
+
+# Infrastructure
+
+elastic:
+  host: "elastic-svc"
+  schema: https
+  username: "elastic"
+  existingSecret: "elastic-secret"
+  existingSecretPasswordKey: "elastic"
+  verifyCerts: "no"
+  port: 9200
+
+redis:
+  existingSecret: "redis-secret"
+  existingSecretPasswordKey: "redis-password"
+  schema: "redis://"
+  host: redis-svc
+  port: "6379"
+  db: "0"
+
+
+# Digital ocean
+
+digitalOcean:
+  loadBalancer: false
+  certId: ""  # SET-CERT-ID
