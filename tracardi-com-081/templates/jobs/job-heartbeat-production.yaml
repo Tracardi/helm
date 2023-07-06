@@ -27,7 +27,7 @@ spec:
           imagePullSecrets:
             - name: {{ $root.Values.secrets.dockerHub | quote }}
           containers:
-          - name: production-job-heartbeat
+          - name: job-heartbeat-production
             image: "{{ $root.Values.heartbeatJob.image.repository }}:{{ $root.Values.heartbeatJob.image.tag }}"
             imagePullPolicy: "{{ $root.Values.heartbeatJob.image.pullPolicy }}"
             env:
