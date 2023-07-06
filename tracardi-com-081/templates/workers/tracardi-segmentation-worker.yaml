@@ -2,23 +2,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: com-segmentation-worker
+  name: com-worker-segmentation
   labels:
-    {{- include "tracardi.labels" (dict "ctx" . "component" "com-segmentation-worker") | nindent 4 }}
+    {{- include "tracardi.labels" (dict "ctx" . "component" "com-worker-segmentation") | nindent 4 }}
 spec:
   replicas: {{ .Values.segmentationWorker.replicas }}
   selector:
     matchLabels:
-      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "com-segmentation-worker") | nindent 6 }}
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "com-worker-segmentation") | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "tracardi.podLabels" (dict "ctx" . "component" "com-segmentation-worker") | nindent 8 }}
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "com-worker-segmentation") | nindent 8 }}
     spec:
       imagePullSecrets:
         - name: {{ .Values.secrets.dockerHub | quote }}
       containers:
-      - name: com-segmentation-worker
+      - name: com-worker-segmentation
         image: "{{ .Values.segmentationWorker.image.repository }}:{{ .Values.segmentationWorker.image.tag }}"
         imagePullPolicy: {{ .Values.segmentationWorker.image.pullPolicy }}
         env:

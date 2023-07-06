@@ -5,18 +5,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: com-scheduler-worker
+  name: com-worker-scheduler
   labels:
-    {{- include "tracardi.labels" (dict "ctx" . "component" "com-scheduler-worker") | nindent 4 }}
+    {{- include "tracardi.labels" (dict "ctx" . "component" "com-worker-scheduler") | nindent 4 }}
 spec:
   replicas: {{ .Values.schedulerWorker.replicas }}
   selector:
     matchLabels:
-      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "com-scheduler-worker") | nindent 6 }}
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "com-worker-scheduler") | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "tracardi.podLabels" (dict "ctx" . "component" "com-scheduler-worker") | nindent 8 }}
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "com-worker-scheduler") | nindent 8 }}
     spec:
       imagePullSecrets:
         - name: {{ .Values.secrets.dockerHub | quote }}
@@ -29,6 +29,6 @@ spec:
           - name: LOGGING_LEVEL
             value: {{ .Values.schedulerWorker.config.loggingLevel | quote }}
           - name: PRODUCTION
-            value: "yes"
+            value: "no"
 
 {{ end }}

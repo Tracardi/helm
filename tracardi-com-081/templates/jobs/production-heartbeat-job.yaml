@@ -40,6 +40,10 @@ spec:
                 value: {{ $s.range | quote }}
               - name: QUALIFY_BY
                 value: {{ $s.qualify_by | quote }}
+              - name: SKIP_SECONDS
+                value: {{ $s.skip_seconds | quote }}
+              - name: EVENT_TYPE
+                value: {{ $s.event_type | quote }}
           restartPolicy: OnFailure
 
 ---

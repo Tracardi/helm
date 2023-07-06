@@ -1,0 +1,30 @@
+{{ if and .Values.secrets.dockerHub .Values.copingWorker.license.existingSecret }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: com-worker-coping
+  labels:
+    {{- include "tracardi.labels" (dict "ctx" . "component" "com-worker-coping") | nindent 4 }}
+spec:
+  replicas: {{ .Values.copingWorker.replicas }}
+  selector:
+    matchLabels:
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "com-worker-coping") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "com-worker-coping") | nindent 8 }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.secrets.dockerHub | quote }}
+      containers:
+      - name: com-worker-coping
+        image: "{{ .Values.copingWorker.image.repository }}:{{ .Values.copingWorker.image.tag }}"
+        imagePullPolicy: {{ .Values.copingWorker.image.pullPolicy }}
+        env:
+          {{- include "tracardi.env" (dict "ctx" . "license" .Values.copingWorker.license.existingSecret) | nindent 10 }}
+          - name: LOGGING_LEVEL
+            value: {{ .Values.copingWorker.config.loggingLevel | quote }}
+          - name: PRODUCTION
+            value: "no"
+{{ end }}

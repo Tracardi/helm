@@ -84,20 +84,6 @@ migration:
   license:
     existingSecret: ""  # SET-TRACARDI-LICENSE-SECRET. The secret need to have a key field in it
 
-# Scheduler worker. It is a service that is responsible for execution the delayed events. A delayed event happens when the
-# workflow pauses and resumes after some time.
-
-schedulerWorker:
-  image:
-    repository: tracardi/com-tracardi-scheduler-worker
-    tag: 0.8.1-rc3
-    pullPolicy: IfNotPresent
-  replicas: 1
-  config:
-    loggingLevel: "WARNING"
-  license:
-    existingSecret: ""  # SET-SCHEDULER-LICENSE The secret need to have a key field in it
-
 # Segmentation job is a job that runs periodically and checks if some profiles should be run through a segmentation process.
 
 segmentationJob:
@@ -149,7 +135,7 @@ heartbeatJob:
         - name: production-session-close # every 15min get last events and skip first 30 minutes.
           schedule: "*/15 * * * *"
           range: "now-1h|now"
-          qualify_by: "not-closed-session"
+          qualify_by: "session-not-closed"
           skip_seconds: "1800"  # 30 minutes
           event_type: "session-closed"
         - name: production-inactive-profile # every 8min get last events and skip first 15 minutes.
@@ -171,18 +157,44 @@ heartbeatJob:
         - name: staging-session-close # every 10min get last events and skip first 10 minutes.
           schedule: "*/15 * * * *"
           range: "now-1h|now"
-          qualify_by: "not-closed-session"
+          qualify_by: "session-not-closed"
           skip_seconds: "600"  # 10 minutes
           event_type: "session-closed"
 
   license:
     existingSecret: ""  # SET-HEARTBEAT-LICENSE. The secret need to have a key field in it
 
+
+# Scheduler worker. It is a service that is responsible for execution the delayed events. A delayed event happens when the
+# workflow pauses and resumes after some time.
+
+schedulerWorker:
+  image:
+    repository: tracardi/com-tracardi-scheduler-worker
+    tag: 0.8.1-rc3
+    pullPolicy: IfNotPresent
+  replicas: 1
+  config:
+    loggingLevel: "WARNING"
+  license:
+    existingSecret: ""  # SET-SCHEDULER-LICENSE The secret need to have a key field in it
+
 # Segmentation worker runs a segmentation process.
 
 segmentationWorker:
   image:
     repository: tracardi/com-tracardi-segmentation-worker
+    tag: 0.8.1-rc3
+    pullPolicy: IfNotPresent
+  config:
+    saveLogs: "no"
+    loggingLevel: "WARNING"
+  license:
+    existingSecret: ""  # SET-SEGMENTATION-LICENSE. The secret need to have a key field in it
+
+copingWorker:
+  image:
+    repository: tracardi/com-tracardi-coping-worker
     tag: 0.8.1-rc3
     pullPolicy: IfNotPresent
   config:
