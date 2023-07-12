@@ -218,36 +218,6 @@ updateWorker:
 # Bridges. Services responsible for collection data from different channels. They bridge the defined transportation protocol to tracardi event source.
 
 bridge:
-  rest:
-    enabled: false
-    image:
-      repository: tracardi/com-bridge-rest
-      tag: 0.8.1-rc3
-      pullPolicy: IfNotPresent
-    replicas: 1
-    ingress:
-      enabled: false
-      domain: async.tracardi.example.com
-      ingressClassName: ""
-      tls:
-        enable: true
-        secretName: ""
-      annotations: {}
-    config:
-      loggingLevel: "WARNING"
-    license:
-      existingSecret: ""  # SET-REST-LICENSE-SECRET
-  restWorker:
-    enabled: false
-    image:
-      repository: tracardi/com-bridge-rest-worker
-      tag: 0.8.1-rc3
-      pullPolicy: IfNotPresent
-    replicas: 1
-    config:
-      loggingLevel: "WARNING"
-    license:
-      existingSecret: ""  # SET-REST-LICENSE-SECRET
   queue:
     enabled: false
     image:
