@@ -81,31 +81,4 @@ spec:
             port:
               number: {{ .Values.gui.port }}
 {{ end }}
----
-{{ if .Values.bridge.rest.ingress.enabled }}
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: bridge-rest-ingress
-  annotations:
-      {{ toYaml .Values.bridge.rest.ingress.annotations }}
-spec:
-  {{ if .Values.bridge.rest.ingress.tls -}}
-  tls:
-  - secretName: {{ .Values.bridge.rest.ingress.tls.secretName }}
-  {{ end }}
-  {{- with .Values.bridge.rest.ingressClassName -}}
-  ingressClassName: {{ . }}
-  {{- end -}}
-  rules:
-  - host: {{ .Values.bridge.rest.ingress.domain }}
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: bridge-rest
-            port:
-              number: 10000
-{{ end }}
+
