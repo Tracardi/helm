@@ -42,12 +42,12 @@ spec:
               value: {{ .Values.staging.config.apiDocs | quote}}
             - name: SAVE_LOGS
               value: {{ .Values.staging.config.saveLogs | quote }}
-            {{ if and .Values.secrets.maxmind_license_key .Values.secrets.maxmind_account_id }}
+{{ if and .Values.secrets.maxmind_license_key .Values.secrets.maxmind_account_id }}
             - name: MAXMIND_LICENSE_KEY
-              value: {{ .Values.secrets.maxmind_license_key }}
+              value: {{ .Values.secrets.maxmind_license_key | quote}}
             - name: MAXMIND_ACCOUNT_ID
-              value: {{ .Values.secrets.maxmind_account_id }}
-            {{end}}
+              value: {{ .Values.secrets.maxmind_account_id | quote }}
+{{end}}
 ---
 apiVersion: v1
 kind: Service
