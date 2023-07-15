@@ -128,13 +128,13 @@ heartbeatJob:
       schedules:
         - name: production-session-inactive # every 8min get last events and skip first 15 minutes.
           schedule: "*/8 * * * *"
-          range: "now-1h|now"
+          range: "now-1y|now"
           qualify_by: "inactive-session"
           skip_seconds: "900"  # 15 minutes
           event_type: "session-inactive"
         - name: production-session-close # every 15min get last events and skip first 30 minutes.
           schedule: "*/15 * * * *"
-          range: "now-1h|now"
+          range: "now-1y|now"
           qualify_by: "session-not-closed"
           skip_seconds: "1800"  # 30 minutes
           event_type: "session-closed"
