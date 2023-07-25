@@ -19,6 +19,7 @@ spec:
           resources:
             requests:
               storage: 5Gi
+              cpu: 8
     podTemplate:
       spec:
         initContainers:
@@ -40,6 +41,7 @@ spec:
           resources:
             requests:
               storage: 50Gi
+              cpu: 8
     podTemplate:
       spec:
         initContainers:

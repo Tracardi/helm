@@ -3,6 +3,9 @@ secrets:
   installationToken: "SET-INSTALLATION-SECRET"
 
 config:
+  multiTenant:
+    multi: "yes"
+    tms_url: http://tms-svc
   image:
     tag: 0.8.1-rc3  # Tag should be the same for gui and backend
     api:
@@ -11,9 +14,11 @@ config:
     gui:
       repository: tracardi/tracardi-gui
       pullPolicy: IfNotPresent
+    tms:
+      repository: tracardi/tms
+      pullPolicy: Always
 
 gui:
-  image:
   port: 8787
   replicas: 1
   ingress:
@@ -24,6 +29,14 @@ gui:
       enable: true
       secretName: ""
     annotations: {}
+
+tms:
+  port: 8383
+  replicas: 1
+  config:
+    loggingLevel: "WARNING"
+    secret: "xxx"
+    apiKey: "zzz"
 
 # Collector API is the API that should be exposed to the internet. It has limited API only to collecting data.
 # No GUI like operations are available
@@ -134,7 +147,7 @@ heartbeatJob:
           event_type: "session-inactive"
         - name: production-session-close # every 15min get last events and skip first 30 minutes.
           schedule: "*/15 * * * *"
-          range: "now-1y|now"
+          range: "now-1d|now"
           qualify_by: "session-not-closed"
           skip_seconds: "1800"  # 30 minutes
           event_type: "session-closed"
