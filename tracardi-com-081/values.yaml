@@ -4,8 +4,8 @@ secrets:
 
 config:
   multiTenant:
-    multi: "yes"
-    tms_url: http://tms-svc
+    multi: "no"
+    tms_service: tms-svc  # The name of tms service
   image:
     tag: 0.8.1-rc3  # Tag should be the same for gui and backend
     api:
@@ -16,7 +16,7 @@ config:
       pullPolicy: IfNotPresent
     tms:
       repository: tracardi/tms
-      pullPolicy: Always
+      pullPolicy: IfNotPresent
 
 gui:
   port: 8787
@@ -35,8 +35,8 @@ tms:
   replicas: 1
   config:
     loggingLevel: "WARNING"
-    secret: "xxx"
-    apiKey: "zzz"
+    secret: "d2ff923f-e81b-4af6-83bc-7450c128f082"
+    apiKey: "86705331-8594-4224-871d-26f543eccaba"
 
 # Collector API is the API that should be exposed to the internet. It has limited API only to collecting data.
 # No GUI like operations are available

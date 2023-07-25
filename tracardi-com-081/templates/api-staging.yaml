@@ -24,12 +24,14 @@ spec:
           ports:
             - name: staging-port
               containerPort: 80
+{{ if not .Values.config.multiTenant }}
           livenessProbe:
             httpGet:
               path: /healthcheck
               port: 80
             initialDelaySeconds: 30
             periodSeconds: 60
+{{ end }}
           env:
             {{- include "tracardi.env" (dict "ctx" . "license" .Values.staging.license.existingSecret) | nindent 12 }}
             - name: EXPOSE_GUI_API
@@ -52,7 +54,7 @@ spec:
             - name: MULTI_TENANT
               value: {{ .Values.config.multiTenant.multi | quote }}
             - name: MULTI_TENANT_MANAGER_URL
-              value: {{ .Values.config.multiTenant.tms_url | quote }}
+              value: http://{{ .Values.config.multiTenant.tms_service}}:{{ .Values.tms.port }}
             - name: MULTI_TENANT_MANAGER_API_KEY
               value: {{ .Values.tms.config.apiKey | quote }}
 {{end}}
