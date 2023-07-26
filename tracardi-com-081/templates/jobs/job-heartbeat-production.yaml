@@ -36,14 +36,42 @@ spec:
                 value: {{ $root.Values.heartbeatJob.config.production.loggingLevel | quote }}
               - name: PRODUCTION
                 value: "yes"
+{{ if $s.range }}
               - name: RANGE
                 value: {{ $s.range | quote }}
+{{ end }}
+{{ if $s.qualify_by }}
               - name: QUALIFY_BY
                 value: {{ $s.qualify_by | quote }}
+{{ end }}
+{{ if $s.skip_seconds }}
               - name: SKIP_SECONDS
                 value: {{ $s.skip_seconds | quote }}
-              - name: EVENT_TYPE
-                value: {{ $s.event_type | quote }}
+{{ end }}
+{{ if $s.no_events_within_last }}
+              - name: NO_EVENTS_WITHIN_LAST
+                value: {{ $s.no_events_within_last | quote }}
+{{ end }}
+{{ if $s.open_event_type }}
+              - name: OPEN_EVENT_TYPE
+                value: {{ $s.open_event_type | quote }}
+{{ end }}
+{{ if $s.close_event_type }}
+              - name: CLOSE_EVENT_TYPE
+                value: {{ $s.close_event_type | quote }}
+{{ end }}
+{{ if $s.ephemeral }}
+              - name: EPHEMERAL
+                value: {{ $s.ephemeral | quote }}
+{{ end }}
+{{ if $root.Values.config.multiTenant }}
+              - name: MULTI_TENANT
+                value: {{ $root.Values.config.multiTenant.multi | quote }}
+              - name: MULTI_TENANT_MANAGER_URL
+                value: http://{{ $root.Values.config.multiTenant.tms_service}}:{{ $root.Values.tms.port }}
+              - name: MULTI_TENANT_MANAGER_API_KEY
+                value: {{ $root.Values.tms.config.apiKey | quote }}
+{{end}}
           restartPolicy: OnFailure
 
 ---

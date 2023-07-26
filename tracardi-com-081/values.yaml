@@ -99,31 +99,6 @@ migration:
 
 # Segmentation job is a job that runs periodically and checks if some profiles should be run through a segmentation process.
 
-segmentationJob:
-  image:
-    repository: tracardi/com-tracardi-segmentation-job
-    tag: 0.8.1-rc3
-    pullPolicy: IfNotPresent
-  config:
-    production:
-      successfulJobsHistoryLimit: 2
-      failedJobsHistoryLimit: 2
-      saveLogs: "no"
-      loggingLevel: "WARNING"
-      poolSize: 100
-      saveAfterPools: 40
-      schedule: ""      # example */15 * * * * - means run every 15 minutes
-    staging:
-      successfulJobsHistoryLimit: 2
-      failedJobsHistoryLimit: 2
-      saveLogs: "yes"
-      loggingLevel: "INFO"
-      poolSize: 100
-      saveAfterPools: 40
-      schedule: ""      # example */15 * * * * - means run every 15 minutes
-  license:
-    existingSecret: ""  # SET-SEGMENTATION-LICENSE. The secret need to have a key field in it
-
 heartbeatJob:
   image:
     repository: tracardi/com-heartbeat-job
@@ -139,24 +114,19 @@ heartbeatJob:
       saveLogs: "no"
       loggingLevel: "WARNING"
       schedules:
-        - name: production-session-inactive # every 8min get last events and skip first 15 minutes.
-          schedule: "*/8 * * * *"
-          range: "now-1y|now"
-          qualify_by: "inactive-session"
-          skip_seconds: "900"  # 15 minutes
-          event_type: "session-inactive"
-        - name: production-session-close # every 15min get last events and skip first 30 minutes.
-          schedule: "*/15 * * * *"
-          range: "now-1d|now"
-          qualify_by: "session-not-closed"
+        - name: profile-segmentation # every 30min get last events and skip first 15 minutes.
+          schedule: "*/30 * * * *"
+          range: "now-1M|now"
+          qualify_by: "profile-segmentation"
+          no_events_within_last: "20m"
+        - name: visit-end # every 20min get last events and skip first 30 minutes.
+          schedule: "*/20 * * * *"
+          range: "now-1M|now"
+          qualify_by: "visit-end"
           skip_seconds: "1800"  # 30 minutes
-          event_type: "session-closed"
-        - name: production-inactive-profile # every 8min get last events and skip first 15 minutes.
-          schedule: "13 4 1 * *"
-          range: "now-1y|now"
-          qualify_by: "inactive-profile"
-          skip_seconds: "15548736"  # 6 months
-          event_type: "profile-inactive"
+          open_event_type: "visit-started"
+          close_event_type: "visit-ended"
+          ephemeral: "no"
 
        # Add ass many as you need
 
@@ -167,12 +137,19 @@ heartbeatJob:
       saveLogs: "yes"
       loggingLevel: "INFO"
       schedules:
-        - name: staging-session-close # every 10min get last events and skip first 10 minutes.
-          schedule: "*/15 * * * *"
-          range: "now-1h|now"
-          qualify_by: "session-not-closed"
-          skip_seconds: "600"  # 10 minutes
-          event_type: "session-closed"
+        - name: profile-segmentation # every 30min get last events and skip first 15 minutes.
+          schedule: "*/30 * * * *"
+          range: "now-1M|now"
+          qualify_by: "profile-segmentation"
+          no_events_within_last: "20m"
+        - name: visit-end # every 20min get last events and skip first 30 minutes.
+          schedule: "*/20 * * * *"
+          range: "now-1M|now"
+          qualify_by: "visit-end"
+          skip_seconds: "1800"  # 30 minutes
+          open_event_type: "visit-started"
+          close_event_type: "visit-ended"
+          ephemeral: "no"
 
   license:
     existingSecret: ""  # SET-HEARTBEAT-LICENSE. The secret need to have a key field in it
