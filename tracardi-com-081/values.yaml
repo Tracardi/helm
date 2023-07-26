@@ -114,12 +114,12 @@ heartbeatJob:
       saveLogs: "no"
       loggingLevel: "WARNING"
       schedules:
-        - name: profile-segmentation # every 30min get last events and skip first 20 minutes.
+        - name: profile-segmentation # every 30min get last events of last month and skip first 20 minutes.
           schedule: "*/30 * * * *"
           range: "now-1M|now"
           qualify_by: "profile-segmentation"
           no_events_within_last: "20m"
-        - name: visit-end # every 20min get last events and skip first 15 minutes.
+        - name: visit-end # every 20min get last events of last month and skip first 15 minutes.
           schedule: "*/20 * * * *"
           range: "now-1M|now"
           qualify_by: "visit-end"
@@ -128,7 +128,7 @@ heartbeatJob:
           close_event_type: "visit-ended"
           ephemeral: "no"
 
-       # Add ass many as you need
+       # Add as many as you need
 
     staging:
       enable: true
@@ -137,13 +137,13 @@ heartbeatJob:
       saveLogs: "yes"
       loggingLevel: "INFO"
       schedules:
-        - name: profile-segmentation # every 30min get last events and skip first 20 minutes.
-          schedule: "*/30 * * * *"
+        - name: profile-segmentation # every 15min get last events of last month and skip first 20 minutes.
+          schedule: "*/15 * * * *"
           range: "now-1M|now"
           qualify_by: "profile-segmentation"
           no_events_within_last: "20m"
-        - name: visit-end # every 20min get last events and skip first 15 minutes.
-          schedule: "*/20 * * * *"
+        - name: visit-end # every 5min get last events of last month and skip first 15 minutes.
+          schedule: "*/5 * * * *"
           range: "now-1M|now"
           qualify_by: "visit-end"
           skip_seconds: "900"  # 15 minutes
