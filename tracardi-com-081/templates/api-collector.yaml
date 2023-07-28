@@ -24,12 +24,14 @@ spec:
           ports:
             - name: coll-port
               containerPort: 80
+{{ if not .Values.config.multiTenant }}
           livenessProbe:
             httpGet:
               path: /healthcheck
               port: 80
             initialDelaySeconds: 30
             periodSeconds: 60
+{{ end }}
           env:
             {{- include "tracardi.env" (dict "ctx" . "license" .Values.collector.license.existingSecret) | nindent 12 }}
             - name: EXPOSE_GUI_API
