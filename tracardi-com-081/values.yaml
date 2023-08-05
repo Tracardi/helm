@@ -57,6 +57,9 @@ collector:
     saveLogs: "no"
     loggingLevel: "WARNING"
     apiDocs: "no"
+    disableWorkflow: "no"
+    disableEventDestinations: "no"
+    disableProfileDestinations: "no"
   license:
     existingSecret: ""  # SET-TRACARDI-LICENSE-SECRET. The secret need to have a key field in it
 
@@ -79,6 +82,9 @@ staging:
     saveLogs: "yes"
     loggingLevel: "WARNING"
     apiDocs: "yes"
+    disableWorkflow: "no"
+    disableEventDestinations: "no"
+    disableProfileDestinations: "no"
   license:
     existingSecret: ""  # SET-TRACARDI-LICENSE-SECRET. The secret need to have a key field in it
 
