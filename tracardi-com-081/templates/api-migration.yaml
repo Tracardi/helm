@@ -21,6 +21,12 @@ spec:
       containers:
         - name: api-migration
           {{- include "tracardi.image" (dict "ctx" . "repo" .Values.migration.image.api.repository "tag" .Values.migration.image.tag "policy" .Values.migration.image.api.pullPolicy) | nindent 10 }}
+          resources:
+            limits:
+              memory: 150Mi
+              cpu: 1
+            requests:
+              memory: 100Mi
           ports:
             - name: migration-port
               containerPort: 80
