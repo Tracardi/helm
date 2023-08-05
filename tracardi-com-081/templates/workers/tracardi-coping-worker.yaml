@@ -21,6 +21,13 @@ spec:
       - name: com-worker-coping
         image: "{{ .Values.copingWorker.image.repository }}:{{ .Values.copingWorker.image.tag }}"
         imagePullPolicy: {{ .Values.copingWorker.image.pullPolicy }}
+        resources:
+          limits:
+            memory: 100Mi
+            cpu: 500m
+          requests:
+            memory: 80Mi
+            cpu: 300m
         env:
           {{- include "tracardi.env" (dict "ctx" . "license" .Values.copingWorker.license.existingSecret) | nindent 10 }}
           - name: LOGGING_LEVEL

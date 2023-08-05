@@ -28,6 +28,13 @@ spec:
       containers:
         - name: gui
           {{- include "tracardi.image" (dict "ctx" . "repo" .Values.migration.image.gui.repository "tag" .Values.migration.image.tag "policy" .Values.migration.image.gui.pullPolicy) | nindent 10 }}
+          resources:
+            limits:
+              memory: 50Mi
+              cpu: 500m
+            requests:
+              memory: 20Mi
+              cpu: 300m
           ports:
             - containerPort: 80
               name: gui-mgr-port

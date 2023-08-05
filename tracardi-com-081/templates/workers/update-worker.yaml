@@ -18,6 +18,13 @@ spec:
         - name: update-worker
           image: "{{ .Values.updateWorker.image.repository }}:{{ .Values.updateWorker.image.tag }}"
           imagePullPolicy: {{ .Values.updateWorker.image.pullPolicy }}
+          resources:
+            limits:
+              memory: 100Mi
+              cpu: 500m
+            requests:
+              memory: 80Mi
+              cpu: 300m
           env:
             {{- include "tracardi.env" (dict "ctx" .) | nindent 12 }}
             - name: LOGGING_LEVEL

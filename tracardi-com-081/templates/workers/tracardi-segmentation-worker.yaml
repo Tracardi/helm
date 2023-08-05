@@ -21,6 +21,13 @@ spec:
       - name: com-worker-segmentation
         image: "{{ .Values.segmentationWorker.image.repository }}:{{ .Values.segmentationWorker.image.tag }}"
         imagePullPolicy: {{ .Values.segmentationWorker.image.pullPolicy }}
+        resources:
+          limits:
+            memory: 100Mi
+            cpu: 500m
+          requests:
+            memory: 80Mi
+            cpu: 300m
         env:
           {{- include "tracardi.env" (dict "ctx" . "license" .Values.segmentationWorker.license.existingSecret) | nindent 10 }}
           - name: LOGGING_LEVEL

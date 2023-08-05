@@ -30,6 +30,13 @@ spec:
           - name: job-heartbeat-staging
             image: "{{ $root.Values.heartbeatJob.image.repository }}:{{ $root.Values.heartbeatJob.image.tag }}"
             imagePullPolicy: "{{ $root.Values.heartbeatJob.image.pullPolicy }}"
+            resources:
+              limits:
+                memory: 100Mi
+                cpu: 500m
+              requests:
+                memory: 80Mi
+                cpu: 300m
             env:
               {{- include "tracardi.env" (dict "ctx" $root) | nindent 14 }}
               - name: LOGGING_LEVEL

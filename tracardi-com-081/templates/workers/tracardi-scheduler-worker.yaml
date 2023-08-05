@@ -24,6 +24,13 @@ spec:
       - name: com-tracardi-scheduler
         image: "{{ .Values.schedulerWorker.image.repository }}:{{ .Values.schedulerWorker.image.tag }}"
         imagePullPolicy: {{ .Values.schedulerWorker.image.pullPolicy }}
+        resources:
+          limits:
+            memory: 100Mi
+            cpu: 500m
+          requests:
+            memory: 80Mi
+            cpu: 300m
         env:
           {{- include "tracardi.env" (dict "ctx" . "license" .Values.schedulerWorker.license.existingSecret) | nindent 10 }}
           - name: LOGGING_LEVEL
