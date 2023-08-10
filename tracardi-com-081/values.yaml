@@ -57,9 +57,9 @@ collector:
     saveLogs: "no"
     loggingLevel: "WARNING"
     apiDocs: "no"
-    disableWorkflow: "no"
-    disableEventDestinations: "no"
-    disableProfileDestinations: "no"
+    enableWorkflow: "yes"
+    enableEventDestinations: "yes"
+    enableProfileDestinations: "yes"
   license:
     existingSecret: ""  # SET-TRACARDI-LICENSE-SECRET. The secret need to have a key field in it
 
@@ -82,9 +82,9 @@ staging:
     saveLogs: "yes"
     loggingLevel: "WARNING"
     apiDocs: "yes"
-    disableWorkflow: "no"
-    disableEventDestinations: "no"
-    disableProfileDestinations: "no"
+    enableWorkflow: "yes"
+    enableEventDestinations: "yes"
+    enableProfileDestinations: "yes"
   license:
     existingSecret: ""  # SET-TRACARDI-LICENSE-SECRET. The secret need to have a key field in it
 
@@ -167,6 +167,17 @@ heartbeatJob:
 schedulerWorker:
   image:
     repository: tracardi/com-tracardi-scheduler-worker
+    tag: 0.8.1-rc3
+    pullPolicy: IfNotPresent
+  replicas: 1
+  config:
+    loggingLevel: "WARNING"
+  license:
+    existingSecret: ""  # SET-SCHEDULER-LICENSE The secret need to have a key field in it
+
+triggerWorker:
+  image:
+    repository: tracardi/com-tracardi-trigger-worker
     tag: 0.8.1-rc3
     pullPolicy: IfNotPresent
   replicas: 1
