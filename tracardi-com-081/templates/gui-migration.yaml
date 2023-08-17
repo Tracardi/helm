@@ -1,4 +1,4 @@
-{{ if and .Values.secrets.dockerHub .Values.migration.enabled  .Values.migration.license.existingSecret }}
+{{ if and .Values.secrets.dockerHub .Values.migration.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:

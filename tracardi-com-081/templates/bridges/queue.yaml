@@ -1,4 +1,4 @@
-{{ if and .Values.secrets.dockerHub .Values.bridge.queue.license.existingSecret .Values.bridge.queue.enabled}}
+{{ if and .Values.secrets.dockerHub .Values.bridge.queue.enabled}}
 #
 # This is the deployment for commercial Queues Bridge
 # This bridge includes:
@@ -37,7 +37,7 @@ spec:
             memory: 80Mi
             cpu: 300m
         env:
-          {{- include "tracardi.env" (dict "ctx" . "license" .Values.bridge.queue.license.existingSecret) | nindent 10 }}
+          {{- include "tracardi.env" (dict "ctx" .) | nindent 10 }}
           - name: LOGGING_LEVEL
             value: {{ .Values.bridge.queue.config.loggingLevel | quote }}
           - name: PRODUCTION

@@ -1,4 +1,4 @@
-{{ if and .Values.secrets.dockerHub .Values.triggerWorker.license.existingSecret}}
+{{ if and .Values.secrets.dockerHub .Values.triggerWorker.enabled }}
 #
 # This is the deployment for scheduler worker. It is responsible for delayed events
 #
@@ -32,7 +32,7 @@ spec:
             memory: 80Mi
             cpu: 300m
         env:
-          {{- include "tracardi.env" (dict "ctx" . "license" .Values.triggerWorker.license.existingSecret) | nindent 10 }}
+          {{- include "tracardi.env" (dict "ctx" .) | nindent 10 }}
           - name: LOGGING_LEVEL
             value: {{ .Values.triggerWorker.config.loggingLevel | quote }}
           - name: PRODUCTION

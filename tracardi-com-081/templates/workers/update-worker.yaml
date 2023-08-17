@@ -1,3 +1,4 @@
+{{ if and .Values.updateWorker.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -29,3 +30,4 @@ spec:
             {{- include "tracardi.env" (dict "ctx" .) | nindent 12 }}
             - name: LOGGING_LEVEL
               value: {{ .Values.updateWorker.config.loggingLevel | quote }}
+{{ end }}

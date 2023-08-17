@@ -1,4 +1,4 @@
-{{ if and .Values.secrets.dockerHub .Values.staging.enabled  .Values.staging.license.existingSecret }}
+{{ if and .Values.secrets.dockerHub .Values.staging.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -24,10 +24,10 @@ spec:
           resources:
             limits:
               memory: 150Mi
-              cpu: 1
+              cpu: 600m
             requests:
               memory: 100Mi
-              cpu: 500m
+              cpu: 400m
           ports:
             - name: staging-port
               containerPort: 80
@@ -40,7 +40,7 @@ spec:
             periodSeconds: 60
 {{ end }}
           env:
-            {{- include "tracardi.env" (dict "ctx" . "license" .Values.staging.license.existingSecret) | nindent 12 }}
+            {{- include "tracardi.env" (dict "ctx" .) | nindent 12 }}
             - name: EXPOSE_GUI_API
               value: "yes"
             - name: PRODUCTION

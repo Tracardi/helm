@@ -1,4 +1,4 @@
-{{ if and .Values.secrets.dockerHub .Values.copingWorker.license.existingSecret }}
+{{ if and .Values.secrets.dockerHub .Values.copingWorker.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -29,7 +29,7 @@ spec:
             memory: 80Mi
             cpu: 300m
         env:
-          {{- include "tracardi.env" (dict "ctx" . "license" .Values.copingWorker.license.existingSecret) | nindent 10 }}
+          {{- include "tracardi.env" (dict "ctx" .) | nindent 10 }}
           - name: LOGGING_LEVEL
             value: {{ .Values.copingWorker.config.loggingLevel | quote }}
           - name: PRODUCTION

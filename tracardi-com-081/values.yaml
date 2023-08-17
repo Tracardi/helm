@@ -1,6 +1,10 @@
 secrets:
-  dockerHub: "SET-DOCKERHUB-SECRET"
+  dockerHub: "tracardi-dockerhub"
   installationToken: "SET-INSTALLATION-SECRET"
+  license:
+    secretName: "tracardi-license"
+    secretKey: "license-key"
+
 
 config:
   multiTenant:
@@ -60,8 +64,6 @@ collector:
     enableWorkflow: "yes"
     enableEventDestinations: "yes"
     enableProfileDestinations: "yes"
-  license:
-    existingSecret: ""  # SET-TRACARDI-LICENSE-SECRET. The secret need to have a key field in it
 
 # Stating API is the API that should not be exposed to the internet. It has the API functions with the access to
 # test data. Access to this server should have people working on the data orchestration.
@@ -85,8 +87,6 @@ staging:
     enableWorkflow: "yes"
     enableEventDestinations: "yes"
     enableProfileDestinations: "yes"
-  license:
-    existingSecret: ""  # SET-TRACARDI-LICENSE-SECRET. The secret need to have a key field in it
 
 migration:
   enabled: false
@@ -100,8 +100,6 @@ migration:
       repository: tracardi/tracardi-gui
       pullPolicy: IfNotPresent
       port: 28787
-  license:
-    existingSecret: ""  # SET-TRACARDI-LICENSE-SECRET. The secret need to have a key field in it
 
 # Segmentation job is a job that runs periodically and checks if some profiles should be run through a segmentation process.
 
@@ -157,14 +155,12 @@ heartbeatJob:
           close_event_type: "visit-ended"
           ephemeral: "no"
 
-  license:
-    existingSecret: ""  # SET-HEARTBEAT-LICENSE. The secret need to have a key field in it
-
 
 # Scheduler worker. It is a service that is responsible for execution the delayed events. A delayed event happens when the
 # workflow pauses and resumes after some time.
 
 schedulerWorker:
+  enabled: true
   image:
     repository: tracardi/com-tracardi-scheduler-worker
     tag: 0.8.1-rc3
@@ -172,10 +168,9 @@ schedulerWorker:
   replicas: 1
   config:
     loggingLevel: "WARNING"
-  license:
-    existingSecret: ""  # SET-SCHEDULER-LICENSE The secret need to have a key field in it
 
 triggerWorker:
+  enabled: true
   image:
     repository: tracardi/com-tracardi-trigger-worker
     tag: 0.8.1-rc3
@@ -183,12 +178,11 @@ triggerWorker:
   replicas: 1
   config:
     loggingLevel: "WARNING"
-  license:
-    existingSecret: ""  # SET-SCHEDULER-LICENSE The secret need to have a key field in it
 
 # Segmentation worker runs a segmentation process.
 
 segmentationWorker:
+  enabled: true
   image:
     repository: tracardi/com-tracardi-segmentation-worker
     tag: 0.8.1-rc3
@@ -196,10 +190,9 @@ segmentationWorker:
   config:
     saveLogs: "no"
     loggingLevel: "WARNING"
-  license:
-    existingSecret: ""  # SET-SEGMENTATION-LICENSE. The secret need to have a key field in it
 
 copingWorker:
+  enabled: true
   image:
     repository: tracardi/com-tracardi-coping-worker
     tag: 0.8.1-rc3
@@ -207,12 +200,11 @@ copingWorker:
   config:
     saveLogs: "no"
     loggingLevel: "WARNING"
-  license:
-    existingSecret: ""  # SET-SEGMENTATION-LICENSE. The secret need to have a key field in it
 
 # Update and Migration. Set of workers responsible for system migration, data import, etc.
 
 updateWorker:
+  enabled: true
   image:
     repository: tracardi/update-worker
     tag: 0.8.1-rc3
@@ -234,8 +226,6 @@ bridge:
     replicas: 1
     config:
       loggingLevel: "WARNING"
-    license:
-      existingSecret: ""  # SET-QUEUE-LICENSE-SECRET
 
 # Infrastructure
 

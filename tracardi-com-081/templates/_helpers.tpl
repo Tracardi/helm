@@ -112,10 +112,11 @@ Params:
   license = name of secret containing the license
 */}}
 {{- define "tracardi.env" -}}
-{{- if .license }}
 - name: LICENSE
-  value: {{ .license }}
-{{- end }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ .ctx.Values.secrets.license.secretName }}
+      key: {{ .ctx.Values.secrets.license.secretKey }}
 - name: ELASTIC_SCHEME
   value: {{ .ctx.Values.elastic.schema | quote }}
 - name: ELASTIC_HOST
