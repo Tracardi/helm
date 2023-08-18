@@ -61,7 +61,10 @@ spec:
             - name: MULTI_TENANT_MANAGER_URL
               value: http://{{ .Values.config.multiTenant.tms_service}}:{{ .Values.tms.port }}
             - name: MULTI_TENANT_MANAGER_API_KEY
-              value: {{ .Values.tms.config.apiKey | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.tms.secretName }}
+                  key: {{ .Values.secrets.tms.apiKey.secretKey }}
 {{end}}
             - name: ENABLE_EVENT_DESTINATIONS
               value: {{ .Values.collector.config.enableEventDestinations | quote }}

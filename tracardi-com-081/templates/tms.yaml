@@ -1,3 +1,4 @@
+{{ if and .Values.tms.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -27,9 +28,15 @@ spec:
             - name: LOGGING_LEVEL
               value: {{ .Values.tms.config.loggingLevel | quote }}
             - name: SECRET
-              value: {{ .Values.tms.config.secret | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.tms.secretName }}
+                  key: {{ .Values.secrets.tms.secret.secretKey }}
             - name: API_KEY
-              value: {{ .Values.tms.config.apiKey | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.tms.secretName }}
+                  key: {{ .Values.secrets.tms.apiKey.secretKey }}
 ---
 apiVersion: v1
 kind: Service
@@ -72,4 +79,5 @@ spec:
       targetPort: tms-port
     {{ end }}
 
+{{ end }}
 {{ end }}

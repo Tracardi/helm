@@ -77,7 +77,10 @@ spec:
               - name: MULTI_TENANT_MANAGER_URL
                 value: http://{{ $root.Values.config.multiTenant.tms_service}}:{{ $root.Values.tms.port }}
               - name: MULTI_TENANT_MANAGER_API_KEY
-                value: {{ $root.Values.tms.config.apiKey | quote }}
+                valueFrom:
+                  secretKeyRef:
+                    name: {{ $root.Values.secrets.tms.secretName }}
+                    key: {{ $root.Values.secrets.tms.apiKey.secretKey }}
 {{end}}
           restartPolicy: OnFailure
 
