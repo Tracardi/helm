@@ -23,7 +23,7 @@ spec:
           {{- include "tracardi.image" (dict "ctx" . "repo" .Values.migration.image.api.repository "tag" .Values.migration.image.tag "policy" .Values.migration.image.api.pullPolicy) | nindent 10 }}
           resources:
             limits:
-              memory: 150Mi
+              memory: 250Mi
               cpu: 600m
             requests:
               memory: 100Mi
