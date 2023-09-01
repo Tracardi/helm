@@ -24,9 +24,9 @@ spec:
           resources:
             limits:
               memory: 250Mi
-              cpu: 600m
+              cpu: 1200m
             requests:
-              memory: 100Mi
+              memory: 150Mi
               cpu: 400m
           ports:
             - name: staging-port
@@ -69,11 +69,17 @@ spec:
                   key: {{ .Values.secrets.tms.apiKey.secretKey }}
 {{end}}
             - name: ENABLE_EVENT_DESTINATIONS
-              value: {{ .Values.collector.config.enableEventDestinations | quote }}
+              value: {{ .Values.staging.config.enableEventDestinations | quote }}
             - name: ENABLE_PROFILE_DESTINATIONS
-              value: {{ .Values.collector.config.enableProfileDestinations | quote }}
+              value: {{ .Values.staging.config.enableProfileDestinations | quote }}
             - name: ENABLE_WORKFLOW
-              value: {{ .Values.collector.config.enableWorkflow | quote }}
+              value: {{ .Values.staging.config.enableWorkflow | quote }}
+            - name: ENABLE_IDENTIFICATION_POINT
+              value: {{ .Values.staging.config.enableIdentification | quote }}
+            - name: ENABLE_POST_EVENT_SEGMENTATION
+              value: {{ .Values.staging.config.enablePostEventSegmentation | quote }}
+            - name: ENABLE_PROFILE_IMMEDIATE_FLUSH
+              value: {{ .Values.staging.config.enableProfileFlush | quote }}
 ---
 apiVersion: v1
 kind: Service
