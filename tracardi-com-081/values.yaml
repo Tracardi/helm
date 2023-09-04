@@ -76,6 +76,7 @@ collector:
     enableIdentification: "yes"
     enablePostEventSegmentation: "yes"
     enableProfileFlush: "yes"
+    elasticSavePool: 0
 
 # Stating API is the API that should not be exposed to the internet. It has the API functions with the access to
 # test data. Access to this server should have people working on the data orchestration.

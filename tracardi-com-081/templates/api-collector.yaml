@@ -72,6 +72,14 @@ spec:
               value: {{ .Values.collector.config.enableProfileDestinations | quote }}
             - name: ENABLE_WORKFLOW
               value: {{ .Values.collector.config.enableWorkflow | quote }}
+            - name: ENABLE_IDENTIFICATION_POINT
+              value: {{ .Values.staging.config.enableIdentification | quote }}
+            - name: ENABLE_POST_EVENT_SEGMENTATION
+              value: {{ .Values.staging.config.enablePostEventSegmentation | quote }}
+            - name: ENABLE_PROFILE_IMMEDIATE_FLUSH
+              value: {{ .Values.staging.config.enableProfileFlush | quote }}
+            - name: ELASTIC_SAVE_POOL
+              value: {{ .Values.staging.config.elasticSavePool | quote }}
 ---
 apiVersion: v1
 kind: Service
