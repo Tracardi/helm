@@ -1,0 +1,39 @@
+{{ if and .Values.sessionStorage.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: session-storage
+  labels:
+    {{- include "tracardi.labels" (dict "ctx" . "component" "session-storage") | nindent 4 }}
+spec:
+  replicas: {{ .Values.sessionStorage.replicas }}
+  selector:
+    matchLabels:
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "session-storage") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "session-storage") | nindent 8 }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.secrets.dockerHub | quote }}
+      containers:
+        - name: session-storage
+          image: "{{ .Values.sessionStorage.image.repository }}:{{ .Values.sessionStorage.image.tag }}"
+          imagePullPolicy: {{ .Values.sessionStorage.image.pullPolicy }}
+          resources:
+            limits:
+              memory: 100Mi
+              cpu: 100m
+            requests:
+              memory: 50Mi
+              cpu: 50m
+          env:
+            {{- include "tracardi.env" (dict "ctx" .) | nindent 12 }}
+            - name: LOGGING_LEVEL
+              value: {{ .Values.sessionStorage.config.loggingLevel | quote }}
+            - name: CONSUMER_TYPE
+              value: "session"
+            - name: PULSAR_COLLECTOR_POOL
+              value: "500"
+{{ end }}

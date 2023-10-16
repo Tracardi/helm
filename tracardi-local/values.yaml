@@ -1,6 +1,0 @@
-collector:
-  port: 8585
-staging:
-  port: 8686
-gui:
-  port: 8787

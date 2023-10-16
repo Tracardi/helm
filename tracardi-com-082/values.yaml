@@ -82,6 +82,73 @@ staging:
     enablePostEventSegmentation: "yes"
     enableProfileFlush: "yes"
 
+# Flusher workers
+
+profileFlusher:
+  enabled: true
+  image:
+    repository: tracardi/com-tracardi-flusher-worker
+    tag: 0.8.2-rc1
+    pullPolicy: IfNotPresent
+  replicas: 1
+  config:
+    loggingLevel: "WARNING"
+
+sessionFlusher:
+  enabled: true
+  image:
+    repository: tracardi/com-tracardi-flusher-worker
+    tag: 0.8.2-rc1
+    pullPolicy: IfNotPresent
+  replicas: 1
+  config:
+    loggingLevel: "WARNING"
+
+# Storage workers
+
+profileStorage:
+  enabled: true
+  image:
+    repository: tracardi/com-tracardi-storage-worker
+    tag: 0.8.2-rc1
+    pullPolicy: IfNotPresent
+  replicas: 1
+  config:
+    loggingLevel: "WARNING"
+
+eventStorage:
+  enabled: true
+  image:
+    repository: tracardi/com-tracardi-storage-worker
+    tag: 0.8.2-rc1
+    pullPolicy: IfNotPresent
+  replicas: 1
+  config:
+    loggingLevel: "WARNING"
+
+sessionStorage:
+  enabled: true
+  image:
+    repository: tracardi/com-tracardi-storage-worker
+    tag: 0.8.2-rc1
+    pullPolicy: IfNotPresent
+  replicas: 1
+  config:
+    loggingLevel: "WARNING"
+
+# Visit-end worker
+
+visitEnd:
+  enabled: false
+  image:
+    repository: tracardi/com-tracardi-visit-end-worker
+    tag: 0.8.2-rc1
+    pullPolicy: IfNotPresent
+  replicas: 1
+  config:
+    loggingLevel: "WARNING"
+
+
 # Segmentation job is a job that runs periodically and checks if some profiles should be run through a segmentation process.
 
 heartbeatJob:
@@ -185,7 +252,7 @@ copingWorker:
 # Update and Migration. Set of workers responsible for system migration, data import, etc.
 
 updateWorker:
-  enabled: false
+  enabled: true
   image:
     repository: tracardi/update-worker
     tag: 0.8.2-rc1
@@ -211,7 +278,7 @@ bridge:
 # Infrastructure
 
 elastic:
-  host: elastic-std-svc
+  host: elastic-std-svc.elastic-standalone.svc.cluster.local
   schema: http
   username: "elastic"
   existingSecret: "elastic-secret"
@@ -221,16 +288,16 @@ elastic:
   verifyCerts: "no"
 
 redis:
-  host: redis-svc
+  host: redis-std-svc.redis-standalone.svc.cluster.local
   schema: "redis://"
   existingSecret: "redis-secret"
   existingSecretPasswordKey: "redis-password"
-  authenticate: true
+  authenticate: false
   port: 6379
   db: "0"
 
 pulsar:
-  host: pulsar-std-svc
+  host: pulsar-std-svc.pulsar-standalone.svc.cluster.local
   schema: "pulsar://"
   existingSecret: "pulsar-secret"
   existingSecretPasswordKey: "pulsar-token"

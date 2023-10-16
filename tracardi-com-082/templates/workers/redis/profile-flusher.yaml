@@ -1,0 +1,37 @@
+{{ if and .Values.profileFlusher.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: profile-flusher
+  labels:
+    {{- include "tracardi.labels" (dict "ctx" . "component" "profile-flusher") | nindent 4 }}
+spec:
+  replicas: {{ .Values.profileFlusher.replicas }}
+  selector:
+    matchLabels:
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "profile-flusher") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "profile-flusher") | nindent 8 }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.secrets.dockerHub | quote }}
+      containers:
+        - name: profile-flusher
+          image: "{{ .Values.profileFlusher.image.repository }}:{{ .Values.profileFlusher.image.tag }}"
+          imagePullPolicy: {{ .Values.profileFlusher.image.pullPolicy }}
+          resources:
+            limits:
+              memory: 50Mi
+              cpu: 100m
+            requests:
+              memory: 30Mi
+              cpu: 50m
+          env:
+            {{- include "tracardi.env" (dict "ctx" .) | nindent 12 }}
+            - name: LOGGING_LEVEL
+              value: {{ .Values.profileFlusher.config.loggingLevel | quote }}
+            - name: CONSUMER_TYPE
+              value: "profile"
+{{ end }}
