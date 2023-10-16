@@ -211,11 +211,12 @@ bridge:
 # Infrastructure
 
 elastic:
-  host: elastic-svc
-  schema: https
+  host: elastic-std-svc
+  schema: http
   username: "elastic"
   existingSecret: "elastic-secret"
   existingSecretPasswordKey: "elastic"
+  authenticate: false
   port: 9200
   verifyCerts: "no"
 
@@ -224,6 +225,7 @@ redis:
   schema: "redis://"
   existingSecret: "redis-secret"
   existingSecretPasswordKey: "redis-password"
+  authenticate: true
   port: 6379
   db: "0"
 

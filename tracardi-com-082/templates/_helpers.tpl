@@ -121,6 +121,7 @@ Params:
   value: {{ .ctx.Values.elastic.schema | quote }}
 - name: ELASTIC_HOST
   value: {{ .ctx.Values.elastic.host }}
+{{ if .ctx.Values.elastic.authenticate }}
 - name: ELASTIC_HTTP_AUTH_USERNAME
   value: {{ .ctx.Values.elastic.username }}
 - name: ELASTIC_HTTP_AUTH_PASSWORD
@@ -128,6 +129,7 @@ Params:
     secretKeyRef:
       name: {{ .ctx.Values.elastic.existingSecret }}
       key: {{ .ctx.Values.elastic.existingSecretPasswordKey }}
+{{ end }}
 - name: ELASTIC_PORT
   value: {{ .ctx.Values.elastic.port | quote }}
 - name: ELASTIC_VERIFY_CERTS
@@ -136,11 +138,13 @@ Params:
   value: "120"
 - name: REDIS_HOST
   value: {{ .ctx.Values.redis.schema }}{{ .ctx.Values.redis.host }}
+{{ if .ctx.Values.redis.authenticate }}
 - name: REDIS_PASSWORD
   valueFrom:
     secretKeyRef:
       name: {{ .ctx.Values.redis.existingSecret }}
       key: {{ .ctx.Values.redis.existingSecretPasswordKey }}
+{{ end }}
 - name: PULSAR_HOST
   value: {{ .ctx.Values.pulsar.schema }}{{ .ctx.Values.pulsar.host }}
 {{ if .ctx.Values.pulsar.authenticate }}

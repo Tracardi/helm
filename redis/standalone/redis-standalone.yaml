@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-standalone-deployment
+  labels:
+    app: redis-standalone
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-standalone
+  template:
+    metadata:
+      labels:
+        app: redis-standalone
+        tier: backend
+    spec:
+      containers:
+        - name: redis-standalone
+          image: redis
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: redis-6379
+              containerPort: 6379
+          resources:
+            limits:
+              memory: 1Gi
+              cpu: 1000m
+            requests:
+              memory: 512Mi
+              cpu: 400m
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-std-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: redis-standalone
+  ports:
+    - name: redis-6379
+      protocol: TCP
+      port: 6379
+      targetPort: redis-6379
