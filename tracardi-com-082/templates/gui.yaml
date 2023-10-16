@@ -75,7 +75,7 @@ spec:
   selector:
     app: gui
   ports:
-    - name: http-{{ .Values.migration.image.gui.port }}
+    - name: http-{{ .Values.gui.port }}
       protocol: TCP
       port: {{ .Values.gui.port }}
       targetPort: gui-port

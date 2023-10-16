@@ -81,7 +81,7 @@ spec:
             - name: ENABLE_PROFILE_IMMEDIATE_FLUSH
               value: {{ .Values.staging.config.enableProfileFlush | quote }}
             - name: ASYNC_PROCESSING
-              value: { { .Values.staging.config.asyncProcessing | quote } }
+              value: {{ .Values.staging.config.asyncProcessing | quote }}
 ---
 apiVersion: v1
 kind: Service

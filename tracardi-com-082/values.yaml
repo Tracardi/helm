@@ -35,14 +35,6 @@ config:
 gui:
   port: 8787
   replicas: 1
-  ingress:
-    enabled: false
-    domain: gui.tracardi.example.com
-    ingressClassName: ""
-    tls:
-      enable: true
-      secretName: ""
-    annotations: {}
 
 tms:
   enabled: true
@@ -55,17 +47,9 @@ tms:
 # No GUI like operations are available
 
 collector:
-  enabled: true
+  enabled: false
   port: 8484
   replicas: 1
-  ingress:
-    enabled: true
-    domain: track.tracardi.example.com
-    ingressClassName: ""
-    tls:
-      enable: true
-      secretName: ""
-    annotations: {}
   config:
     saveLogs: "no"
     loggingLevel: "WARNING"
@@ -86,14 +70,6 @@ staging:
   enabled: true
   port: 8686
   replicas: 1
-  ingress:
-    enabled: true
-    domain: staging.tracardi.example.com
-    ingressClassName: ""
-    tls:
-      enable: true
-      secretName: ""
-    annotations: {}
   config:
     saveLogs: "yes"
     loggingLevel: "WARNING"
@@ -117,7 +93,7 @@ heartbeatJob:
   config:
 
     production:
-      enable: true
+      enable: false
       successfulJobsHistoryLimit: 2
       failedJobsHistoryLimit: 2
       saveLogs: "no"
@@ -140,7 +116,7 @@ heartbeatJob:
        # Add as many as you need
 
     staging:
-      enable: true
+      enable: false
       successfulJobsHistoryLimit: 2
       failedJobsHistoryLimit: 2
       saveLogs: "yes"
@@ -165,7 +141,7 @@ heartbeatJob:
 # workflow pauses and resumes after some time.
 
 schedulerWorker:
-  enabled: true
+  enabled: false
   image:
     repository: tracardi/com-tracardi-scheduler-worker
     tag: 0.8.2-rc1
@@ -175,7 +151,7 @@ schedulerWorker:
     loggingLevel: "WARNING"
 
 triggerWorker:
-  enabled: true
+  enabled: false
   image:
     repository: tracardi/com-tracardi-trigger-worker
     tag: 0.8.2-rc1
@@ -187,7 +163,7 @@ triggerWorker:
 # Segmentation worker runs a segmentation process.
 
 segmentationWorker:
-  enabled: true
+  enabled: false
   image:
     repository: tracardi/com-tracardi-segmentation-worker
     tag: 0.8.2-rc1
@@ -197,7 +173,7 @@ segmentationWorker:
     loggingLevel: "WARNING"
 
 copingWorker:
-  enabled: true
+  enabled: false
   image:
     repository: tracardi/com-tracardi-coping-worker
     tag: 0.8.2-rc1
@@ -209,7 +185,7 @@ copingWorker:
 # Update and Migration. Set of workers responsible for system migration, data import, etc.
 
 updateWorker:
-  enabled: true
+  enabled: false
   image:
     repository: tracardi/update-worker
     tag: 0.8.2-rc1
@@ -252,10 +228,11 @@ redis:
   db: "0"
 
 pulsar:
-  host: pulsar-svc
+  host: pulsar-std-svc
   schema: "pulsar://"
   existingSecret: "pulsar-secret"
   existingSecretPasswordKey: "pulsar-token"
+  authenticate: false
   port: 6650
 
 # Digital ocean

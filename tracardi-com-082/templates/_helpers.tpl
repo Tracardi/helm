@@ -143,11 +143,13 @@ Params:
       key: {{ .ctx.Values.redis.existingSecretPasswordKey }}
 - name: PULSAR_HOST
   value: {{ .ctx.Values.pulsar.schema }}{{ .ctx.Values.pulsar.host }}
+{{ if .ctx.Values.pulsar.authenticate }}
 - name: PULSAR_AUTH_TOKEN
   valueFrom:
     secretKeyRef:
       name: {{ .ctx.Values.pulsar.existingSecret }}
       key: {{ .ctx.Values.pulsar.existingSecretPasswordKey }}
+{{ end }}
 - name: SOURCE_CACHE_TTL
   value: "2"
 - name: SESSION_CACHE_TTL
