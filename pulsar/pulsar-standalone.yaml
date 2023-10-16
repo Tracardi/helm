@@ -23,7 +23,7 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - name: pulsar-port
-              containerPort: 6655
+              containerPort: 6650
             - name: http-port
               containerPort: 8080
 ---
@@ -58,7 +58,7 @@ spec:
   ports:
     - name: pulsar-port
       protocol: TCP
-      port: 6655
+      port: 6650
       targetPort: pulsar-port
     - name: http-port
       protocol: TCP
