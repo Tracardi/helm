@@ -1,0 +1,41 @@
+{{ if and .Values.secrets.dockerHub .Values.triggerWorker.enabled }}
+#
+# This is the deployment for scheduler worker. It is responsible for delayed events
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: com-worker-trigger
+  labels:
+    {{- include "tracardi.labels" (dict "ctx" . "component" "com-worker-trigger") | nindent 4 }}
+spec:
+  replicas: {{ .Values.triggerWorker.replicas }}
+  selector:
+    matchLabels:
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "com-worker-trigger") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "com-worker-trigger") | nindent 8 }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.secrets.dockerHub | quote }}
+      containers:
+      - name: com-tracardi-scheduler
+        image: "{{ .Values.triggerWorker.image.repository }}:{{ .Values.triggerWorker.image.tag }}"
+        imagePullPolicy: {{ .Values.triggerWorker.image.pullPolicy }}
+        resources:
+          limits:
+            memory: 100Mi
+            cpu: 500m
+          requests:
+            memory: 80Mi
+            cpu: 300m
+        env:
+          {{- include "tracardi.env" (dict "ctx" .) | nindent 10 }}
+          - name: LOGGING_LEVEL
+            value: {{ .Values.triggerWorker.config.loggingLevel | quote }}
+          - name: PRODUCTION
+            value: "no"
+
+{{ end }}

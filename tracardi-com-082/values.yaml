@@ -1,0 +1,265 @@
+# Definition of defined secrets.
+
+secrets:
+  installationToken: "SET-INSTALLATION-SECRET"
+  dockerHub: "tracardi-dockerhub"
+  license:
+    secretName: "tracardi-license"
+    secretKey: "license-key"
+  tms:
+    secretName: "tms"
+    secret:
+      secretKey: "secret"
+    apiKey:
+      secretKey: "api-key"
+
+
+# General Tracardi configuration. Version, images, multi-tenancy, etc.
+
+config:
+  multiTenant:
+    multi: "no"
+    tms_service: tms-svc  # The name of tms service
+  image:
+    tag: 0.8.2-rc1  # Tag should be the same for gui and backend
+    api:
+      repository: tracardi/com-tracardi-api
+      pullPolicy: IfNotPresent
+    gui:
+      repository: tracardi/tracardi-gui
+      pullPolicy: IfNotPresent
+    tms:
+      repository: tracardi/tms
+      pullPolicy: IfNotPresent
+
+gui:
+  port: 8787
+  replicas: 1
+  ingress:
+    enabled: false
+    domain: gui.tracardi.example.com
+    ingressClassName: ""
+    tls:
+      enable: true
+      secretName: ""
+    annotations: {}
+
+tms:
+  enabled: true
+  port: 8383
+  replicas: 1
+  config:
+    loggingLevel: "WARNING"
+
+# Collector API is the API that should be exposed to the internet. It has limited API only to collecting data.
+# No GUI like operations are available
+
+collector:
+  enabled: true
+  port: 8484
+  replicas: 1
+  ingress:
+    enabled: true
+    domain: track.tracardi.example.com
+    ingressClassName: ""
+    tls:
+      enable: true
+      secretName: ""
+    annotations: {}
+  config:
+    saveLogs: "no"
+    loggingLevel: "WARNING"
+    apiDocs: "no"
+    asyncProcessing: "yes"
+    enableWorkflow: "yes"
+    enableEventDestinations: "yes"
+    enableProfileDestinations: "yes"
+    enableIdentification: "yes"
+    enablePostEventSegmentation: "yes"
+    enableProfileFlush: "yes"
+    elasticSavePool: 0
+
+# Stating API is the API that should not be exposed to the internet. It has the API functions with the access to
+# test data. Access to this server should have people working on the data orchestration.
+
+staging:
+  enabled: true
+  port: 8686
+  replicas: 1
+  ingress:
+    enabled: true
+    domain: staging.tracardi.example.com
+    ingressClassName: ""
+    tls:
+      enable: true
+      secretName: ""
+    annotations: {}
+  config:
+    saveLogs: "yes"
+    loggingLevel: "WARNING"
+    apiDocs: "yes"
+    asyncProcessing: "yes"
+    enableWorkflow: "yes"
+    enableEventDestinations: "no"
+    enableProfileDestinations: "no"
+    enableIdentification: "yes"
+    enablePostEventSegmentation: "yes"
+    enableProfileFlush: "yes"
+
+# Segmentation job is a job that runs periodically and checks if some profiles should be run through a segmentation process.
+
+heartbeatJob:
+  image:
+    repository: tracardi/com-heartbeat-job
+    tag: 0.8.2-rc1
+    pullPolicy: IfNotPresent
+
+  config:
+
+    production:
+      enable: true
+      successfulJobsHistoryLimit: 2
+      failedJobsHistoryLimit: 2
+      saveLogs: "no"
+      loggingLevel: "WARNING"
+      schedules:
+        - name: prod-profile-segmentation # every 30min get last events of last month and skip first 20 minutes.
+          schedule: "*/30 * * * *"
+          range: "now-1M|now"
+          qualify_by: "profile-segmentation"
+          no_events_within_last: "20m"
+        - name: prod-visit-end # every 20min get last events of last month and skip first 15 minutes.
+          schedule: "*/20 * * * *"
+          range: "now-1M|now"
+          qualify_by: "visit-end"
+          skip_seconds: "900"  # 15 minutes
+          open_event_type: "visit-started"
+          close_event_type: "visit-ended"
+          ephemeral: "no"
+
+       # Add as many as you need
+
+    staging:
+      enable: true
+      successfulJobsHistoryLimit: 2
+      failedJobsHistoryLimit: 2
+      saveLogs: "yes"
+      loggingLevel: "INFO"
+      schedules:
+        - name: test-profile-segmentation # every 15min get last events of last month and skip first 20 minutes.
+          schedule: "*/15 * * * *"
+          range: "now-1M|now"
+          qualify_by: "profile-segmentation"
+          no_events_within_last: "20m"
+        - name: test-visit-end # every 5min get last events of last month and skip first 15 minutes.
+          schedule: "*/5 * * * *"
+          range: "now-1M|now"
+          qualify_by: "visit-end"
+          skip_seconds: "900"  # 15 minutes
+          open_event_type: "visit-started"
+          close_event_type: "visit-ended"
+          ephemeral: "no"
+
+
+# Scheduler worker. It is a service that is responsible for execution the delayed events. A delayed event happens when the
+# workflow pauses and resumes after some time.
+
+schedulerWorker:
+  enabled: true
+  image:
+    repository: tracardi/com-tracardi-scheduler-worker
+    tag: 0.8.2-rc1
+    pullPolicy: IfNotPresent
+  replicas: 1
+  config:
+    loggingLevel: "WARNING"
+
+triggerWorker:
+  enabled: true
+  image:
+    repository: tracardi/com-tracardi-trigger-worker
+    tag: 0.8.2-rc1
+    pullPolicy: IfNotPresent
+  replicas: 1
+  config:
+    loggingLevel: "WARNING"
+
+# Segmentation worker runs a segmentation process.
+
+segmentationWorker:
+  enabled: true
+  image:
+    repository: tracardi/com-tracardi-segmentation-worker
+    tag: 0.8.2-rc1
+    pullPolicy: IfNotPresent
+  config:
+    saveLogs: "no"
+    loggingLevel: "WARNING"
+
+copingWorker:
+  enabled: true
+  image:
+    repository: tracardi/com-tracardi-coping-worker
+    tag: 0.8.2-rc1
+    pullPolicy: IfNotPresent
+  config:
+    saveLogs: "no"
+    loggingLevel: "WARNING"
+
+# Update and Migration. Set of workers responsible for system migration, data import, etc.
+
+updateWorker:
+  enabled: true
+  image:
+    repository: tracardi/update-worker
+    tag: 0.8.2-rc1
+    pullPolicy: IfNotPresent
+  replicas: 1
+  config:
+    saveLogs: "no"
+    loggingLevel: "WARNING"
+
+# Bridges. Services responsible for collection data from different channels. They bridge the defined transportation protocol to tracardi event source.
+
+bridge:
+  queue:
+    enabled: false
+    image:
+      repository: tracardi/com-bridge-queue
+      tag: 0.8.2-rc1
+      pullPolicy: IfNotPresent
+    replicas: 1
+    config:
+      loggingLevel: "WARNING"
+
+# Infrastructure
+
+elastic:
+  host: elastic-svc
+  schema: https
+  username: "elastic"
+  existingSecret: "elastic-secret"
+  existingSecretPasswordKey: "elastic"
+  port: 9200
+  verifyCerts: "no"
+
+redis:
+  host: redis-svc
+  schema: "redis://"
+  existingSecret: "redis-secret"
+  existingSecretPasswordKey: "redis-password"
+  port: 6379
+  db: "0"
+
+pulsar:
+  host: pulsar-svc
+  schema: "pulsar://"
+  existingSecret: "pulsar-secret"
+  existingSecretPasswordKey: "pulsar-token"
+  port: 6650
+
+# Digital ocean
+
+digitalOcean:
+  loadBalancer: false
+  certId: ""  # SET-CERT-ID

@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gui-config
+data:
+  custom.js: |
+    export const custom = {}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gui-deployment
+  labels:
+    {{- include "tracardi.labels" (dict "ctx" . "component" "gui") | nindent 4 }}
+spec:
+  replicas: {{ .Values.gui.replicas }}
+  selector:
+    matchLabels:
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "gui") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: gui
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "gui") | nindent 8 }}
+    spec:
+      containers:
+        - name: gui
+          {{- include "tracardi.image" (dict "ctx" . "repo" .Values.config.image.gui.repository "tag" .Values.config.image.tag "policy" .Values.config.image.gui.pullPolicy) | nindent 10 }}
+          resources:
+            limits:
+              memory: 50Mi
+              cpu: 500m
+            requests:
+              memory: 20Mi
+              cpu: 300m
+          ports:
+            - containerPort: 80
+              name: gui-port
+          volumeMounts:
+            - name: gui-config-volume
+              mountPath: /usr/share/nginx/html/config
+      volumes:
+        - name: gui-config-volume
+          configMap:
+            name: gui-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gui-svc
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "gui") | nindent 6 }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.gui.port }}
+      targetPort: gui-port
+
+{{ if .Values.digitalOcean.loadBalancer }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: do-gui-lb
+  {{ if .Values.digitalOcean.certId }}
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
+    service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: {{ .Values.digitalOcean.certId | quote }}
+  {{ end }}
+spec:
+  type: LoadBalancer
+  selector:
+    app: gui
+  ports:
+    - name: http-{{ .Values.migration.image.gui.port }}
+      protocol: TCP
+      port: {{ .Values.gui.port }}
+      targetPort: gui-port
+    {{ if .Values.digitalOcean.certId }}
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: gui-port
+    {{ end }}
+
+{{ end }}

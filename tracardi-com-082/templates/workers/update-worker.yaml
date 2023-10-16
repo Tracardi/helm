@@ -1,0 +1,33 @@
+{{ if and .Values.updateWorker.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: update-worker
+  labels:
+    {{- include "tracardi.labels" (dict "ctx" . "component" "update-worker") | nindent 4 }}
+spec:
+  replicas: {{ .Values.updateWorker.replicas }}
+  selector:
+    matchLabels:
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "update-worker") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "update-worker") | nindent 8 }}
+    spec:
+      containers:
+        - name: update-worker
+          image: "{{ .Values.updateWorker.image.repository }}:{{ .Values.updateWorker.image.tag }}"
+          imagePullPolicy: {{ .Values.updateWorker.image.pullPolicy }}
+          resources:
+            limits:
+              memory: 100Mi
+              cpu: 500m
+            requests:
+              memory: 80Mi
+              cpu: 300m
+          env:
+            {{- include "tracardi.env" (dict "ctx" .) | nindent 12 }}
+            - name: LOGGING_LEVEL
+              value: {{ .Values.updateWorker.config.loggingLevel | quote }}
+{{ end }}
