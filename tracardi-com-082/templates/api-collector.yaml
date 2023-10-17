@@ -55,17 +55,6 @@ spec:
             - name: MAXMIND_ACCOUNT_ID
               value: {{ .Values.secrets.maxmind.accountId | quote }}
 {{end}}
-{{ if .Values.config.multiTenant }}
-            - name: MULTI_TENANT
-              value: {{ .Values.config.multiTenant.multi | quote }}
-            - name: MULTI_TENANT_MANAGER_URL
-              value: http://{{ .Values.config.multiTenant.tms_service}}:{{ .Values.tms.port }}
-            - name: MULTI_TENANT_MANAGER_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: "tms"
-                  key: 'api-key'
-{{end}}
             - name: ENABLE_EVENT_DESTINATIONS
               value: {{ .Values.collector.config.enableEventDestinations | quote }}
             - name: ENABLE_PROFILE_DESTINATIONS
