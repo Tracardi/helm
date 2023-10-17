@@ -157,17 +157,17 @@ Params:
       name: "pulsar-secret"
       key: "pulsar-token"
 {{ end }}
-{{ if .Values.config.multiTenant }}
- - name: MULTI_TENANT
-   value: {{ .Values.config.multiTenant.multi | quote }}
- - name: MULTI_TENANT_MANAGER_URL
-   value: http://{{ .Values.config.multiTenant.tms_service}}:{{ .Values.tms.port }}
- - name: MULTI_TENANT_MANAGER_API_KEY
-   valueFrom:
-     secretKeyRef:
-       name: "tms"
-       key: 'api-key'
-{{end}}
+{{ if .ctx.Values.config.multiTenant }}
+- name: MULTI_TENANT
+  value: {{ .ctx.Values.config.multiTenant.multi | quote }}
+- name: MULTI_TENANT_MANAGER_URL
+  value: http://{{ .ctx.Values.config.multiTenant.tms_service}}:{{ .ctx.Values.tms.port }}
+- name: MULTI_TENANT_MANAGER_API_KEY
+  valueFrom:
+    secretKeyRef:
+      name: "tms"
+      key: "api-key"
+{{ end }}
 - name: SOURCE_CACHE_TTL
   value: "2"
 - name: SESSION_CACHE_TTL
