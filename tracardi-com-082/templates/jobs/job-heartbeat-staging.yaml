@@ -79,8 +79,8 @@ spec:
               - name: MULTI_TENANT_MANAGER_API_KEY
                 valueFrom:
                   secretKeyRef:
-                    name: {{ $root.Values.secrets.tms.secretName }}
-                    key: {{ $root.Values.secrets.tms.apiKey.secretKey }}
+                    name: "tms"
+                    key: "api-key"
 {{end}}
           restartPolicy: OnFailure
 

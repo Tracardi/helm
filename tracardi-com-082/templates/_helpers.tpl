@@ -115,20 +115,23 @@ Params:
 - name: LICENSE
   valueFrom:
     secretKeyRef:
-      name: {{ .ctx.Values.secrets.license.secretName }}
-      key: {{ .ctx.Values.secrets.license.secretKey }}
+      name: "tracardi-license"
+      key: "license-key"
 - name: ELASTIC_SCHEME
   value: {{ .ctx.Values.elastic.schema | quote }}
 - name: ELASTIC_HOST
   value: {{ .ctx.Values.elastic.host }}
 {{ if .ctx.Values.elastic.authenticate }}
 - name: ELASTIC_HTTP_AUTH_USERNAME
-  value: {{ .ctx.Values.elastic.username }}
+  valueFrom:
+    secretKeyRef:
+      name: "elastic-secret"
+      key: "elastic-username"
 - name: ELASTIC_HTTP_AUTH_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ .ctx.Values.elastic.existingSecret }}
-      key: {{ .ctx.Values.elastic.existingSecretPasswordKey }}
+      name: "elastic-secret"
+      key: "elastic-password"
 {{ end }}
 - name: ELASTIC_PORT
   value: {{ .ctx.Values.elastic.port | quote }}
@@ -142,8 +145,8 @@ Params:
 - name: REDIS_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ .ctx.Values.redis.existingSecret }}
-      key: {{ .ctx.Values.redis.existingSecretPasswordKey }}
+      name: "redis-secret"
+      key: "redis-password"
 {{ end }}
 - name: PULSAR_HOST
   value: {{ .ctx.Values.pulsar.schema }}{{ .ctx.Values.pulsar.host }}
@@ -151,8 +154,8 @@ Params:
 - name: PULSAR_AUTH_TOKEN
   valueFrom:
     secretKeyRef:
-      name: {{ .ctx.Values.pulsar.existingSecret }}
-      key: {{ .ctx.Values.pulsar.existingSecretPasswordKey }}
+      name: "pulsar-secret"
+      key: "pulsar-token"
 {{ end }}
 - name: SOURCE_CACHE_TTL
   value: "2"

@@ -30,13 +30,13 @@ spec:
             - name: SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.secrets.tms.secretName }}
-                  key: {{ .Values.secrets.tms.secret.secretKey }}
+                  name: "tms"
+                  key: "token-key"
             - name: API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.secrets.tms.secretName }}
-                  key: {{ .Values.secrets.tms.apiKey.secretKey }}
+                  name: "tms"
+                  key: "api-key"
 ---
 apiVersion: v1
 kind: Service

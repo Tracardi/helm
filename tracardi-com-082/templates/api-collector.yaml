@@ -49,11 +49,11 @@ spec:
               value: {{ .Values.collector.config.loggingLevel | quote }}
             - name: SAVE_LOGS
               value: {{ .Values.collector.config.saveLogs | quote }}
-{{ if and .Values.secrets.maxmind_license_key .Values.secrets.maxmind_account_id }}
+{{ if and .Values.secrets.maxmind.licenseKey .Values.secrets.maxmind.accountId }}
             - name: MAXMIND_LICENSE_KEY
-              value: {{ .Values.secrets.maxmind_license_key | quote}}
+              value: {{ .Values.secrets.maxmind.licenseKey | quote}}
             - name: MAXMIND_ACCOUNT_ID
-              value: {{ .Values.secrets.maxmind_account_id | quote }}
+              value: {{ .Values.secrets.maxmind.accountId | quote }}
 {{end}}
 {{ if .Values.config.multiTenant }}
             - name: MULTI_TENANT
@@ -63,8 +63,8 @@ spec:
             - name: MULTI_TENANT_MANAGER_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.secrets.tms.secretName }}
-                  key: {{ .Values.secrets.tms.apiKey.secretKey }}
+                  name: "tms"
+                  key: 'api-key'
 {{end}}
             - name: ENABLE_EVENT_DESTINATIONS
               value: {{ .Values.collector.config.enableEventDestinations | quote }}
@@ -82,6 +82,8 @@ spec:
               value: {{ .Values.collector.config.elasticSavePool | quote }}
             - name: ASYNC_PROCESSING
               value: {{ .Values.collector.config.asyncProcessing | quote }}
+            - name: LOCK_ON_DATA_COMPUTATION
+              value: 'no'
 ---
 apiVersion: v1
 kind: Service

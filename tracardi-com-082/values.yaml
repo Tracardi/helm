@@ -1,24 +1,58 @@
+# Infrastructure
+
+elastic:
+  host: elastic-std-svc.elastic-standalone.svc.cluster.local
+  schema: http
+  authenticate: false
+  port: 9200
+  verifyCerts: "no"
+
+redis:
+  host: redis-std-svc.redis-standalone.svc.cluster.local
+  schema: "redis://"
+  authenticate: false
+  port: 6379
+  db: "0"
+
+pulsar:
+  host: pulsar-std-svc.pulsar-standalone.svc.cluster.local
+  schema: "pulsar://"
+  authenticate: false
+  port: 6650
+
+# Digital ocean
+
+digitalOcean:
+  loadBalancer: false
+  certId: ""  # SET-CERT-ID
+
+
 # Definition of defined secrets.
 
 secrets:
-  installationToken: "SET-INSTALLATION-SECRET"
+  installationToken: "<SET-INSTALLATION-SECRET>"
   dockerHub: "tracardi-dockerhub"
   license:
-    secretName: "tracardi-license"
-    secretKey: "license-key"
+    licenseKey: "<LICENSE-KEY-VALUE>"
   tms:
-    secretName: "tms"
-    secret:
-      secretKey: "secret"
-    apiKey:
-      secretKey: "api-key"
+    tokenKey: "<SECRET-KEY-VALUE>"
+    apiKey: "<API-KEY-VALUE>"
+  redis:
+    password: "<REDIS-PASSWORD>"
+  elastic:
+    password: "<ELASTIC-PASSWORD>"
+  pulsar:
+    token: "<PULSAR-TOKEN>"
+  maxmind:
+    licenseKey: "<MAXMIND-LICENSE-KEY-VALUE>"
+    accountId: "<MAXMIND-ACCOUNT-ID>"
 
 
 # General Tracardi configuration. Version, images, multi-tenancy, etc.
 
 config:
   multiTenant:
-    multi: "no"
+    multi: "yes"
     tms_service: tms-svc  # The name of tms service
   image:
     tag: 0.8.2-rc1  # Tag should be the same for gui and backend
@@ -275,37 +309,3 @@ bridge:
     config:
       loggingLevel: "WARNING"
 
-# Infrastructure
-
-elastic:
-  host: elastic-std-svc.elastic-standalone.svc.cluster.local
-  schema: http
-  username: "elastic"
-  existingSecret: "elastic-secret"
-  existingSecretPasswordKey: "elastic"
-  authenticate: false
-  port: 9200
-  verifyCerts: "no"
-
-redis:
-  host: redis-std-svc.redis-standalone.svc.cluster.local
-  schema: "redis://"
-  existingSecret: "redis-secret"
-  existingSecretPasswordKey: "redis-password"
-  authenticate: false
-  port: 6379
-  db: "0"
-
-pulsar:
-  host: pulsar-std-svc.pulsar-standalone.svc.cluster.local
-  schema: "pulsar://"
-  existingSecret: "pulsar-secret"
-  existingSecretPasswordKey: "pulsar-token"
-  authenticate: false
-  port: 6650
-
-# Digital ocean
-
-digitalOcean:
-  loadBalancer: false
-  certId: ""  # SET-CERT-ID
