@@ -1,4 +1,4 @@
-{{ if and .Values.eventStorage.enabled }}
+{{ if and .Values.secrets.dockerHub .Values.eventStorage.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

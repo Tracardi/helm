@@ -1,4 +1,4 @@
-{{ if and .Values.profileStorage.enabled }}
+{{ if and .Values.secrets.dockerHub .Values.profileStorage.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

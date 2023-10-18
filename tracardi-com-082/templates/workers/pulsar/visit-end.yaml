@@ -1,4 +1,4 @@
-{{ if and .Values.visitEnd.enabled }}
+{{ if and .Values.secrets.dockerHub .Values.visitEnd.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

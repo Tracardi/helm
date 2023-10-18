@@ -183,6 +183,19 @@ visitEnd:
     loggingLevel: "WARNING"
 
 
+# Scheduler worker
+
+scheduler:
+  enabled: true
+  image:
+    repository: tracardi/com-tracardi-scheduler-worker
+    tag: 0.8.2-rc1
+    pullPolicy: IfNotPresent
+  replicas: 1
+  config:
+    loggingLevel: "WARNING"
+
+
 # Segmentation job is a job that runs periodically and checks if some profiles should be run through a segmentation process.
 
 heartbeatJob:
@@ -237,19 +250,6 @@ heartbeatJob:
           close_event_type: "visit-ended"
           ephemeral: "no"
 
-
-# Scheduler worker. It is a service that is responsible for execution the delayed events. A delayed event happens when the
-# workflow pauses and resumes after some time.
-
-schedulerWorker:
-  enabled: false
-  image:
-    repository: tracardi/com-tracardi-scheduler-worker
-    tag: 0.8.2-rc1
-    pullPolicy: IfNotPresent
-  replicas: 1
-  config:
-    loggingLevel: "WARNING"
 
 triggerWorker:
   enabled: false
