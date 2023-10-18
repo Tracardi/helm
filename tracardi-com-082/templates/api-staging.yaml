@@ -24,10 +24,10 @@ spec:
           resources:
             limits:
               memory: 250Mi
-              cpu: 1200m
+              cpu: 500m
             requests:
-              memory: 150Mi
-              cpu: 400m
+              memory: 100Mi
+              cpu: 100m
           ports:
             - name: staging-port
               containerPort: 80

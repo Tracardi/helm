@@ -173,7 +173,7 @@ sessionStorage:
 # Visit-end worker
 
 visitEnd:
-  enabled: false
+  enabled: true
   image:
     repository: tracardi/com-tracardi-visit-end-worker
     tag: 0.8.2-rc1

@@ -26,8 +26,8 @@ spec:
               memory: 50Mi
               cpu: 100m
             requests:
-              memory: 30Mi
-              cpu: 50m
+              memory: 35Mi
+              cpu: 30m
           env:
             {{- include "tracardi.env" (dict "ctx" .) | nindent 12 }}
             - name: LOGGING_LEVEL
