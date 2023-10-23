@@ -1,6 +1,7 @@
 # Infrastructure
 
 elastic:
+  name: es1
   host: elastic-std-svc.elastic-standalone.svc.cluster.local
   schema: http
   authenticate: false
@@ -8,6 +9,7 @@ elastic:
   verifyCerts: "no"
 
 redis:
+  name: rd1
   host: redis-std-svc.redis-standalone.svc.cluster.local
   schema: "redis://"
   authenticate: false
@@ -15,6 +17,7 @@ redis:
   db: "0"
 
 pulsar:
+  name: ps1
   host: pulsar-std-svc.pulsar-standalone.svc.cluster.local
   schema: "pulsar://"
   authenticate: false

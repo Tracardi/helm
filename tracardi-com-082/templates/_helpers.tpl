@@ -97,6 +97,9 @@ Params:
 {{- define "tracardi.podLabels" -}}
 helm.sh/chart: {{ include "tracardi.chart" .ctx }}
 app.kubernetes.io/name: {{ include "tracardi.name" .ctx }}
+app.kubernetes.io/ns-elastic: {{ .ctx.Values.elastic.name }}
+app.kubernetes.io/ns-cache: {{ .ctx.Values.redis.name }}
+app.kubernetes.io/ns-pulsar: {{ .ctx.Values.pulsar.name }}
 app.kubernetes.io/instance: {{ .ctx.Release.Name }}
 app.kubernetes.io/version: {{ .ctx.Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .ctx.Release.Service }}
