@@ -27,7 +27,7 @@ spec:
           imagePullSecrets:
             - name: {{ $root.Values.secrets.dockerHub | quote }}
           containers:
-          - name: metrics-job
+          - name: {{ $s.name }}
             image: "{{ $root.Values.metricsJob.image.repository }}:{{ $root.Values.metricsJob.image.tag }}"
             imagePullPolicy: "{{ $root.Values.metricsJob.image.pullPolicy }}"
             resources:

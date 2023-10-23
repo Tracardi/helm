@@ -2,24 +2,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tms-deployment
+  name: be-fa-tms
   labels:
-    {{- include "tracardi.labels" (dict "ctx" . "component" "tms") | nindent 4 }}
+    {{- include "tracardi.labels" (dict "ctx" . "component" "be-fa-tms") | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "tms") | nindent 6 }}
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "be-fa-tms") | nindent 6 }}
   template:
     metadata:
       labels:
-        app: tms
-        {{- include "tracardi.podLabels" (dict "ctx" . "component" "tms") | nindent 8 }}
+        app: be-fa-tms
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "be-fa-tms") | nindent 8 }}
     spec:
       imagePullSecrets:
         - name: {{ .Values.secrets.dockerHub  | quote }}
       containers:
-        - name: tms
+        - name: be-fa-tms
           {{- include "tracardi.image" (dict "ctx" . "repo" .Values.config.image.tms.repository "tag" .Values.config.image.tag "policy" .Values.config.image.tms.pullPolicy) | nindent 10 }}
           ports:
             - containerPort: 80
@@ -41,11 +41,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: tms-svc
+  name: be-fa-tms-svc
 spec:
   type: ClusterIP
   selector:
-    {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "tms") | nindent 6 }}
+    {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "be-fa-tms") | nindent 6 }}
   ports:
     - protocol: TCP
       port: {{ .Values.tms.port }}
@@ -56,7 +56,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: do-tms-lb
+  name: do-be-fa-tms-lb
   {{ if .Values.digitalOcean.certId }}
   annotations:
     service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
@@ -66,7 +66,7 @@ metadata:
 spec:
   type: LoadBalancer
   selector:
-    app: tms
+    {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "be-fa-tms") | nindent 6 }}
   ports:
     - name: http-{{ .Values.tms.port }}
       protocol: TCP

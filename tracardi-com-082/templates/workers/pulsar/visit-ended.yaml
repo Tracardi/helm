@@ -1,0 +1,35 @@
+{{ if and .Values.secrets.dockerHub .Values.visitEnded.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wk-pl-visit-ended
+  labels:
+    {{- include "tracardi.labels" (dict "ctx" . "component" "wk-pl-visit-ended") | nindent 4 }}
+spec:
+  replicas: {{ .Values.visitEnded.replicas }}
+  selector:
+    matchLabels:
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "wk-pl-visit-ended") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "wk-pl-visit-ended") | nindent 8 }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.secrets.dockerHub | quote }}
+      containers:
+        - name: wk-pl-visit-ended
+          image: "{{ .Values.visitEnded.image.repository }}:{{ .Values.visitEnded.image.tag }}"
+          imagePullPolicy: {{ .Values.visitEnded.image.pullPolicy }}
+          resources:
+            limits:
+              memory: 100Mi
+              cpu: 200m
+            requests:
+              memory: 50Mi
+              cpu: 100m
+          env:
+            {{- include "tracardi.env" (dict "ctx" .) | nindent 12 }}
+            - name: LOGGING_LEVEL
+              value: {{ .Values.visitEnded.config.loggingLevel | quote }}
+{{ end }}

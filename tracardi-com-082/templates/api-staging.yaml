@@ -2,24 +2,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-staging-deployment
+  name: be-fa-test
   labels:
-    {{- include "tracardi.labels" (dict "ctx" . "component" "api-staging") | nindent 4 }}
+    {{- include "tracardi.labels" (dict "ctx" . "component" "be-fa-test") | nindent 4 }}
 spec:
   replicas: {{ .Values.staging.replicas }}
   selector:
     matchLabels:
-      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "api-staging") | nindent 6 }}
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "be-fa-test") | nindent 6 }}
   template:
     metadata:
       labels:
-        app: api-staging
-        {{- include "tracardi.podLabels" (dict "ctx" . "component" "api-staging") | nindent 8 }}
+        app: be-fa-test
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "be-fa-test") | nindent 8 }}
     spec:
       imagePullSecrets:
         - name: {{ .Values.secrets.dockerHub  | quote }}
       containers:
-        - name: api-staging
+        - name: be-fa-test
           {{- include "tracardi.image" (dict "ctx" . "repo" .Values.config.image.api.repository "tag" .Values.config.image.tag "policy" .Values.config.image.api.pullPolicy) | nindent 10 }}
           resources:
             limits:
@@ -29,7 +29,7 @@ spec:
               memory: 100Mi
               cpu: 100m
           ports:
-            - name: staging-port
+            - name: test-port
               containerPort: 80
 {{ if not .Values.config.multiTenant }}
           livenessProbe:
@@ -77,22 +77,22 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: api-staging
+  name: be-fa-test-svc
 spec:
   type: ClusterIP
   selector:
-    {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "api-staging") | nindent 6 }}
+    {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "be-fa-test") | nindent 6 }}
   ports:
     - protocol: TCP
       port: {{ .Values.staging.port }}
-      targetPort: staging-port
+      targetPort: test-port
 
 {{ if .Values.digitalOcean.loadBalancer }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: do-api-staging-lb
+  name: do-be-fa-test-lb
   {{ if .Values.digitalOcean.certId }}
   annotations:
     service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
@@ -102,17 +102,17 @@ metadata:
 spec:
   type: LoadBalancer
   selector:
-    app: api-staging
+    {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "be-fa-test") | nindent 6 }}
   ports:
     - name: http-{{ .Values.staging.port }}
       protocol: TCP
       port: {{ .Values.staging.port }}
-      targetPort: staging-port
+      targetPort: test-port
     {{ if .Values.digitalOcean.certId }}
     - name: https
       protocol: TCP
       port: 443
-      targetPort: staging-port
+      targetPort: test-port
     {{ end }}
 
 {{ end }}

@@ -173,18 +173,29 @@ sessionStorage:
   config:
     loggingLevel: "WARNING"
 
-# Visit-end worker
+# Visit-end-checker worker
 
-visitEnd:
+visitEndChecker:
   enabled: true
   image:
-    repository: tracardi/com-tracardi-visit-end-worker
+    repository: tracardi/com-tracardi-visit-end-checker-worker
     tag: 0.8.2-rc1
     pullPolicy: IfNotPresent
   replicas: 1
   config:
     loggingLevel: "WARNING"
+    defaultReschedulingTime: 1200  # 20 min
+    closeVisitAfter: 2100  # 35 min
 
+visitEnded:
+  enabled: true
+  image:
+    repository: tracardi/com-tracardi-visit-ended-worker
+    tag: 0.8.2-rc1
+    pullPolicy: IfNotPresent
+  replicas: 1
+  config:
+    loggingLevel: "WARNING"
 
 # Scheduler worker
 
@@ -209,7 +220,7 @@ metricsJob:
     failedJobsHistoryLimit: 2
     pullPolicy: IfNotPresent
     schedules:
-      - name: metrics-job # every 30min get last events of last month and skip first 20 minutes.
+      - name: jb-metrics # every 30min get last events of last month and skip first 20 minutes.
         schedule: "*/30 * * * *"
 
 # Segmentation job is a job that runs periodically and checks if some profiles should be run through a segmentation process.
@@ -229,12 +240,12 @@ heartbeatJob:
       saveLogs: "no"
       loggingLevel: "WARNING"
       schedules:
-        - name: prod-profile-segmentation # every 30min get last events of last month and skip first 20 minutes.
+        - name: jb-segmentation-production # every 30min get last events of last month and skip first 20 minutes.
           schedule: "*/30 * * * *"
           range: "now-1M|now"
           qualify_by: "profile-segmentation"
           no_events_within_last: "20m"
-        - name: prod-visit-end # every 20min get last events of last month and skip first 15 minutes.
+        - name: jb-visit-ended-production # every 20min get last events of last month and skip first 15 minutes.
           schedule: "*/20 * * * *"
           range: "now-1M|now"
           qualify_by: "visit-end"
@@ -252,12 +263,12 @@ heartbeatJob:
       saveLogs: "yes"
       loggingLevel: "INFO"
       schedules:
-        - name: test-profile-segmentation # every 15min get last events of last month and skip first 20 minutes.
+        - name: jb-segmentation-test # every 15min get last events of last month and skip first 20 minutes.
           schedule: "*/15 * * * *"
           range: "now-1M|now"
           qualify_by: "profile-segmentation"
           no_events_within_last: "20m"
-        - name: test-visit-end # every 5min get last events of last month and skip first 15 minutes.
+        - name: jb-visit-ended-test # every 5min get last events of last month and skip first 15 minutes.
           schedule: "*/5 * * * *"
           range: "now-1M|now"
           qualify_by: "visit-end"
@@ -268,7 +279,7 @@ heartbeatJob:
 
 
 triggerWorker:
-  enabled: true
+  enabled: false
   image:
     repository: tracardi/com-tracardi-trigger-worker
     tag: 0.8.2-rc1
@@ -313,7 +324,7 @@ copingWorker:
 
 # Update and Migration. Set of workers responsible for system migration, data import, etc.
 
-updateWorker:
+upgradeWorker:
   enabled: true
   image:
     repository: tracardi/update-worker

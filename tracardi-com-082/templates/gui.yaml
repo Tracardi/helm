@@ -10,22 +10,22 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: gui-deployment
+  name: fe-rj-gui
   labels:
-    {{- include "tracardi.labels" (dict "ctx" . "component" "gui") | nindent 4 }}
+    {{- include "tracardi.labels" (dict "ctx" . "component" "fe-rj-gui") | nindent 4 }}
 spec:
   replicas: {{ .Values.gui.replicas }}
   selector:
     matchLabels:
-      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "gui") | nindent 6 }}
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "fe-rj-gui") | nindent 6 }}
   template:
     metadata:
       labels:
-        app: gui
-        {{- include "tracardi.podLabels" (dict "ctx" . "component" "gui") | nindent 8 }}
+        app: fe-rj-gui
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "fe-rj-gui") | nindent 8 }}
     spec:
       containers:
-        - name: gui
+        - name: fe-rj-gui
           {{- include "tracardi.image" (dict "ctx" . "repo" .Values.config.image.gui.repository "tag" .Values.config.image.tag "policy" .Values.config.image.gui.pullPolicy) | nindent 10 }}
           resources:
             limits:
@@ -48,11 +48,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: gui-svc
+  name: fe-rj-gui-svc
 spec:
   type: ClusterIP
   selector:
-    {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "gui") | nindent 6 }}
+    {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "fe-rj-gui") | nindent 6 }}
   ports:
     - protocol: TCP
       port: {{ .Values.gui.port }}
@@ -63,7 +63,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: do-gui-lb
+  name: do-fe-rj-gui-lb
   {{ if .Values.digitalOcean.certId }}
   annotations:
     service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
@@ -73,7 +73,7 @@ metadata:
 spec:
   type: LoadBalancer
   selector:
-    app: gui
+    {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "fe-rj-gui") | nindent 6 }}
   ports:
     - name: http-{{ .Values.gui.port }}
       protocol: TCP

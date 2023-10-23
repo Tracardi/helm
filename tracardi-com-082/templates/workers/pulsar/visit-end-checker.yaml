@@ -1,0 +1,39 @@
+{{ if and .Values.secrets.dockerHub .Values.visitEndChecker.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wk-pl-visit-end-checker
+  labels:
+    {{- include "tracardi.labels" (dict "ctx" . "component" "wk-pl-visit-end-checker") | nindent 4 }}
+spec:
+  replicas: {{ .Values.visitEndChecker.replicas }}
+  selector:
+    matchLabels:
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "wk-pl-visit-end-checker") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "wk-pl-visit-end-checker") | nindent 8 }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.secrets.dockerHub | quote }}
+      containers:
+        - name: wk-pl-visit-end-checker
+          image: "{{ .Values.visitEndChecker.image.repository }}:{{ .Values.visitEndChecker.image.tag }}"
+          imagePullPolicy: {{ .Values.visitEndChecker.image.pullPolicy }}
+          resources:
+            limits:
+              memory: 100Mi
+              cpu: 200m
+            requests:
+              memory: 50Mi
+              cpu: 100m
+          env:
+            {{- include "tracardi.env" (dict "ctx" .) | nindent 12 }}
+            - name: LOGGING_LEVEL
+              value: {{ .Values.visitEndChecker.config.loggingLevel | quote }}
+            - name: DEFAULT_RESCHEDULING_TIME
+              value: {{ .Values.visitEndChecker.config.defaultReschedulingTime | quote }}
+            - name: CLOSE_VISIT_AFTER
+              value: {{ .Values.visitEndChecker.config.closeVisitAfter | quote }}
+{{ end }}
