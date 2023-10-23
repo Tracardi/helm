@@ -1,0 +1,39 @@
+{{ if and .Values.secrets.dockerHub .Values.metricsWorker.enabled }}
+#
+# This is the deployment for scheduler worker. It is responsible for delayed events
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: com-metrics-worker
+  labels:
+    {{- include "tracardi.labels" (dict "ctx" . "component" "com-metrics-worker") | nindent 4 }}
+spec:
+  replicas: {{ .Values.metricsWorker.replicas }}
+  selector:
+    matchLabels:
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "com-metrics-worker") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "com-metrics-worker") | nindent 8 }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.secrets.dockerHub | quote }}
+      containers:
+      - name: com-tracardi-scheduler
+        image: "{{ .Values.metricsWorker.image.repository }}:{{ .Values.metricsWorker.image.tag }}"
+        imagePullPolicy: {{ .Values.metricsWorker.image.pullPolicy }}
+        resources:
+          limits:
+            memory: 100Mi
+            cpu: 500m
+          requests:
+            memory: 80Mi
+            cpu: 300m
+        env:
+          {{- include "tracardi.env" (dict "ctx" .) | nindent 10 }}
+          - name: LOGGING_LEVEL
+            value: {{ .Values.metricsWorker.config.loggingLevel | quote }}
+
+{{ end }}

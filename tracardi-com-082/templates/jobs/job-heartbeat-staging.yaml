@@ -71,17 +71,6 @@ spec:
               - name: EPHEMERAL
                 value: {{ $s.ephemeral | quote }}
 {{ end }}
-{{ if $root.Values.config.multiTenant }}
-              - name: MULTI_TENANT
-                value: {{ $root.Values.config.multiTenant.multi | quote }}
-              - name: MULTI_TENANT_MANAGER_URL
-                value: http://{{ $root.Values.config.multiTenant.tms_service}}:{{ $root.Values.tms.port }}
-              - name: MULTI_TENANT_MANAGER_API_KEY
-                valueFrom:
-                  secretKeyRef:
-                    name: "tms"
-                    key: "api-key"
-{{end}}
           restartPolicy: OnFailure
 
 ---

@@ -196,6 +196,19 @@ scheduler:
     loggingLevel: "WARNING"
 
 
+metricsJob:
+  enabled: true
+  image:
+    repository: tracardi/com-metrics-job
+    tag: 0.8.2-rc1
+  config:
+    successfulJobsHistoryLimit: 2
+    failedJobsHistoryLimit: 2
+    pullPolicy: IfNotPresent
+    schedules:
+      - name: metrics-job # every 30min get last events of last month and skip first 20 minutes.
+        schedule: "*/30 * * * *"
+
 # Segmentation job is a job that runs periodically and checks if some profiles should be run through a segmentation process.
 
 heartbeatJob:
@@ -207,7 +220,7 @@ heartbeatJob:
   config:
 
     production:
-      enable: false
+      enable: true
       successfulJobsHistoryLimit: 2
       failedJobsHistoryLimit: 2
       saveLogs: "no"
@@ -230,7 +243,7 @@ heartbeatJob:
        # Add as many as you need
 
     staging:
-      enable: false
+      enable: true
       successfulJobsHistoryLimit: 2
       failedJobsHistoryLimit: 2
       saveLogs: "yes"
@@ -252,9 +265,21 @@ heartbeatJob:
 
 
 triggerWorker:
-  enabled: false
+  enabled: true
   image:
     repository: tracardi/com-tracardi-trigger-worker
+    tag: 0.8.2-rc1
+    pullPolicy: IfNotPresent
+  replicas: 1
+  config:
+    loggingLevel: "WARNING"
+
+# Metrics Redis worker
+
+metricsWorker:
+  enabled: true
+  image:
+    repository: tracardi/com-tracardi-metrics-worker
     tag: 0.8.2-rc1
     pullPolicy: IfNotPresent
   replicas: 1
@@ -264,7 +289,7 @@ triggerWorker:
 # Segmentation worker runs a segmentation process.
 
 segmentationWorker:
-  enabled: false
+  enabled: true
   image:
     repository: tracardi/com-tracardi-segmentation-worker
     tag: 0.8.2-rc1
@@ -274,7 +299,7 @@ segmentationWorker:
     loggingLevel: "WARNING"
 
 copingWorker:
-  enabled: false
+  enabled: true
   image:
     repository: tracardi/com-tracardi-coping-worker
     tag: 0.8.2-rc1

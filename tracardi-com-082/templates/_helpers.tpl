@@ -157,9 +157,10 @@ Params:
       name: "pulsar-secret"
       key: "pulsar-token"
 {{ end }}
-{{ if .ctx.Values.config.multiTenant }}
+{{ if .ctx.Values.config.multiTenant.multi }}
 - name: MULTI_TENANT
   value: {{ .ctx.Values.config.multiTenant.multi | quote }}
+{{ if eq .ctx.Values.config.multiTenant.multi "yes" }}
 - name: MULTI_TENANT_MANAGER_URL
   value: http://{{ .ctx.Values.config.multiTenant.tms_service}}:{{ .ctx.Values.tms.port }}
 - name: MULTI_TENANT_MANAGER_API_KEY
@@ -167,6 +168,7 @@ Params:
     secretKeyRef:
       name: "tms"
       key: "api-key"
+{{ end }}
 {{ end }}
 - name: SOURCE_CACHE_TTL
   value: "2"
