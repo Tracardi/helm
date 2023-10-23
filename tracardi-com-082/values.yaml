@@ -84,7 +84,7 @@ tms:
 # No GUI like operations are available
 
 collector:
-  enabled: false
+  enabled: true
   port: 8484
   replicas: 1
   config:

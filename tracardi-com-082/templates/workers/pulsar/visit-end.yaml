@@ -2,23 +2,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: visit-end
+  name: wk-pl-visit-end
   labels:
-    {{- include "tracardi.labels" (dict "ctx" . "component" "visit-end") | nindent 4 }}
+    {{- include "tracardi.labels" (dict "ctx" . "component" "wk-pl-visit-end") | nindent 4 }}
 spec:
   replicas: {{ .Values.visitEnd.replicas }}
   selector:
     matchLabels:
-      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "visit-end") | nindent 6 }}
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "wk-pl-visit-end") | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "tracardi.podLabels" (dict "ctx" . "component" "visit-end") | nindent 8 }}
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "wk-pl-visit-end") | nindent 8 }}
     spec:
       imagePullSecrets:
         - name: {{ .Values.secrets.dockerHub | quote }}
       containers:
-        - name: visit-end
+        - name: wk-pl-visit-end
           image: "{{ .Values.visitEnd.image.repository }}:{{ .Values.visitEnd.image.tag }}"
           imagePullPolicy: {{ .Values.visitEnd.image.pullPolicy }}
           resources:

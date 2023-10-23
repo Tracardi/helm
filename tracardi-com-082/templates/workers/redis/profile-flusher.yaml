@@ -2,23 +2,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: profile-flusher
+  name: wk-rd-flusher-profile
   labels:
-    {{- include "tracardi.labels" (dict "ctx" . "component" "profile-flusher") | nindent 4 }}
+    {{- include "tracardi.labels" (dict "ctx" . "component" "wk-rd-flusher-profile") | nindent 4 }}
 spec:
   replicas: {{ .Values.profileFlusher.replicas }}
   selector:
     matchLabels:
-      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "profile-flusher") | nindent 6 }}
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "wk-rd-flusher-profile") | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "tracardi.podLabels" (dict "ctx" . "component" "profile-flusher") | nindent 8 }}
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "wk-rd-flusher-profile") | nindent 8 }}
     spec:
       imagePullSecrets:
         - name: {{ .Values.secrets.dockerHub | quote }}
       containers:
-        - name: profile-flusher
+        - name: wk-rd-flusher-profile
           image: "{{ .Values.profileFlusher.image.repository }}:{{ .Values.profileFlusher.image.tag }}"
           imagePullPolicy: {{ .Values.profileFlusher.image.pullPolicy }}
           resources:

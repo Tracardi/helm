@@ -2,23 +2,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: session-storage
+  name: wk-pl-storage-session
   labels:
-    {{- include "tracardi.labels" (dict "ctx" . "component" "session-storage") | nindent 4 }}
+    {{- include "tracardi.labels" (dict "ctx" . "component" "wk-pl-storage-session") | nindent 4 }}
 spec:
   replicas: {{ .Values.sessionStorage.replicas }}
   selector:
     matchLabels:
-      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "session-storage") | nindent 6 }}
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "wk-pl-storage-session") | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "tracardi.podLabels" (dict "ctx" . "component" "session-storage") | nindent 8 }}
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "wk-pl-storage-session") | nindent 8 }}
     spec:
       imagePullSecrets:
         - name: {{ .Values.secrets.dockerHub | quote }}
       containers:
-        - name: session-storage
+        - name: wk-pl-storage-session
           image: "{{ .Values.sessionStorage.image.repository }}:{{ .Values.sessionStorage.image.tag }}"
           imagePullPolicy: {{ .Values.sessionStorage.image.pullPolicy }}
           resources:

@@ -2,21 +2,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: update-worker
+  name: wk-rd-upgrades
   labels:
-    {{- include "tracardi.labels" (dict "ctx" . "component" "update-worker") | nindent 4 }}
+    {{- include "tracardi.labels" (dict "ctx" . "component" "wk-rd-upgrades") | nindent 4 }}
 spec:
   replicas: {{ .Values.updateWorker.replicas }}
   selector:
     matchLabels:
-      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "update-worker") | nindent 6 }}
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "wk-rd-upgrades") | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "tracardi.podLabels" (dict "ctx" . "component" "update-worker") | nindent 8 }}
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "wk-rd-upgrades") | nindent 8 }}
     spec:
       containers:
-        - name: update-worker
+        - name: wk-rd-upgrades
           image: "{{ .Values.updateWorker.image.repository }}:{{ .Values.updateWorker.image.tag }}"
           imagePullPolicy: {{ .Values.updateWorker.image.pullPolicy }}
           resources:

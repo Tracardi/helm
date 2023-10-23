@@ -2,23 +2,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: com-worker-coping
+  name: wk-rd-coping
   labels:
-    {{- include "tracardi.labels" (dict "ctx" . "component" "com-worker-coping") | nindent 4 }}
+    {{- include "tracardi.labels" (dict "ctx" . "component" "wk-rd-coping") | nindent 4 }}
 spec:
   replicas: {{ .Values.copingWorker.replicas }}
   selector:
     matchLabels:
-      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "com-worker-coping") | nindent 6 }}
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "wk-rd-coping") | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "tracardi.podLabels" (dict "ctx" . "component" "com-worker-coping") | nindent 8 }}
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "wk-rd-coping") | nindent 8 }}
     spec:
       imagePullSecrets:
         - name: {{ .Values.secrets.dockerHub | quote }}
       containers:
-      - name: com-worker-coping
+      - name: wk-rd-coping
         image: "{{ .Values.copingWorker.image.repository }}:{{ .Values.copingWorker.image.tag }}"
         imagePullPolicy: {{ .Values.copingWorker.image.pullPolicy }}
         resources:
