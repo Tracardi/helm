@@ -1,4 +1,4 @@
-{{ if and .Values.profileFlusher.enabled }}
+{{ if and .Values.worker.flusher.profile.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "tracardi.labels" (dict "ctx" . "component" "wk-rd-flusher-profile") | nindent 4 }}
 spec:
-  replicas: {{ .Values.profileFlusher.replicas }}
+  replicas: {{ .Values.worker.flusher.profile.replicas }}
   selector:
     matchLabels:
       {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "wk-rd-flusher-profile") | nindent 6 }}
@@ -19,8 +19,8 @@ spec:
         - name: {{ .Values.secrets.dockerHub | quote }}
       containers:
         - name: wk-rd-flusher-profile
-          image: "{{ .Values.profileFlusher.image.repository }}:{{ .Values.profileFlusher.image.tag }}"
-          imagePullPolicy: {{ .Values.profileFlusher.image.pullPolicy }}
+          image: "{{ .Values.worker.flusher.image.repository }}:{{ .Values.worker.flusher.image.tag }}"
+          imagePullPolicy: {{ .Values.worker.flusher.image.pullPolicy }}
           resources:
             limits:
               memory: 50Mi
@@ -31,7 +31,7 @@ spec:
           env:
             {{- include "tracardi.env" (dict "ctx" .) | nindent 12 }}
             - name: LOGGING_LEVEL
-              value: {{ .Values.profileFlusher.config.loggingLevel | quote }}
+              value: {{ .Values.worker.flusher.profile.config.loggingLevel | quote }}
             - name: CONSUMER_TYPE
               value: "profile"
 {{ end }}

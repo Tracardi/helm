@@ -1,0 +1,35 @@
+{{ if and .Values.secrets.dockerHub .Values.worker.workflow.event.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wk-pl-workflow
+  labels:
+    {{- include "tracardi.labels" (dict "ctx" . "component" "wk-pl-workflow") | nindent 4 }}
+spec:
+  replicas: {{ .Values.worker.workflow.event.replicas }}
+  selector:
+    matchLabels:
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "wk-pl-workflow") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "wk-pl-workflow") | nindent 8 }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.secrets.dockerHub | quote }}
+      containers:
+        - name: wk-pl-workflow
+          image: "{{ .Values.worker.workflow.image.repository }}:{{ .Values.worker.workflow.image.tag }}"
+          imagePullPolicy: {{ .Values.worker.workflow.image.pullPolicy }}
+          resources:
+            limits:
+              memory: 100Mi
+              cpu: 200m
+            requests:
+              memory: 50Mi
+              cpu: 100m
+          env:
+            {{- include "tracardi.env" (dict "ctx" .) | nindent 12 }}
+            - name: LOGGING_LEVEL
+              value: {{ .Values.worker.workflow.event.config.loggingLevel | quote }}
+{{ end }}

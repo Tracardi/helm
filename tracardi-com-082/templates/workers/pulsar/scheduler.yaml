@@ -1,4 +1,4 @@
-{{ if and .Values.secrets.dockerHub .Values.scheduler.enabled }}
+{{ if and .Values.secrets.dockerHub .Values.worker.internal.scheduler.event.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "tracardi.labels" (dict "ctx" . "component" "wk-pl-scheduler") | nindent 4 }}
 spec:
-  replicas: {{ .Values.scheduler.replicas }}
+  replicas: {{ .Values.worker.internal.scheduler.image.replicas }}
   selector:
     matchLabels:
       {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "wk-pl-scheduler") | nindent 6 }}
@@ -19,8 +19,8 @@ spec:
         - name: {{ .Values.secrets.dockerHub | quote }}
       containers:
         - name: wk-pl-scheduler
-          image: "{{ .Values.scheduler.image.repository }}:{{ .Values.scheduler.image.tag }}"
-          imagePullPolicy: {{ .Values.scheduler.image.pullPolicy }}
+          image: "{{ .Values.worker.internal.scheduler.image.repository }}:{{ .Values.worker.internal.scheduler.image.tag }}"
+          imagePullPolicy: {{ .Values.worker.internal.scheduler.image.pullPolicy }}
           resources:
             limits:
               memory: 100Mi
@@ -31,5 +31,5 @@ spec:
           env:
             {{- include "tracardi.env" (dict "ctx" .) | nindent 12 }}
             - name: LOGGING_LEVEL
-              value: {{ .Values.scheduler.config.loggingLevel | quote }}
+              value: {{ .Values.worker.internal.scheduler.event.config.loggingLevel | quote }}
 {{ end }}

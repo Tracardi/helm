@@ -1,4 +1,4 @@
-{{ if and .Values.secrets.dockerHub .Values.bridge.queue.enabled}}
+{{ if and .Values.secrets.dockerHub .Values.bridge.queue.docker.enabled}}
 #
 # This is the deployment for commercial Queues Bridge
 # This bridge includes:
@@ -10,23 +10,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bridge-queue
+  name: bg-queue-prod
   labels:
-    {{- include "tracardi.labels" (dict "ctx" . "component" "bridge-queue") | nindent 4 }}
+    {{- include "tracardi.labels" (dict "ctx" . "component" "bg-queue-prod") | nindent 4 }}
 spec:
-  replicas: {{ .Values.bridge.queue.replicas }}
+  replicas: {{ .Values.bridge.queue.docker.replicas }}
   selector:
     matchLabels:
-      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "bridge-queue") | nindent 6 }}
+      {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "bg-queue-prod") | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "tracardi.podLabels" (dict "ctx" . "component" "bridge-queue") | nindent 8 }}
+        {{- include "tracardi.podLabels" (dict "ctx" . "component" "bg-queue-prod") | nindent 8 }}
     spec:
       imagePullSecrets:
         - name: {{ .Values.secrets.dockerHub | quote }}
       containers:
-      - name: bridge-queue
+      - name: bg-queue-prod
         image: "{{ .Values.bridge.queue.image.repository }}:{{ .Values.bridge.queue.image.tag }}"
         imagePullPolicy: {{ .Values.bridge.queue.image.pullPolicy }}
         resources:
@@ -39,7 +39,7 @@ spec:
         env:
           {{- include "tracardi.env" (dict "ctx" .) | nindent 10 }}
           - name: LOGGING_LEVEL
-            value: {{ .Values.bridge.queue.config.loggingLevel | quote }}
+            value: {{ .Values.bridge.queue.docker.config.loggingLevel | quote }}
           - name: PRODUCTION
             value: "yes"
 {{ end }}

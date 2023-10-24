@@ -1,4 +1,4 @@
-{{ if and .Values.secrets.dockerHub .Values.eventStorage.enabled }}
+{{ if and .Values.secrets.dockerHub .Values.worker.storage.event.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "tracardi.labels" (dict "ctx" . "component" "wk-pl-storage-event") | nindent 4 }}
 spec:
-  replicas: {{ .Values.eventStorage.replicas }}
+  replicas: {{ .Values.worker.storage.event.replicas }}
   selector:
     matchLabels:
       {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "wk-pl-storage-event") | nindent 6 }}
@@ -19,8 +19,8 @@ spec:
         - name: {{ .Values.secrets.dockerHub | quote }}
       containers:
         - name: wk-pl-storage-event
-          image: "{{ .Values.eventStorage.image.repository }}:{{ .Values.eventStorage.image.tag }}"
-          imagePullPolicy: {{ .Values.eventStorage.image.pullPolicy }}
+          image: "{{ .Values.worker.storage.image.repository }}:{{ .Values.worker.storage.image.tag }}"
+          imagePullPolicy: {{ .Values.worker.storage.image.pullPolicy }}
           resources:
             limits:
               memory: 150Mi
@@ -31,7 +31,7 @@ spec:
           env:
             {{- include "tracardi.env" (dict "ctx" .) | nindent 12 }}
             - name: LOGGING_LEVEL
-              value: {{ .Values.eventStorage.config.loggingLevel | quote }}
+              value: {{ .Values.worker.storage.event.config.loggingLevel | quote }}
             - name: CONSUMER_TYPE
               value: "event"
             - name: PULSAR_COLLECTOR_POOL

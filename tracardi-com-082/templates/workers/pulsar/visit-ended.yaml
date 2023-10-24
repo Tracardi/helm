@@ -1,4 +1,4 @@
-{{ if and .Values.secrets.dockerHub .Values.visitEnded.enabled }}
+{{ if and .Values.secrets.dockerHub .Values.worker.internal.visitEndedDispatcher.docker.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "tracardi.labels" (dict "ctx" . "component" "wk-pl-visit-ended") | nindent 4 }}
 spec:
-  replicas: {{ .Values.visitEnded.replicas }}
+  replicas: {{ .Values.worker.internal.visitEndedDispatcher.docker.replicas }}
   selector:
     matchLabels:
       {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "wk-pl-visit-ended") | nindent 6 }}
@@ -19,8 +19,8 @@ spec:
         - name: {{ .Values.secrets.dockerHub | quote }}
       containers:
         - name: wk-pl-visit-ended
-          image: "{{ .Values.visitEnded.image.repository }}:{{ .Values.visitEnded.image.tag }}"
-          imagePullPolicy: {{ .Values.visitEnded.image.pullPolicy }}
+          image: "{{ .Values.worker.internal.visitEndedDispatcher.image.repository }}:{{ .Values.worker.internal.visitEndedDispatcher.image.tag }}"
+          imagePullPolicy: {{ .Values.worker.internal.visitEndedDispatcher.image.pullPolicy }}
           resources:
             limits:
               memory: 100Mi
@@ -31,5 +31,5 @@ spec:
           env:
             {{- include "tracardi.env" (dict "ctx" .) | nindent 12 }}
             - name: LOGGING_LEVEL
-              value: {{ .Values.visitEnded.config.loggingLevel | quote }}
+              value: {{ .Values.worker.internal.visitEndedDispatcher.docker.config.loggingLevel | quote }}
 {{ end }}
