@@ -1,4 +1,4 @@
-{{ if and .Values.tms.enabled }}
+{{ if and .Values.tms.docker.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20,13 +20,13 @@ spec:
         - name: {{ .Values.secrets.dockerHub  | quote }}
       containers:
         - name: be-fa-tms
-          {{- include "tracardi.image" (dict "ctx" . "repo" .Values.config.image.tms.repository "tag" .Values.config.image.tag "policy" .Values.config.image.tms.pullPolicy) | nindent 10 }}
+          {{- include "tracardi.image" (dict "ctx" . "repo" .Values.tms.image.repository "tag" .Values.tms.image.tag "policy" .Values.tms.image.pullPolicy) | nindent 10 }}
           ports:
             - containerPort: 80
               name: tms-port
           env:
             - name: LOGGING_LEVEL
-              value: {{ .Values.tms.config.loggingLevel | quote }}
+              value: {{ .Values.tms.docker.config.loggingLevel | quote }}
             - name: SECRET
               valueFrom:
                 secretKeyRef:
@@ -41,14 +41,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: be-fa-tms-svc
+  name: {{ .Values.tms.docker.service.name }}
 spec:
   type: ClusterIP
   selector:
     {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "be-fa-tms") | nindent 6 }}
   ports:
     - protocol: TCP
-      port: {{ .Values.tms.port }}
+      port: {{ .Values.tms.docker.service.port }}
       targetPort: tms-port
 
 {{ if .Values.digitalOcean.loadBalancer }}
@@ -68,9 +68,9 @@ spec:
   selector:
     {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "be-fa-tms") | nindent 6 }}
   ports:
-    - name: http-{{ .Values.tms.port }}
+    - name: http-{{ .Values.tms.docker.service.port }}
       protocol: TCP
-      port: {{ .Values.tms.port }}
+      port: {{ .Values.tms.docker.service.port }}
       targetPort: tms-port
     {{ if .Values.digitalOcean.certId }}
     - name: https

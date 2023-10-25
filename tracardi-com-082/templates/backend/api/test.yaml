@@ -1,4 +1,4 @@
-{{ if and .Values.secrets.dockerHub .Values.staging.enabled }}
+{{ if and .Values.secrets.dockerHub .Values.api.test.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "tracardi.labels" (dict "ctx" . "component" "be-fa-test") | nindent 4 }}
 spec:
-  replicas: {{ .Values.staging.replicas }}
+  replicas: {{ .Values.api.test.replicas }}
   selector:
     matchLabels:
       {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "be-fa-test") | nindent 6 }}
@@ -20,7 +20,7 @@ spec:
         - name: {{ .Values.secrets.dockerHub  | quote }}
       containers:
         - name: be-fa-test
-          {{- include "tracardi.image" (dict "ctx" . "repo" .Values.config.image.api.repository "tag" .Values.config.image.tag "policy" .Values.config.image.api.pullPolicy) | nindent 10 }}
+          {{- include "tracardi.image" (dict "ctx" . "repo" .Values.api.image.repository "tag" .Values.api.image.tag "policy" .Values.api.image.pullPolicy) | nindent 10 }}
           resources:
             limits:
               memory: 250Mi
@@ -46,11 +46,11 @@ spec:
             - name: PRODUCTION
               value: "no"
             - name: LOGGING_LEVEL
-              value: {{ .Values.staging.config.loggingLevel | quote }}
+              value: {{ .Values.api.test.config.loggingLevel | quote }}
             - name: API_DOCS
-              value: {{ .Values.staging.config.apiDocs | quote}}
+              value: {{ .Values.api.test.config.apiDocs | quote}}
             - name: SAVE_LOGS
-              value: {{ .Values.staging.config.saveLogs | quote }}
+              value: {{ .Values.api.test.config.saveLogs | quote }}
 {{ if and .Values.secrets.maxmind.licenseKey .Values.secrets.maxmind.accountId }}
             - name: MAXMIND_LICENSE_KEY
               value: {{ .Values.secrets.maxmind.licenseKey | quote}}
@@ -58,19 +58,19 @@ spec:
               value: {{ .Values.secrets.maxmind.accountId | quote }}
 {{end}}
             - name: ENABLE_EVENT_DESTINATIONS
-              value: {{ .Values.staging.config.enableEventDestinations | quote }}
+              value: {{ .Values.api.test.config.enableEventDestinations | quote }}
             - name: ENABLE_PROFILE_DESTINATIONS
-              value: {{ .Values.staging.config.enableProfileDestinations | quote }}
+              value: {{ .Values.api.test.config.enableProfileDestinations | quote }}
             - name: ENABLE_WORKFLOW
-              value: {{ .Values.staging.config.enableWorkflow | quote }}
+              value: {{ .Values.api.test.config.enableWorkflow | quote }}
             - name: ENABLE_IDENTIFICATION_POINT
-              value: {{ .Values.staging.config.enableIdentification | quote }}
+              value: {{ .Values.api.test.config.enableIdentification | quote }}
             - name: ENABLE_POST_EVENT_SEGMENTATION
-              value: {{ .Values.staging.config.enablePostEventSegmentation | quote }}
+              value: {{ .Values.api.test.config.enablePostEventSegmentation | quote }}
             - name: ENABLE_PROFILE_IMMEDIATE_FLUSH
-              value: {{ .Values.staging.config.enableProfileFlush | quote }}
+              value: {{ .Values.api.test.config.enableProfileFlush | quote }}
             - name: ASYNC_PROCESSING
-              value: {{ .Values.staging.config.asyncProcessing | quote }}
+              value: {{ .Values.api.test.config.asyncProcessing | quote }}
             - name: LOCK_ON_DATA_COMPUTATION
               value: 'no'
 ---
@@ -84,7 +84,7 @@ spec:
     {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "be-fa-test") | nindent 6 }}
   ports:
     - protocol: TCP
-      port: {{ .Values.staging.port }}
+      port: {{ .Values.api.test.service.port }}
       targetPort: test-port
 
 {{ if .Values.digitalOcean.loadBalancer }}
@@ -104,9 +104,9 @@ spec:
   selector:
     {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "be-fa-test") | nindent 6 }}
   ports:
-    - name: http-{{ .Values.staging.port }}
+    - name: http-{{ .Values.api.test.service.port }}
       protocol: TCP
-      port: {{ .Values.staging.port }}
+      port: {{ .Values.api.test.service.port }}
       targetPort: test-port
     {{ if .Values.digitalOcean.certId }}
     - name: https

@@ -1,3 +1,4 @@
+{{ if and .Values.gui.console.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -14,7 +15,7 @@ metadata:
   labels:
     {{- include "tracardi.labels" (dict "ctx" . "component" "fe-rj-gui") | nindent 4 }}
 spec:
-  replicas: {{ .Values.gui.replicas }}
+  replicas: {{ .Values.gui.console.replicas }}
   selector:
     matchLabels:
       {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "fe-rj-gui") | nindent 6 }}
@@ -26,7 +27,7 @@ spec:
     spec:
       containers:
         - name: fe-rj-gui
-          {{- include "tracardi.image" (dict "ctx" . "repo" .Values.config.image.gui.repository "tag" .Values.config.image.tag "policy" .Values.config.image.gui.pullPolicy) | nindent 10 }}
+          {{- include "tracardi.image" (dict "ctx" . "repo" .Values.gui.image.repository "tag" .Values.gui.image.tag "policy" .Values.gui.image.pullPolicy) | nindent 10 }}
           resources:
             limits:
               memory: 50Mi
@@ -55,7 +56,7 @@ spec:
     {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "fe-rj-gui") | nindent 6 }}
   ports:
     - protocol: TCP
-      port: {{ .Values.gui.port }}
+      port: {{ .Values.gui.console.service.port }}
       targetPort: gui-port
 
 {{ if .Values.digitalOcean.loadBalancer }}
@@ -75,9 +76,9 @@ spec:
   selector:
     {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "fe-rj-gui") | nindent 6 }}
   ports:
-    - name: http-{{ .Values.gui.port }}
+    - name: http-{{ .Values.gui.console.service.port }}
       protocol: TCP
-      port: {{ .Values.gui.port }}
+      port: {{ .Values.gui.console.service.port }}
       targetPort: gui-port
     {{ if .Values.digitalOcean.certId }}
     - name: https
@@ -86,4 +87,5 @@ spec:
       targetPort: gui-port
     {{ end }}
 
+{{ end }}
 {{ end }}

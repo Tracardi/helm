@@ -165,7 +165,7 @@ Params:
   value: {{ .ctx.Values.config.multiTenant.multi | quote }}
 {{ if eq .ctx.Values.config.multiTenant.multi "yes" }}
 - name: MULTI_TENANT_MANAGER_URL
-  value: http://{{ .ctx.Values.config.multiTenant.tms_service}}:{{ .ctx.Values.tms.port }}
+  value: http://{{ .ctx.Values.tms.docker.service.name }}:{{ .ctx.Values.tms.docker.service.port }}
 - name: MULTI_TENANT_MANAGER_API_KEY
   valueFrom:
     secretKeyRef:

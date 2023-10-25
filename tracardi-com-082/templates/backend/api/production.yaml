@@ -1,4 +1,4 @@
-{{ if and .Values.secrets.dockerHub .Values.collector.enabled }}
+{{ if and .Values.secrets.dockerHub .Values.api.production.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "tracardi.labels" (dict "ctx" . "component" "be-fa-production") | nindent 4 }}
 spec:
-  replicas: {{ .Values.collector.replicas }}
+  replicas: {{ .Values.api.production.replicas }}
   selector:
     matchLabels:
       {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "be-fa-production") | nindent 6 }}
@@ -20,7 +20,7 @@ spec:
         - name: {{ .Values.secrets.dockerHub | quote }}
       containers:
         - name: be-fa-production
-          {{- include "tracardi.image" (dict "ctx" . "repo" .Values.config.image.api.repository "tag" .Values.config.image.tag "policy" .Values.config.image.api.pullPolicy) | nindent 10 }}
+          {{- include "tracardi.image" (dict "ctx" . "repo" .Values.api.image.repository "tag" .Values.api.image.tag "policy" .Values.api.image.pullPolicy) | nindent 10 }}
           resources:
             limits:
               memory: 250Mi
@@ -29,7 +29,7 @@ spec:
               memory: 100Mi
               cpu: 100m
           ports:
-            - name: coll-port
+            - name: be-fa-p-port
               containerPort: 80
 {{ if not .Values.config.multiTenant }}
           livenessProbe:
@@ -46,9 +46,9 @@ spec:
             - name: PRODUCTION
               value: "yes"
             - name: LOGGING_LEVEL
-              value: {{ .Values.collector.config.loggingLevel | quote }}
+              value: {{ .Values.api.production.config.loggingLevel | quote }}
             - name: SAVE_LOGS
-              value: {{ .Values.collector.config.saveLogs | quote }}
+              value: {{ .Values.api.production.config.saveLogs | quote }}
 {{ if and .Values.secrets.maxmind.licenseKey .Values.secrets.maxmind.accountId }}
             - name: MAXMIND_LICENSE_KEY
               value: {{ .Values.secrets.maxmind.licenseKey | quote}}
@@ -56,21 +56,21 @@ spec:
               value: {{ .Values.secrets.maxmind.accountId | quote }}
 {{end}}
             - name: ENABLE_EVENT_DESTINATIONS
-              value: {{ .Values.collector.config.enableEventDestinations | quote }}
+              value: {{ .Values.api.production.config.enableEventDestinations | quote }}
             - name: ENABLE_PROFILE_DESTINATIONS
-              value: {{ .Values.collector.config.enableProfileDestinations | quote }}
+              value: {{ .Values.api.production.config.enableProfileDestinations | quote }}
             - name: ENABLE_WORKFLOW
-              value: {{ .Values.collector.config.enableWorkflow | quote }}
+              value: {{ .Values.api.production.config.enableWorkflow | quote }}
             - name: ENABLE_IDENTIFICATION_POINT
-              value: {{ .Values.collector.config.enableIdentification | quote }}
+              value: {{ .Values.api.production.config.enableIdentification | quote }}
             - name: ENABLE_POST_EVENT_SEGMENTATION
-              value: {{ .Values.collector.config.enablePostEventSegmentation | quote }}
+              value: {{ .Values.api.production.config.enablePostEventSegmentation | quote }}
             - name: ENABLE_PROFILE_IMMEDIATE_FLUSH
-              value: {{ .Values.collector.config.enableProfileFlush | quote }}
+              value: {{ .Values.api.production.config.enableProfileFlush | quote }}
             - name: ELASTIC_SAVE_POOL
-              value: {{ .Values.collector.config.elasticSavePool | quote }}
+              value: {{ .Values.api.production.config.elasticSavePool | quote }}
             - name: ASYNC_PROCESSING
-              value: {{ .Values.collector.config.asyncProcessing | quote }}
+              value: {{ .Values.api.production.config.asyncProcessing | quote }}
             - name: LOCK_ON_DATA_COMPUTATION
               value: 'no'
 ---
@@ -84,8 +84,8 @@ spec:
     {{- include "tracardi.selectorLabels" (dict "ctx" . "component" "be-fa-production") | nindent 6 }}
   ports:
     - protocol: TCP
-      port: {{ .Values.collector.port }}
-      targetPort: coll-port
+      port: {{ .Values.api.production.service.port }}
+      targetPort: be-fa-p-port
 
 {{ if .Values.digitalOcean.loadBalancer }}
 ---
@@ -106,13 +106,13 @@ spec:
   ports:
     - name: http
       protocol: TCP
-      port: {{ .Values.collector.port }}
-      targetPort: coll-port
+      port: {{ .Values.api.production.service.port }}
+      targetPort: be-fa-p-port
     {{ if .Values.digitalOcean.certId }}
     - name: https
       protocol: TCP
       port: 443
-      targetPort: coll-port
+      targetPort: be-fa-p-port
     {{ end }}
 
 {{ end }}

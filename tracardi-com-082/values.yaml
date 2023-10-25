@@ -56,129 +56,71 @@ secrets:
 config:
   multiTenant:
     multi: "yes"
-    tms_service: tms-svc  # The name of tms service
+
+api:
   image:
+    repository: tracardi/com-tracardi-api
+    pullPolicy: IfNotPresent
     tag: 0.8.2-rc1  # Tag should be the same for gui and backend
-    api:
-      repository: tracardi/com-tracardi-api
-      pullPolicy: IfNotPresent
-    gui:
-      repository: tracardi/tracardi-gui
-      pullPolicy: IfNotPresent
-    tms:
-      repository: tracardi/tms
-      pullPolicy: IfNotPresent
+  test:
+    enabled: true
+    replicas: 1
+    config:
+      saveLogs: "yes"
+      loggingLevel: "INFO"
+      apiDocs: "yes"
+      asyncProcessing: "yes"
+      enableWorkflow: "yes"
+      enableEventDestinations: "yes"
+      enableProfileDestinations: "yes"
+      enableIdentification: "yes"
+      enablePostEventSegmentation: "yes"
+      enableProfileFlush: "yes"
+    service:
+      port: 8686
+
+  production:
+    enabled: true
+    replicas: 1
+    config:
+      saveLogs: "no"
+      loggingLevel: "INFO"
+      apiDocs: "no"
+      asyncProcessing: "yes"
+      enableWorkflow: "yes"
+      enableEventDestinations: "yes"
+      enableProfileDestinations: "yes"
+      enableIdentification: "yes"
+      enablePostEventSegmentation: "yes"
+      enableProfileFlush: "yes"
+      elasticSavePool: 0
+    service:
+      port: 8484
 
 gui:
-  port: 8787
-  replicas: 1
+  image:
+    repository: tracardi/tracardi-gui
+    pullPolicy: IfNotPresent
+    tag: 0.8.2-rc1  # Tag should be the same for gui and backend
+  console:
+    enabled: true
+    replicas: 1
+    service:
+        port: 8787
 
 tms:
-  enabled: true
-  port: 8383
-  replicas: 1
-  config:
-    loggingLevel: "INFO"
-
-#api:
-#  image:
-#    repository: tracardi/com-tracardi-api
-#    pullPolicy: IfNotPresent
-#    tag: 0.8.2-rc1  # Tag should be the same for gui and backend
-#  test:
-#    enabled: true
-#    port: 8686
-#    replicas: 1
-#    config:
-#      saveLogs: "yes"
-#      loggingLevel: "INFO"
-#      apiDocs: "yes"
-#      asyncProcessing: "yes"
-#      enableWorkflow: "yes"
-#      enableEventDestinations: "yes"
-#      enableProfileDestinations: "yes"
-#      enableIdentification: "yes"
-#      enablePostEventSegmentation: "yes"
-#      enableProfileFlush: "yes"
-#  production:
-#    enabled: true
-#    port: 8484
-#    replicas: 1
-#    config:
-#      saveLogs: "no"
-#      loggingLevel: "INFO"
-#      apiDocs: "no"
-#      asyncProcessing: "yes"
-#      enableWorkflow: "yes"
-#      enableEventDestinations: "yes"
-#      enableProfileDestinations: "yes"
-#      enableIdentification: "yes"
-#      enablePostEventSegmentation: "yes"
-#      enableProfileFlush: "yes"
-#      elasticSavePool: 0
-#
-#gui:
-#  image:
-#    repository: tracardi/tracardi-gui
-#    pullPolicy: IfNotPresent
-#    tag: 0.8.2-rc1  # Tag should be the same for gui and backend
-#  docker:
-#    port: 8787
-#    replicas: 1
-#
-#tms:
-#  image:
-#    repository: tracardi/tracardi-gui
-#    pullPolicy: IfNotPresent
-#    tag: 0.8.2-rc1  # Tag should be the same for gui and backend
-#  docker:
-#    enabled: true
-#    port: 8383
-#    replicas: 1
-#    config:
-#      loggingLevel: "INFO"
-#  service:
-#    name: tms-svc  # The name of tms service
-
-# Collector API is the API that should be exposed to the internet. It has limited API only to collecting data.
-# No GUI like operations are available
-
-collector:
-  enabled: true
-  port: 8484
-  replicas: 1
-  config:
-    saveLogs: "no"
-    loggingLevel: "INFO"
-    apiDocs: "no"
-    asyncProcessing: "yes"
-    enableWorkflow: "yes"
-    enableEventDestinations: "yes"
-    enableProfileDestinations: "yes"
-    enableIdentification: "yes"
-    enablePostEventSegmentation: "yes"
-    enableProfileFlush: "yes"
-    elasticSavePool: 0
-
-# Stating API is the API that should not be exposed to the internet. It has the API functions with the access to
-# test data. Access to this server should have people working on the data orchestration.
-
-staging:
-  enabled: true
-  port: 8686
-  replicas: 1
-  config:
-    saveLogs: "yes"
-    loggingLevel: "INFO"
-    apiDocs: "yes"
-    asyncProcessing: "yes"
-    enableWorkflow: "yes"
-    enableEventDestinations: "yes"
-    enableProfileDestinations: "yes"
-    enableIdentification: "yes"
-    enablePostEventSegmentation: "yes"
-    enableProfileFlush: "yes"
-
+  image:
+    repository: tracardi/tracardi-gui
+    pullPolicy: IfNotPresent
+    tag: 0.8.2-rc1  # Tag should be the same for gui and backend
+  docker:
+    enabled: true
+    replicas: 1
+    config:
+      loggingLevel: "INFO"
+    service:
+      port: 8383
+      name: be-fa-tms-svc  # The name of tms service
 
 job:
   heartbeat:

@@ -18,6 +18,7 @@ kubectl apply -f 082-t440-secrets.yaml -n tracardi-com-082
 
 ```
 helm template tracardi-com-082 --values 082-t440-tracardi-com.yaml
+helm template tracardi-com-082 -s templates/frontend/gui.yaml --values 082-t440-tracardi-com.yaml
 ```
 
 ```
