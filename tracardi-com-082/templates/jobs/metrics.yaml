@@ -1,6 +1,6 @@
-{{ if and .Values.secrets.dockerHub .Values.metricsJob.enabled }}
+{{ if and .Values.secrets.dockerHub .Values.job.metrics.docker.enabled }}
 {{- $root := . -}}
-{{- range $s := .Values.metricsJob.config.schedules }}
+{{- range $s := .Values.job.metrics.docker.config.schedules }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -11,8 +11,8 @@ spec:
   schedule: {{ $s.schedule | quote }}
   concurrencyPolicy: Forbid
   startingDeadlineSeconds: 120
-  successfulJobsHistoryLimit: {{ $root.Values.metricsJob.config.successfulJobsHistoryLimit }}
-  failedJobsHistoryLimit: {{ $root.Values.metricsJob.config.failedJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ $root.Values.job.metrics.docker.config.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ $root.Values.job.metrics.docker.config.failedJobsHistoryLimit }}
   jobTemplate:
     spec:
       backoffLimit: 2
@@ -28,8 +28,8 @@ spec:
             - name: {{ $root.Values.secrets.dockerHub | quote }}
           containers:
           - name: {{ $s.name }}
-            image: "{{ $root.Values.metricsJob.image.repository }}:{{ $root.Values.metricsJob.image.tag }}"
-            imagePullPolicy: "{{ $root.Values.metricsJob.image.pullPolicy }}"
+            image: "{{ $root.Values.job.metrics.image.repository }}:{{ $root.Values.job.metrics.image.tag }}"
+            imagePullPolicy: "{{ $root.Values.job.metrics.image.pullPolicy }}"
             resources:
               limits:
                 memory: 100Mi
@@ -40,7 +40,7 @@ spec:
             env:
               {{- include "tracardi.env" (dict "ctx" $root) | nindent 14 }}
               - name: LOGGING_LEVEL
-                value: {{ $root.Values.metricsJob.config.loggingLevel | quote }}
+                value: {{ $root.Values.job.metrics.docker.config.loggingLevel | quote }}
           restartPolicy: OnFailure
 
 ---

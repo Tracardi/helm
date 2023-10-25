@@ -80,6 +80,66 @@ tms:
   config:
     loggingLevel: "INFO"
 
+#api:
+#  image:
+#    repository: tracardi/com-tracardi-api
+#    pullPolicy: IfNotPresent
+#    tag: 0.8.2-rc1  # Tag should be the same for gui and backend
+#  test:
+#    enabled: true
+#    port: 8686
+#    replicas: 1
+#    config:
+#      saveLogs: "yes"
+#      loggingLevel: "INFO"
+#      apiDocs: "yes"
+#      asyncProcessing: "yes"
+#      enableWorkflow: "yes"
+#      enableEventDestinations: "yes"
+#      enableProfileDestinations: "yes"
+#      enableIdentification: "yes"
+#      enablePostEventSegmentation: "yes"
+#      enableProfileFlush: "yes"
+#  production:
+#    enabled: true
+#    port: 8484
+#    replicas: 1
+#    config:
+#      saveLogs: "no"
+#      loggingLevel: "INFO"
+#      apiDocs: "no"
+#      asyncProcessing: "yes"
+#      enableWorkflow: "yes"
+#      enableEventDestinations: "yes"
+#      enableProfileDestinations: "yes"
+#      enableIdentification: "yes"
+#      enablePostEventSegmentation: "yes"
+#      enableProfileFlush: "yes"
+#      elasticSavePool: 0
+#
+#gui:
+#  image:
+#    repository: tracardi/tracardi-gui
+#    pullPolicy: IfNotPresent
+#    tag: 0.8.2-rc1  # Tag should be the same for gui and backend
+#  docker:
+#    port: 8787
+#    replicas: 1
+#
+#tms:
+#  image:
+#    repository: tracardi/tracardi-gui
+#    pullPolicy: IfNotPresent
+#    tag: 0.8.2-rc1  # Tag should be the same for gui and backend
+#  docker:
+#    enabled: true
+#    port: 8383
+#    replicas: 1
+#    config:
+#      loggingLevel: "INFO"
+#  service:
+#    name: tms-svc  # The name of tms service
+
 # Collector API is the API that should be exposed to the internet. It has limited API only to collecting data.
 # No GUI like operations are available
 
@@ -120,7 +180,69 @@ staging:
     enableProfileFlush: "yes"
 
 
-#job:
+job:
+  heartbeat:
+    image:
+      repository: tracardi/com-heartbeat-job
+      tag: 0.8.2-rc1
+      pullPolicy: IfNotPresent
+
+    production:
+      enabled: true
+      config:
+        successfulJobsHistoryLimit: 2
+        failedJobsHistoryLimit: 2
+        saveLogs: "no"
+        loggingLevel: "INFO"
+      schedules:
+        - name: jb-segmentation-production # every 30min get last events of last month and skip first 20 minutes.
+          schedule: "*/30 * * * *"
+          range: "now-1M|now"
+          qualify_by: "profile-segmentation"
+          no_events_within_last: "20m"
+        - name: jb-visit-ended-production # every 20min get last events of last month and skip first 15 minutes.
+          schedule: "*/20 * * * *"
+          range: "now-1M|now"
+          qualify_by: "visit-end"
+          skip_seconds: "900"  # 15 minutes
+          open_event_type: "visit-started"
+          close_event_type: "visit-ended"
+          ephemeral: "no"
+    test:
+      enabled: true
+      config:
+        successfulJobsHistoryLimit: 2
+        failedJobsHistoryLimit: 2
+        saveLogs: "yes"
+        loggingLevel: "INFO"
+      schedules:
+        - name: jb-segmentation-test # every 15min get last events of last month and skip first 20 minutes.
+          schedule: "*/15 * * * *"
+          range: "now-1M|now"
+          qualify_by: "profile-segmentation"
+          no_events_within_last: "20m"
+        - name: jb-visit-ended-test # every 5min get last events of last month and skip first 15 minutes.
+          schedule: "*/5 * * * *"
+          range: "now-1M|now"
+          qualify_by: "visit-end"
+          skip_seconds: "900"  # 15 minutes
+          open_event_type: "visit-started"
+          close_event_type: "visit-ended"
+          ephemeral: "no"
+
+  metrics:
+    image:
+      repository: tracardi/com-metrics-job
+      tag: 0.8.2-rc1
+      pullPolicy: IfNotPresent
+    docker:
+      enabled: true
+      config:
+        successfulJobsHistoryLimit: 2
+        failedJobsHistoryLimit: 2
+        schedules:
+          - name: jb-metrics # every 30min get last events of last month and skip first 20 minutes.
+            schedule: "*/30 * * * *"
 
 worker:
 
@@ -253,74 +375,21 @@ worker:
 #        config:
 #          loggingLevel: "INFO"
 
-# Jobs
+# Bridges. Services responsible for collection data from different channels. They bridge the defined transportation protocol to tracardi event source.
 
-metricsJob:
-  enabled: true
-  image:
-    repository: tracardi/com-metrics-job
-    tag: 0.8.2-rc1
-  config:
-    successfulJobsHistoryLimit: 2
-    failedJobsHistoryLimit: 2
-    pullPolicy: IfNotPresent
-    schedules:
-      - name: jb-metrics # every 30min get last events of last month and skip first 20 minutes.
-        schedule: "*/30 * * * *"
+bridge:
+  queue:
+    image:
+      repository: tracardi/com-bridge-queue
+      tag: 0.8.2-rc1
+      pullPolicy: IfNotPresent
+    docker:
+      enabled: false
+      replicas: 1
+      config:
+        loggingLevel: "INFO"
 
-# Segmentation job is a job that runs periodically and checks if some profiles should be run through a segmentation process.
-
-heartbeatJob:
-  image:
-    repository: tracardi/com-heartbeat-job
-    tag: 0.8.2-rc1
-    pullPolicy: IfNotPresent
-
-  config:
-
-    production:
-      enable: true
-      successfulJobsHistoryLimit: 2
-      failedJobsHistoryLimit: 2
-      saveLogs: "no"
-      loggingLevel: "INFO"
-      schedules:
-        - name: jb-segmentation-production # every 30min get last events of last month and skip first 20 minutes.
-          schedule: "*/30 * * * *"
-          range: "now-1M|now"
-          qualify_by: "profile-segmentation"
-          no_events_within_last: "20m"
-        - name: jb-visit-ended-production # every 20min get last events of last month and skip first 15 minutes.
-          schedule: "*/20 * * * *"
-          range: "now-1M|now"
-          qualify_by: "visit-end"
-          skip_seconds: "900"  # 15 minutes
-          open_event_type: "visit-started"
-          close_event_type: "visit-ended"
-          ephemeral: "no"
-
-       # Add as many as you need
-
-    staging:
-      enable: true
-      successfulJobsHistoryLimit: 2
-      failedJobsHistoryLimit: 2
-      saveLogs: "yes"
-      loggingLevel: "INFO"
-      schedules:
-        - name: jb-segmentation-test # every 15min get last events of last month and skip first 20 minutes.
-          schedule: "*/15 * * * *"
-          range: "now-1M|now"
-          qualify_by: "profile-segmentation"
-          no_events_within_last: "20m"
-        - name: jb-visit-ended-test # every 5min get last events of last month and skip first 15 minutes.
-          schedule: "*/5 * * * *"
-          range: "now-1M|now"
-          qualify_by: "visit-end"
-          skip_seconds: "900"  # 15 minutes
-          open_event_type: "visit-started"
-          close_event_type: "visit-ended"
-          ephemeral: "no"
+# -----------------------------------------
 
 segmentationWorker:
   enabled: true
@@ -341,18 +410,3 @@ copingWorker:
   config:
     saveLogs: "no"
     loggingLevel: "INFO"
-
-# Bridges. Services responsible for collection data from different channels. They bridge the defined transportation protocol to tracardi event source.
-
-bridge:
-  queue:
-    image:
-      repository: tracardi/com-bridge-queue
-      tag: 0.8.2-rc1
-      pullPolicy: IfNotPresent
-    docker:
-      enabled: false
-      replicas: 1
-      config:
-        loggingLevel: "INFO"
-

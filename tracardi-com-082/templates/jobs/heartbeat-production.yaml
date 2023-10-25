@@ -1,6 +1,6 @@
-{{ if and .Values.secrets.dockerHub .Values.heartbeatJob.config.production.enable }}
+{{ if and .Values.secrets.dockerHub .Values.job.heartbeat.production.enabled }}
 {{- $root := . -}}
-{{- range $s := .Values.heartbeatJob.config.production.schedules }}
+{{- range $s := .Values.job.heartbeat.test.schedules }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -11,8 +11,8 @@ spec:
   schedule: {{ $s.schedule | quote }}
   concurrencyPolicy: Forbid
   startingDeadlineSeconds: 60
-  successfulJobsHistoryLimit: {{ $root.Values.heartbeatJob.config.production.successfulJobsHistoryLimit }}
-  failedJobsHistoryLimit: {{ $root.Values.heartbeatJob.config.production.failedJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ $root.Values.job.heartbeat.production.config.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ $root.Values.job.heartbeat.production.config.failedJobsHistoryLimit }}
   jobTemplate:
     spec:
       backoffLimit: 2
@@ -28,8 +28,8 @@ spec:
             - name: {{ $root.Values.secrets.dockerHub | quote }}
           containers:
           - name: job-heartbeat-production
-            image: "{{ $root.Values.heartbeatJob.image.repository }}:{{ $root.Values.heartbeatJob.image.tag }}"
-            imagePullPolicy: "{{ $root.Values.heartbeatJob.image.pullPolicy }}"
+            image: "{{ $root.Values.job.heartbeat.image.repository }}:{{ $root.Values.job.heartbeat.image.tag }}"
+            imagePullPolicy: "{{ $root.Values.job.heartbeat.image.pullPolicy }}"
             resources:
               limits:
                 memory: 100Mi
@@ -40,7 +40,7 @@ spec:
             env:
               {{- include "tracardi.env" (dict "ctx" $root) | nindent 14 }}
               - name: LOGGING_LEVEL
-                value: {{ $root.Values.heartbeatJob.config.production.loggingLevel | quote }}
+                value: {{ $root.Values.job.heartbeat.production.config.loggingLevel | quote }}
               - name: PRODUCTION
                 value: "yes"
 {{ if $s.range }}
