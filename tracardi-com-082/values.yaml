@@ -186,6 +186,36 @@ job:
           - name: jb-metrics # every 30min get last events of last month and skip first 20 minutes.
             schedule: "*/30 * * * *"
 
+  segmentation:
+    conditional:
+      image:
+        repository: tracardi/com-cond-segmentation-job
+        tag: 0.8.2-rc1
+        pullPolicy: IfNotPresent
+      docker:
+        enabled: true
+        config:
+          loggingLevel: "INFO"
+          successfulJobsHistoryLimit: 2
+          failedJobsHistoryLimit: 2
+          schedules:
+            - name: jb-segmentation-conditional
+              schedule: "*/10 * * * *"
+    workflow:
+      image:
+        repository: tracardi/com-wf-segmentation-job
+        tag: 0.8.2-rc1
+        pullPolicy: IfNotPresent
+      docker:
+        enabled: false
+        config:
+          loggingLevel: "INFO"
+          successfulJobsHistoryLimit: 2
+          failedJobsHistoryLimit: 2
+          schedules:
+            - name: jb-segmentation-workflow
+              schedule: "*/15 * * * *"
+
 worker:
 
   flusher:

@@ -1,0 +1,48 @@
+{{ if and .Values.secrets.dockerHub .Values.job.segmentation.conditional.docker.enabled }}
+{{- $root := . -}}
+{{- range $s := .Values.job.segmentation.conditional.docker.config.schedules }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ $s.name }}
+  labels:
+    {{- include "tracardi.labels" (dict "ctx" $root "component" "jobs-group") | nindent 4 }}
+spec:
+  schedule: {{ $s.schedule | quote }}
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 120
+  successfulJobsHistoryLimit: {{ $root.Values.job.segmentation.conditional.docker.config.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ $root.Values.job.segmentation.conditional.docker.config.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      completions: 1
+      parallelism: 1
+      template:
+        metadata:
+          name: {{ $s.name }}
+          labels:
+            {{- include "tracardi.podLabels" (dict "ctx" $root "component" "jobs-group") | nindent 12 }}
+        spec:
+          imagePullSecrets:
+            - name: {{ $root.Values.secrets.dockerHub | quote }}
+          containers:
+          - name: {{ $s.name }}
+            image: "{{ $root.Values.job.segmentation.conditional.image.repository }}:{{ $root.Values.job.segmentation.conditional.image.tag }}"
+            imagePullPolicy: "{{ $root.Values.job.segmentation.conditional.image.pullPolicy }}"
+            resources:
+              limits:
+                memory: 100Mi
+                cpu: 500m
+              requests:
+                memory: 80Mi
+                cpu: 300m
+            env:
+              {{- include "tracardi.env" (dict "ctx" $root) | nindent 14 }}
+              - name: LOGGING_LEVEL
+                value: {{ $root.Values.job.segmentation.conditional.docker.config.loggingLevel | quote }}
+          restartPolicy: OnFailure
+
+---
+{{- end }}
+{{ end }}
