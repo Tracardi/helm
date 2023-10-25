@@ -110,7 +110,7 @@ gui:
 
 tms:
   image:
-    repository: tracardi/tracardi-tms
+    repository: tracardi/tms
     pullPolicy: IfNotPresent
     tag: 0.8.2-rc1  # Tag should be the same for gui and backend
   docker:
