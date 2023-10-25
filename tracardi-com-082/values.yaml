@@ -123,55 +123,6 @@ tms:
       name: be-fa-tms-svc  # The name of tms service
 
 job:
-  heartbeat:
-    image:
-      repository: tracardi/com-heartbeat-job
-      tag: 0.8.2-rc1
-      pullPolicy: IfNotPresent
-
-    production:
-      enabled: true
-      config:
-        successfulJobsHistoryLimit: 2
-        failedJobsHistoryLimit: 2
-        saveLogs: "no"
-        loggingLevel: "INFO"
-      schedules:
-        - name: jb-segmentation-production # every 30min get last events of last month and skip first 20 minutes.
-          schedule: "*/30 * * * *"
-          range: "now-1M|now"
-          qualify_by: "profile-segmentation"
-          no_events_within_last: "20m"
-        - name: jb-visit-ended-production # every 20min get last events of last month and skip first 15 minutes.
-          schedule: "*/20 * * * *"
-          range: "now-1M|now"
-          qualify_by: "visit-end"
-          skip_seconds: "900"  # 15 minutes
-          open_event_type: "visit-started"
-          close_event_type: "visit-ended"
-          ephemeral: "no"
-    test:
-      enabled: true
-      config:
-        successfulJobsHistoryLimit: 2
-        failedJobsHistoryLimit: 2
-        saveLogs: "yes"
-        loggingLevel: "INFO"
-      schedules:
-        - name: jb-segmentation-test # every 15min get last events of last month and skip first 20 minutes.
-          schedule: "*/15 * * * *"
-          range: "now-1M|now"
-          qualify_by: "profile-segmentation"
-          no_events_within_last: "20m"
-        - name: jb-visit-ended-test # every 5min get last events of last month and skip first 15 minutes.
-          schedule: "*/5 * * * *"
-          range: "now-1M|now"
-          qualify_by: "visit-end"
-          skip_seconds: "900"  # 15 minutes
-          open_event_type: "visit-started"
-          close_event_type: "visit-ended"
-          ephemeral: "no"
-
   metrics:
     image:
       repository: tracardi/com-metrics-job
