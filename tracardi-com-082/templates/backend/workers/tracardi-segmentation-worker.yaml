@@ -23,7 +23,7 @@ spec:
         imagePullPolicy: {{ .Values.segmentationWorker.image.pullPolicy }}
         resources:
           limits:
-            memory: 100Mi
+            memory: 200Mi
             cpu: 500m
           requests:
             memory: 80Mi
