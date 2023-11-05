@@ -23,7 +23,7 @@ spec:
           imagePullPolicy: {{ .Values.worker.workflow.image.pullPolicy }}
           resources:
             limits:
-              memory: 100Mi
+              memory: 150Mi
               cpu: 200m
             requests:
               memory: 50Mi

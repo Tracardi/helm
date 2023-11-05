@@ -23,7 +23,7 @@ spec:
           imagePullPolicy: {{ .Values.worker.flusher.image.pullPolicy }}
           resources:
             limits:
-              memory: 50Mi
+              memory: 75Mi
               cpu: 100m
             requests:
               memory: 35Mi
