@@ -1,4 +1,4 @@
-{{ if and .Values.tms.docker.enabled }}
+{{ if and .Values.tms.docker.enabled (eq .Values.config.multiTenant.multi "yes") }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
