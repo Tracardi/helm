@@ -45,7 +45,7 @@ kubectl create ns tracardi
 
 ## Docker hub credentials
 
-Add dockerhub credentials to the tracardi namespace
+Add dockerhub credentials to the tracardi namespace.
 
 ```
 kubectl create secret docker-registry tracardi-dockerhub \
