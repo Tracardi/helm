@@ -1,0 +1,17 @@
+secrets:
+  installationToken: "<SET-INSTALLATION-SECRET>"
+  dockerHub: "tracardi-dockerhub"
+  license:
+    licenseKey: "<LICENSE-KEY-VALUE>"
+  tms:
+    tokenKey: "<SECRET-KEY-VALUE>"
+    apiKey: "<API-KEY-VALUE>"
+  redis:
+    password: "<REDIS-PASSWORD>"
+  elastic:
+    password: "<ELASTIC-PASSWORD>"
+  pulsar:
+    token: "<PULSAR-TOKEN>"
+  maxmind:
+    licenseKey: "<MAXMIND-LICENSE-KEY-VALUE>"
+    accountId: "<MAXMIND-ACCOUNT-ID>"
