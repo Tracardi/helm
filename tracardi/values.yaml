@@ -61,7 +61,7 @@ api:
   image:
     repository: tracardi/com-tracardi-api
     pullPolicy: IfNotPresent
-    tag: 0.8.2-rc3  # Tag should be the same for gui and backend
+    tag: 0.8.2.1 # Tag should be the same for gui and backend
   test:
     enabled: true
     replicas: 1
@@ -101,7 +101,7 @@ gui:
   image:
     repository: tracardi/tracardi-gui
     pullPolicy: IfNotPresent
-    tag: 0.8.2-rc3  # Tag should be the same for gui and backend
+    tag: 0.8.2.1 # Tag should be the same for gui and backend
   console:
     enabled: true
     replicas: 1
@@ -112,7 +112,7 @@ tms:
   image:
     repository: tracardi/tms
     pullPolicy: IfNotPresent
-    tag: 0.8.2-rc3  # Tag should be the same for gui and backend
+    tag: 0.8.2.1 # Tag should be the same for gui and backend
   docker:
     enabled: true
     replicas: 1
@@ -126,7 +126,7 @@ job:
   metrics:
     image:
       repository: tracardi/com-metrics-job
-      tag: 0.8.2-rc3
+      tag: 0.8.2.1
       pullPolicy: IfNotPresent
     docker:
       enabled: true
@@ -141,7 +141,7 @@ job:
     conditional:
       image:
         repository: tracardi/com-cond-segmentation-job
-        tag: 0.8.2-rc3
+        tag: 0.8.2.1
         pullPolicy: IfNotPresent
       docker:
         enabled: true
@@ -155,7 +155,7 @@ job:
     workflow:
       image:
         repository: tracardi/com-wf-segmentation-job
-        tag: 0.8.2-rc3
+        tag: 0.8.2.1
         pullPolicy: IfNotPresent
       docker:
         enabled: false
@@ -172,7 +172,7 @@ worker:
   flusher:
     image:
       repository: tracardi/com-tracardi-flusher-worker
-      tag: 0.8.2-rc3
+      tag: 0.8.2.1
       pullPolicy: IfNotPresent
     profile:
       enabled: true
@@ -188,7 +188,7 @@ worker:
   storage:
     image:
       repository: tracardi/com-tracardi-storage-worker
-      tag: 0.8.2-rc3
+      tag: 0.8.2.1
       pullPolicy: IfNotPresent
     profile:
       enabled: true
@@ -209,7 +209,7 @@ worker:
   workflow:
     image:
       repository: tracardi/com-tracardi-workflow-worker
-      tag: 0.8.2-rc3
+      tag: 0.8.2.1
       pullPolicy: IfNotPresent
     event:
       enabled: true
@@ -220,7 +220,7 @@ worker:
   outbound:
     image:
       repository: tracardi/com-tracardi-outbound-worker
-      tag: 0.8.2-rc3
+      tag: 0.8.2.1
       pullPolicy: IfNotPresent
     profile:
       enabled: true
@@ -237,7 +237,7 @@ worker:
     metrics:
       image:
         repository: tracardi/com-tracardi-metrics-worker
-        tag: 0.8.2-rc3
+        tag: 0.8.2.1
         pullPolicy: IfNotPresent
       profile:
         enabled: true
@@ -247,7 +247,7 @@ worker:
     scheduler:
       image:
         repository: tracardi/com-tracardi-scheduler-worker
-        tag: 0.8.2-rc3
+        tag: 0.8.2.1
         pullPolicy: IfNotPresent
       event:
         enabled: true
@@ -257,7 +257,7 @@ worker:
     visitEndScheduler:
       image:
         repository: tracardi/com-tracardi-visit-end-checker-worker
-        tag: 0.8.2-rc3
+        tag: 0.8.2.1
         pullPolicy: IfNotPresent
       docker:
         enabled: true
@@ -269,7 +269,7 @@ worker:
     visitEndedDispatcher:
       image:
         repository: tracardi/com-tracardi-visit-ended-worker
-        tag: 0.8.2-rc3
+        tag: 0.8.2.1
         pullPolicy: IfNotPresent
       docker:
         enabled: true
@@ -279,7 +279,7 @@ worker:
     upgrade:
       image:
         repository: tracardi/update-worker
-        tag: 0.8.2-rc3
+        tag: 0.8.2.1
         pullPolicy: IfNotPresent
       docker:
         enabled: true
@@ -290,7 +290,7 @@ worker:
 #    trigger:
 #      image:
 #        repository: tracardi/com-tracardi-trigger-worker
-#        tag: 0.8.2-rc3
+#        tag: 0.8.2.1
 #        pullPolicy: IfNotPresent
 #      segmentation:
 #        enabled: false
@@ -304,7 +304,7 @@ bridge:
   queue:
     image:
       repository: tracardi/com-bridge-queue
-      tag: 0.8.2-rc3
+      tag: 0.8.2.1
       pullPolicy: IfNotPresent
     docker:
       enabled: false
@@ -318,7 +318,7 @@ segmentationWorker:
   enabled: true
   image:
     repository: tracardi/com-tracardi-segmentation-worker
-    tag: 0.8.2-rc3
+    tag: 0.8.2.1
     pullPolicy: IfNotPresent
   config:
     saveLogs: "no"
@@ -328,7 +328,7 @@ copingWorker:
   enabled: true
   image:
     repository: tracardi/com-tracardi-coping-worker
-    tag: 0.8.2-rc3
+    tag: 0.8.2.1
     pullPolicy: IfNotPresent
   config:
     saveLogs: "no"
